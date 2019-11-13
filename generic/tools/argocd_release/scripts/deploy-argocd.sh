@@ -51,7 +51,8 @@ echo "*** Setting up kustomize directory"
 mkdir -p "${KUSTOMIZE_DIR}"
 cp -R "${KUSTOMIZE_TEMPLATE}" "${KUSTOMIZE_DIR}"
 
-HELM_VALUES="server.ingress.enabled=true,server.ingress.hosts.0=${INGRESS_HOST}"
+# Setting redis.enabled=true to workaround upstream bug: https://github.com/argoproj/argo-helm/issues/157
+HELM_VALUES="server.ingress.enabled=true,server.ingress.hosts.0=${INGRESS_HOST},redis.enabled=true"
 if [[ -n "${TLS_SECRET_NAME}" ]]; then
   HELM_VALUES="${HELM_VALUES},server.ingress.tls.0.secretName=${TLS_SECRET_NAME},server.ingress.tls.0.hosts.0=${INGRESS_HOST}"
 fi
