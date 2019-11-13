@@ -3,7 +3,9 @@
 RESOURCE_GROUP="$1"
 REGION="$2"
 
-REGISTRY_NAMESPACE="${RESOURCE_GROUP}"
+# The name of a registry namespace cannot contain uppercase characters
+# Lowercase the resource group name, just in case...
+REGISTRY_NAMESPACE=$(echo "$RESOURCE_GROUP" | tr '[:upper:]' '[:lower:]')
 
 ibmcloud login --apikey "${APIKEY}" -g "${RESOURCE_GROUP}" -r "${REGION}" 1> /dev/null 2> /dev/null
 if [[ $? -ne 0 ]]; then
