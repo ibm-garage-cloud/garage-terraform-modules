@@ -9,6 +9,7 @@ VERSION="$3"
 INGRESS_HOST="$4"
 INGRESS_SUBDOMAIN="$5"
 INGRESS_TLSSECRET="$6"
+ENABLE_ARGO_CACHE="$7"
 
 if [[ -n "${KUBECONFIG_IKS}" ]]; then
     export KUBECONFIG="${KUBECONFIG_IKS}"
@@ -51,8 +52,7 @@ echo "*** Setting up kustomize directory"
 mkdir -p "${KUSTOMIZE_DIR}"
 cp -R "${KUSTOMIZE_TEMPLATE}" "${KUSTOMIZE_DIR}"
 
-# Setting redis.enabled=true to workaround upstream bug: https://github.com/argoproj/argo-helm/issues/157
-HELM_VALUES="server.ingress.enabled=true,server.ingress.hosts.0=${INGRESS_HOST},redis.enabled=true"
+HELM_VALUES="server.ingress.enabled=true,server.ingress.hosts.0=${INGRESS_HOST},redis.enabled=${ENABLE_ARGO_CACHE}"
 if [[ -n "${TLS_SECRET_NAME}" ]]; then
   HELM_VALUES="${HELM_VALUES},server.ingress.tls.0.secretName=${TLS_SECRET_NAME},server.ingress.tls.0.hosts.0=${INGRESS_HOST}"
 fi
