@@ -27,6 +27,10 @@ service:
   type: ClusterIP
   port: 80
 
+route:
+  enabled: false
+  termination: edge
+
 ingress:
   enabled: true
   annotations: {}

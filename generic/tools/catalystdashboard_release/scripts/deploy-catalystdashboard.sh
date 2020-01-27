@@ -56,13 +56,13 @@ helm template "${CHART}" \
     --set configMaps="${CONFIG_MAP_YAML}" > ${OUTPUT_YAML}
 
 echo "*** Applying kube yaml ${OUTPUT_YAML}"
-if [[ "${CLUSTER_TYPE}" == "openshift" ]]; then
+if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
+  kubectl apply -n "${NAMESPACE}" -f ${OUTPUT_YAML}
+else
   oc apply -n "${NAMESPACE}" -f ${OUTPUT_YAML}
 
   DASHBOARD_HOST=$(oc get route "dashboard" -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
   DASHBOARD_URL="https://${DASHBOARD_HOST}"
-else
-  kubectl apply -n "${NAMESPACE}" -f ${OUTPUT_YAML}
 fi
 
 helm template "${CONFIG_CHART}" \

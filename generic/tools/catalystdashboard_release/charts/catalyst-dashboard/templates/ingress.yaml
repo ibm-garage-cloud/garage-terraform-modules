@@ -1,4 +1,4 @@
-{{- if ne .Values.clusterType "openshift" -}}
+{{- if eq .Values.clusterType "kubernetes" -}}
 {{- $fullName := include "catalyst-dashboard.fullname" . -}}
 {{- $ingressPath := .Values.ingress.path -}}
 {{- $host := printf "%s.%s" .Values.host .Values.ingressSubdomain -}}

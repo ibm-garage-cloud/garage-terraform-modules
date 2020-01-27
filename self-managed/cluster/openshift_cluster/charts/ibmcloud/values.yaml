@@ -11,7 +11,7 @@ resource_group: "resource-group"
 registry_url: "us.icr.io"
 region: "us-south"
 server_url: "server-url"
-# cluster_type should be kubernetes or openshift
+# cluster_type should be kubernetes or openshift or ocp3 or ocp4
 cluster_type: "kubernetes"
 ingress_subdomain: "containers.appdomain.cloud"
 #tls_secret_name: ""

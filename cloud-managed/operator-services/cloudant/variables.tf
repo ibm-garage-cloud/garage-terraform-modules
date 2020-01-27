@@ -1,51 +1,47 @@
 variable "resource_group_name" {
-  type        = "string"
+  type        = string
   description = "Resource group where the cluster has been provisioned."
 }
 
 variable "resource_location" {
-  type        = "string"
+  type        = string
   description = "Geographic location of the resource (e.g. us-south, us-east)"
 }
 
 variable "cluster_id" {
-  type        = "string"
+  type        = string
   description = "Id of the cluster"
 }
 
-variable "dev_namespace" {
-  type        = "string"
-  description = "Development namespace"
+variable "namespaces" {
+  type        = list(string)
+  description = "Namespaces"
 }
 
-variable "test_namespace" {
-  type        = "string"
-  description = "Test namespace"
-}
-
-variable "staging_namespace" {
-  type        = "string"
-  description = "Staging namespace"
+variable "tags" {
+  type        = list(string)
+  description = "Tags that should be applied to the service"
+  default     = []
 }
 
 variable "name_prefix" {
-  type        = "string"
+  type        = string
   description = "The prefix name for the service. If not provided it will default to the resource group name"
   default     = ""
 }
 
 variable "plan" {
-  type        = "string"
+  type        = string
   description = "The type of plan the service instance should run under (lite or standard)"
   default     = "standard"
 }
 
 variable "service_namespace" {
-  type        = "string"
+  type        = string
   description = "The namespace where the service obj will be created"
 }
 
 variable "cluster_config_file" {
-  type        = "string"
+  type        = string
   description = "Cluster config file for Kubernetes cluster."
 }

@@ -24,7 +24,12 @@ YAML_FILE=${TMP_DIR}/logdna-agent-key.yaml
 echo "*** Cleaning up existing namespace: ${NAMESPACE}"
 kubectl delete namespace "${NAMESPACE}"
 
-if [[ "${CLUSTER_TYPE}" == "openshift" ]]; then
+if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
+    kubectl create namespace "${NAMESPACE}"
+
+    # Should this be https://raw.githubusercontent.com/logdna/logdna-agent/${BIND_SCRIPT_VERSION}/logdna-agent-ds.yaml
+    LOGDNA_AGENT_DS_YAML="https://assets.us-south.logging.cloud.ibm.com/clients/logdna-agent-ds.yaml"
+else
     oc adm new-project ${NAMESPACE}
     oc project ${NAMESPACE}
     oc create serviceaccount logdna-agent
@@ -54,11 +59,6 @@ if [[ "${CLUSTER_TYPE}" == "openshift" ]]; then
     LOGDNA_AGENT_DS_YAML="${TMP_DIR}/logdna-agent-ds-os.yaml"
 
     kustomize build "${LOGDNA_KUSTOMIZE}" > "${LOGDNA_AGENT_DS_YAML}"
-else
-    kubectl create namespace "${NAMESPACE}"
-
-    # Should this be https://raw.githubusercontent.com/logdna/logdna-agent/${BIND_SCRIPT_VERSION}/logdna-agent-ds.yaml
-    LOGDNA_AGENT_DS_YAML="https://assets.us-south.logging.cloud.ibm.com/clients/logdna-agent-ds.yaml"
 fi
 
 echo "*** Creating logdna-agent-key secret in ${NAMESPACE}"

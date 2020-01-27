@@ -1,3 +1,4 @@
+{{- if .Values.ingress.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,3 +8,4 @@ metadata:
         group: {{ .Values.group }}
 data:
     PACTBROKER_URL: {{ include "pact-broker.url" . }}
+{{- end -}}

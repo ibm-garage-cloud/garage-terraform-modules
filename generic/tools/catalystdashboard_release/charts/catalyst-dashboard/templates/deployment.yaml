@@ -28,14 +28,14 @@ spec:
         "app.kubernetes.io/component": {{ include "catalyst-dashboard.name" . }}-pod
     spec:
       serviceAccountName: {{ include "catalyst-dashboard.name" . }}
-      {{- if eq .Values.clusterType "openshift" }}
+      {{- if or (eq .Values.clusterType "openshift") (regexFind "^ocp.*" .Values.clusterType) }}
       volumes:
         - name: proxy-tls
           secret:
             secretName: {{ .Values.host }}-tls
       {{- end }}
       containers:
-        {{- if eq .Values.clusterType "openshift" }}
+        {{- if or (eq .Values.clusterType "openshift") (regexFind "^ocp.*" .Values.clusterType) }}
         - name: oauth-proxy
           image: openshift/oauth-proxy:latest
           imagePullPolicy: IfNotPresent
