@@ -1,4 +1,4 @@
-{{- if eq .Values.clusterType "openshift" }}
+{{- if or (eq .Values.clusterType "openshift") (regexFind "^ocp.*" .Values.clusterType) }}
 apiVersion: v1
 kind: Route
 metadata:

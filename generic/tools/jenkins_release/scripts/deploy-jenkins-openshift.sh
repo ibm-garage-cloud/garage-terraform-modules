@@ -16,8 +16,7 @@ mkdir -p ${TMP_DIR}
 YAML_OUTPUT=${TMP_DIR}/jenkins-config.yaml
 
 echo "Creating jenkins-ephemeral instance"
-oc new-app jenkins-ephemeral -n "${NAMESPACE}" \
-    -e VOLUME_CAPACITY="${VOLUME_CAPACITY}"
+oc new-app jenkins-ephemeral -n "${NAMESPACE}"
 
 JENKINS_HOST=$(oc get route jenkins -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
 JENKINS_URL="https://${JENKINS_HOST}"

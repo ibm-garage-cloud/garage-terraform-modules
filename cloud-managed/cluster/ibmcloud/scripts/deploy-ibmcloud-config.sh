@@ -13,11 +13,16 @@ REGISTRY_URL="${10}"
 TLS_SECRET_NAME="${11}"
 
 if [[ -n "${KUBECONFIG_IKS}" ]]; then
+    echo "Setting up KUBECONFIG=${KUBECONFIG_IKS}"
     export KUBECONFIG="${KUBECONFIG_IKS}"
 fi
 
 if [[ -z "${TMP_DIR}" ]]; then
     TMP_DIR=".tmp"
+fi
+
+if [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
+  CLUSTER_TYPE="openshift"
 fi
 
 NAME="ibmcloud-config"

@@ -1,36 +1,42 @@
 variable "resource_group_name" {
-  type        = "string"
+  type        = string
   description = "Resource group where the cluster has been provisioned."
 }
 
 variable "resource_location" {
-  type        = "string"
+  type        = string
   description = "Geographic location of the resource (e.g. us-south, us-east)"
 }
 
 variable "cluster_id" {
-  type        = "string"
+  type        = string
   description = "Id of the cluster"
 }
 
 variable "namespaces" {
-  type        = "list"
-  description = "Namespace"
+  type        = list(string)
+  description = "Namespaces"
 }
 
 variable "namespace_count" {
-  type        = "string"
-  description = "The number of items in the namespaces variable"
+  type        = number
+  description = "The number of namespaces"
+}
+
+variable "tags" {
+  type        = list(string)
+  description = "Tags that should be applied to the service"
+  default     = []
 }
 
 variable "name_prefix" {
-  type        = "string"
+  type        = string
   description = "The prefix name for the service. If not provided it will default to the resource group name"
   default     = ""
 }
 
 variable "plan" {
-  type        = "string"
+  type        = string
   description = "The type of plan the service instance should run under (lite or graduated-tier)"
   default     = "graduated-tier"
 }

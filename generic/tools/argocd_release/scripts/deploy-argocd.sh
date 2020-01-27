@@ -26,12 +26,10 @@ KUSTOMIZE_DIR="${TMP_DIR}/kustomize"
 KUSTOMIZE_PATCH="${KUSTOMIZE_DIR}/argocd/patch-ingress.yaml"
 
 ARGOCD_CHART="${CHART_DIR}/${CHART_NAME}"
-ACCESS_CHART="${MODULE_DIR}/charts/argocd-access"
 SOLSACM_CHART="${MODULE_DIR}/charts/solsa-cm"
 
 ARGOCD_KUSTOMIZE="${KUSTOMIZE_DIR}/argocd"
 ARGOCD_BASE_KUSTOMIZE="${ARGOCD_KUSTOMIZE}/base.yaml"
-ARGOCD_ACCESS_KUSTOMIZE="${ARGOCD_KUSTOMIZE}/access.yaml"
 ARGOCD_SOLSACM_KUSTOMIZE="${ARGOCD_KUSTOMIZE}/solsa/solsa-cm.yaml"
 
 ARGOCD_YAML="${TMP_DIR}/argocd.yaml"
@@ -51,9 +49,15 @@ echo "*** Setting up kustomize directory"
 mkdir -p "${KUSTOMIZE_DIR}"
 cp -R "${KUSTOMIZE_TEMPLATE}" "${KUSTOMIZE_DIR}"
 
-HELM_VALUES="server.ingress.enabled=true,server.ingress.hosts.0=${INGRESS_HOST},redis.enabled=${ENABLE_ARGO_CACHE}"
-if [[ -n "${TLS_SECRET_NAME}" ]]; then
-  HELM_VALUES="${HELM_VALUES},server.ingress.tls.0.secretName=${TLS_SECRET_NAME},server.ingress.tls.0.hosts.0=${INGRESS_HOST}"
+HELM_VALUES="redis.enabled=${ENABLE_ARGO_CACHE}"
+if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
+  HELM_VALUES="${HELM_VALUES},server.ingress.enabled=true,server.ingress.hosts.0=${INGRESS_HOST}"
+  URL="http://${INGRESS_HOST}"
+
+  if [[ -n "${TLS_SECRET_NAME}" ]]; then
+    HELM_VALUES="${HELM_VALUES},server.ingress.tls.0.secretName=${TLS_SECRET_NAME},server.ingress.tls.0.hosts.0=${INGRESS_HOST}"
+    URL="https://${INGRESS_HOST}"
+  fi
 fi
 
 echo "*** Generating kube yaml from helm template into ${ARGOCD_BASE_KUSTOMIZE}"
@@ -61,11 +65,6 @@ helm template "${ARGOCD_CHART}" \
     --namespace "${NAMESPACE}" \
     --name "argocd" \
     --set "${HELM_VALUES}" > ${ARGOCD_BASE_KUSTOMIZE}
-
-echo "*** Generating access yaml from helm template into ${ARGOCD_ACCESS_KUSTOMIZE}"
-helm template "${ACCESS_CHART}" \
-    --namespace "${NAMESPACE}" \
-    --set url="http://${INGRESS_HOST}" > ${ARGOCD_ACCESS_KUSTOMIZE}
 
 echo "*** Generating solsa-cm yaml from helm template into ${ARGOCD_SOLSACM_KUSTOMIZE}"
 helm template ${SOLSACM_CHART} \
@@ -78,3 +77,21 @@ kustomize build "${ARGOCD_KUSTOMIZE}" > "${ARGOCD_YAML}"
 
 echo "*** Applying kube yaml ${ARGOCD_YAML}"
 kubectl apply -n "${NAMESPACE}" -f "${ARGOCD_YAML}"
+
+
+if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
+  sleep 5
+
+  oc project ${NAMESPACE}
+  oc create route edge argocd --service=argocd-server --port=https --insecure-policy=Redirect
+
+  HOST=$(oc get route argocd -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
+
+  URL="https://${HOST}"
+fi
+
+sleep 5
+PASSWORD=$(kubectl get pods -n tools -l app.kubernetes.io/name=argocd-server -o jsonpath='{.items[0].metadata.name}')
+
+npm i -g @garage-catalyst/ibm-garage-cloud-cli
+igc tool-config --name argocd --url "${URL}" --username admin --password "${PASSWORD}"

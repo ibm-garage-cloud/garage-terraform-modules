@@ -1,21 +1,20 @@
 data "ibm_resource_group" "tools_resource_group" {
-  name = "${var.resource_group_name}"
+  name = var.resource_group_name
 }
 
 locals {
-  namespaces      = "${var.namespaces}"
-  namespace_count = "${var.namespace_count}"
   role            = "Manager"
-  name_prefix     = "${var.name_prefix != "" ? var.name_prefix : var.resource_group_name}"
+  name_prefix     = var.name_prefix != "" ? var.name_prefix : var.resource_group_name
 }
 
 // COS Cloud Object Storage
 resource "ibm_resource_instance" "cos_instance" {
   name              = "${replace(local.name_prefix, "/[^a-zA-Z0-9_\\-\\.]/", "")}-cos"
   service           = "cloud-object-storage"
-  plan              = "${var.plan}"
+  plan              = var.plan
   location          = "global"
-  resource_group_id = "${data.ibm_resource_group.tools_resource_group.id}"
+  resource_group_id = data.ibm_resource_group.tools_resource_group.id
+  tags              = var.tags
 
   timeouts {
     create = "15m"
@@ -26,8 +25,8 @@ resource "ibm_resource_instance" "cos_instance" {
 
 resource "ibm_resource_key" "cos_credentials" {
   name                 = "${ibm_resource_instance.cos_instance.name}-key"
-  role                 = "${local.role}"
-  resource_instance_id = "${ibm_resource_instance.cos_instance.id}"
+  role                 = local.role
+  resource_instance_id = ibm_resource_instance.cos_instance.id
 
   //User can increase timeouts
   timeouts {
@@ -37,13 +36,13 @@ resource "ibm_resource_key" "cos_credentials" {
 }
 
 resource "ibm_container_bind_service" "cos_binding" {
-  count      = "${local.namespace_count}"
+  count      = var.namespace_count
 
-  cluster_name_id             = "${var.cluster_id}"
-  service_instance_name       = "${ibm_resource_instance.cos_instance.name}"
-  namespace_id                = "${local.namespaces[count.index]}"
-  resource_group_id           = "${data.ibm_resource_group.tools_resource_group.id}"
-  key                         = "${ibm_resource_key.cos_credentials.name}"
+  cluster_name_id             = var.cluster_id
+  service_instance_name       = ibm_resource_instance.cos_instance.name
+  namespace_id                = var.namespaces[count.index]
+  resource_group_id           = data.ibm_resource_group.tools_resource_group.id
+  key                         = ibm_resource_key.cos_credentials.name
 
   // The provider (v16.1) is incorrectly registering that these values change each time,
   // this may be removed in the future if this is fixed.

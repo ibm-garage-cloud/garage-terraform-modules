@@ -20,11 +20,15 @@ OUTPUT_YAML="${TMP_DIR}/pactbroker.yaml"
 
 mkdir -p ${TMP_DIR}
 
-VALUES=ingress.hosts.0.host=${INGRESS_HOST}
-if [[ -n "${TLS_SECRET_NAME}" ]]; then
+if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
+  VALUES=ingress.hosts.0.host=${INGRESS_HOST}
+  if [[ -n "${TLS_SECRET_NAME}" ]]; then
     VALUES="${VALUES},ingress.tls[0].secretName=${TLS_SECRET_NAME}"
     VALUES="${VALUES},ingress.tls[0].hosts[0]=${INGRESS_HOST}"
     VALUES="${VALUES},ingress.annotations.ingress\.bluemix\.net/redirect-to-https='True'"
+  fi
+else
+  VALUES="ingress.enable=false,route.enabled=true"
 fi
 
 echo "*** Generating kube yaml from helm template into ${OUTPUT_YAML}"
@@ -38,3 +42,11 @@ helm template ${CHART} \
 
 echo "*** Applying kube yaml ${OUTPUT_YAML}"
 kubectl apply -n ${NAMESPACE} -f ${OUTPUT_YAML}
+
+if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
+  sleep 5
+  PACTBROKER_HOST=$(oc get route pactbroker -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
+
+  npm i -g @garage-catalyst/ibm-garage-cloud-cli
+  igc tools-config --name pactbroker --url "https://${PACTBROKER_HOST}"
+fi
