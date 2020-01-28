@@ -11,9 +11,11 @@ INGRESS_SUBDOMAIN="$8"
 REGION="$9"
 REGISTRY_URL="${10}"
 TLS_SECRET_NAME="${11}"
+CLUSTER_VERSION="${12}"
 
 if [[ -n "${KUBECONFIG_IKS}" ]]; then
     echo "Setting up KUBECONFIG=${KUBECONFIG_IKS}"
+    cat "${KUBECONFIG_IKS}"
     export KUBECONFIG="${KUBECONFIG_IKS}"
 fi
 
@@ -51,7 +53,8 @@ helm template "${CHART}" \
     --set tls_secret_name="${TLS_SECRET_NAME}" \
     --set ingress_subdomain="${INGRESS_SUBDOMAIN}" \
     --set region="${REGION}" \
-    --set registry_url="${REGISTRY_URL}" > "${OUTPUT_YAML}"
+    --set registry_url="${REGISTRY_URL}" > "${OUTPUT_YAML}" \
+    --set cluster_version="${CLUSTER_VERSION}"
 
 echo "*** Applying kube yaml ${OUTPUT_YAML}"
 kubectl create -n "${NAMESPACE}" -f "${OUTPUT_YAML}"
