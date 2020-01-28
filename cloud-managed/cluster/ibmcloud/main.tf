@@ -24,6 +24,7 @@ resource "null_resource" "ibmcloud_login" {
 locals {
   server_url_file       = "${path.cwd}/.tmp/server-url.val"
   cluster_type_file     = "${path.cwd}/.tmp/cluster_type.val"
+  cluster_version_file  = "${path.cwd}/.tmp/cluster_version.val"
   ingress_url_file      = "${path.cwd}/.tmp/ingress-subdomain.val"
   kube_version_file     = "${path.cwd}/.tmp/kube_version.val"
   tls_secret_file       = "${path.cwd}/.tmp/tls_secret.val"
@@ -205,6 +206,28 @@ data "local_file" "cluster_type" {
   filename = local.cluster_type_file
 }
 
+resource "null_resource" "get_cluster_version" {
+  depends_on = [
+    data.ibm_container_cluster_config.cluster,
+    null_resource.ibmcloud_login,
+  ]
+
+  provisioner "local-exec" {
+    command = "ibmcloud ks cluster get --cluster $${CLUSTER_NAME} | grep \"Version\" | sed -E \"s/Version: +(.*)$/\\1/g ; s/^([0-9]+\\.[0-9]+).*/\\1/g\" | xargs echo -n > $${FILE}"
+
+    environment = {
+      CLUSTER_NAME = local.cluster_name
+      FILE         = local.cluster_version_file
+    }
+  }
+}
+
+data "local_file" "cluster_version" {
+  depends_on = [null_resource.get_cluster_version]
+
+  filename = local.cluster_version_file
+}
+
 resource "null_resource" "check_cluster_type" {
   provisioner "local-exec" {
     command = "if [[ \"$${PROVIDED_CLUSTER_TYPE}\" != \"$${ACTUAL_CLUSTER_TYPE}\" ]]; then echo \"Provided cluster type does not match the value from the server: $${ACTUAL_CLUSTER_TYPE}\"; exit 1; fi"
@@ -244,7 +267,7 @@ resource "null_resource" "ibmcloud_apikey_release" {
   depends_on = [null_resource.oc_login]
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deploy-ibmcloud-config.sh ${local.ibmcloud_apikey_chart} ${local.config_namespace} ${var.ibmcloud_api_key} ${var.resource_group_name} ${data.local_file.server_url.content} ${var.cluster_type} ${local.cluster_name} ${data.local_file.ingress_subdomain.content} ${var.cluster_region} ${data.local_file.registry_url.content} ${data.local_file.tls_secret_name.content}"
+    command = "${path.module}/scripts/deploy-ibmcloud-config.sh ${local.ibmcloud_apikey_chart} ${local.config_namespace} ${var.ibmcloud_api_key} ${var.resource_group_name} ${data.local_file.server_url.content} ${var.cluster_type} ${local.cluster_name} ${data.local_file.ingress_subdomain.content} ${var.cluster_region} ${data.local_file.registry_url.content} ${data.local_file.tls_secret_name.content} ${data.local_file.cluster_version.content}"
 
     environment = {
       KUBECONFIG_IKS = local.config_file_path

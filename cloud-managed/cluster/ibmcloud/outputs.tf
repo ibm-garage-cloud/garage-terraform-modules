@@ -41,6 +41,12 @@ output "type" {
   depends_on  = [null_resource.ibmcloud_apikey_release]
 }
 
+output "version" {
+  value       = data.local_file.cluster_version.content
+  description = "The point release version number of cluster (3.11 or 4.3 or 1.16)"
+  depends_on  = [null_resource.ibmcloud_apikey_release]
+}
+
 output "login_user" {
   value       = var.login_user
   description = "The username used to log into the openshift cli"
