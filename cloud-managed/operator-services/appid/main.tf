@@ -1,7 +1,7 @@
 locals {
   short_name         = "appid"
   name_prefix        = var.name_prefix != "" ? var.name_prefix : var.resource_group_name
-  region             = var.resource_location == "us-east" ? "us-south" : var.resource_location
+  region             = var.resource_location
   service_name       = "${replace(local.name_prefix, "/[^a-zA-Z0-9_\\-\\.]/", "")}-${local.short_name}"
   service_class      = "appid"
   binding_name       = "binding-${local.short_name}"
