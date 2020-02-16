@@ -7,7 +7,7 @@ locals {
   service_class      = "logdna"
   binding_name       = "binding-${local.short_name}"
   binding_namespaces = jsonencode(local.namespaces)
-  resource_location  = var.resource_location == "us-east" ? "us-south" : var.resource_location
+  resource_location  = var.resource_location
   role               = "Manager"
   credentials_file   = "${local.tmp_dir}/logdna_credentials.json"
   ingestion_key_file = "${local.tmp_dir}/logdna_injestion_key.val"

@@ -8,7 +8,7 @@ data "ibm_resource_group" "tools_resource_group" {
 locals {
   name_prefix       = var.name_prefix != "" ? var.name_prefix : var.resource_group_name
   role              = "Manager"
-  resource_location = var.resource_location == "us-east" ? "us-south" : var.resource_location
+  resource_location = var.resource_location
 }
 
 // LogDNA - Logging
