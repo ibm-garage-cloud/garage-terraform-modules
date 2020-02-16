@@ -5,7 +5,7 @@ data "ibm_resource_group" "tools_resource_group" {
 locals {
   role              = "Writer"
   name_prefix       = var.name_prefix != "" ? var.name_prefix : var.resource_group_name
-  resource_location = var.resource_location == "us-east" ? "us-south" : var.resource_location
+  resource_location = var.resource_location
 }
 
 // AppID - App Authentication
