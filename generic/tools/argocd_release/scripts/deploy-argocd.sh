@@ -93,5 +93,8 @@ fi
 sleep 5
 PASSWORD=$(kubectl get pods -n tools -l app.kubernetes.io/name=argocd-server -o jsonpath='{.items[0].metadata.name}')
 
-npm i -g @garage-catalyst/ibm-garage-cloud-cli
+
+if [[ ! $(command -v igc) ]]; then
+  npm i -g @ibmgaragecloud/cloud-native-toolkit-cli
+fi
 igc tool-config --name argocd --url "${URL}" --username admin --password "${PASSWORD}"
