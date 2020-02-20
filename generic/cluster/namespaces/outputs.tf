@@ -7,5 +7,5 @@ output "tools_namespace_name" {
 output "other_namespaces" {
   value       = var.other_namespaces
   description = "Other namespaces"
-  depends_on  = ["null_resource.create_namespaces"]
+  depends_on  = [null_resource.create_namespaces]
 }
