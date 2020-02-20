@@ -110,7 +110,9 @@ if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] |
   SONARQUBE_URL="https://${HOST}"
 fi
 
-npm i -g @garage-catalyst/ibm-garage-cloud-cli
+if [[ ! $(command -v igc) ]]; then
+  npm i -g @ibmgaragecloud/cloud-native-toolkit-cli
+fi
 igc tool-config --name sonarqube --url "${SONARQUBE_URL}" --username admin --password admin
 
 echo "*** Waiting for Sonarqube"

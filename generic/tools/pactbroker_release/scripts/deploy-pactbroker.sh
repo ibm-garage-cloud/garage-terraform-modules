@@ -47,6 +47,8 @@ if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] |
   sleep 5
   PACTBROKER_HOST=$(oc get route pactbroker -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
 
-  npm i -g @garage-catalyst/ibm-garage-cloud-cli
+  if [[ ! $(command -v igc) ]]; then
+    npm i -g @ibmgaragecloud/cloud-native-toolkit-cli
+  fi
   igc tools-config --name pactbroker --url "https://${PACTBROKER_HOST}"
 fi
