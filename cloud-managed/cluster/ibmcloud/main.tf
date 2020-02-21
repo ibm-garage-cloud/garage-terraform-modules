@@ -222,7 +222,7 @@ resource "null_resource" "ibmcloud_apikey_release" {
   depends_on = [null_resource.oc_login]
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deploy-ibmcloud-config.sh ${local.ibmcloud_apikey_chart} ${local.config_namespace} ${var.ibmcloud_api_key} ${var.resource_group_name} ${data.local_file.server_url.content} ${var.cluster_type} ${local.cluster_name} ${data.local_file.ingress_subdomain.content} ${var.cluster_region} ${data.local_file.registry_url.content} ${data.local_file.tls_secret_name.content} ${data.local_file.cluster_version.content}"
+    command = "${path.module}/scripts/deploy-ibmcloud-config.sh ${local.ibmcloud_apikey_chart} ${local.config_namespace} ${var.ibmcloud_api_key} ${var.resource_group_name} ${local.server_url} ${var.cluster_type} ${local.cluster_name} ${local.ingress_hostname} ${var.cluster_region} ${data.local_file.registry_url.content} ${local.tls_secret} ${data.local_file.cluster_version.content}"
 
     environment = {
       KUBECONFIG_IKS = local.config_file_path
