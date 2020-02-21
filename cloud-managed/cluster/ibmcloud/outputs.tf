@@ -20,12 +20,12 @@ output "region" {
 }
 
 output "ingress_hostname" {
-  value       = data.local_file.ingress_subdomain.content
+  value       = local.ingress_hostname
   description = "Ingress hostname of the cluster."
 }
 
 output "server_url" {
-  value       = data.local_file.server_url.content
+  value       = local.server_url
   description = "The url of the control server."
 }
 
@@ -65,7 +65,7 @@ output "ibmcloud_api_key" {
 }
 
 output "tls_secret_name" {
-  value       = data.local_file.tls_secret_name.content
+  value       = local.tls_secret
   description = "The name of the secret containin the tls information for the cluster"
 }
 
