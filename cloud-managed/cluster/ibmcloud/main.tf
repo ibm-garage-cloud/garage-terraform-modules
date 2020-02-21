@@ -40,6 +40,18 @@ locals {
   cluster_type_tag      = var.cluster_type == "kubernetes" ? "iks" : "ocp"
 }
 
+data "ibm_container_cluster_versions" "cluster_versions" {
+  region = var.cluster_region
+}
+
+resource "null_resource" "print_versions" {
+  depends_on = [data.ibm_container_cluster_versions.cluster_versions]
+
+  provisioner "local-exec" {
+    command = "echo \"kube versions: ${data.ibm_container_cluster_versions.cluster_versions.valid_kube_versions}, openshift versions: ${data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions}\""
+  }
+}
+
 resource "null_resource" "get_openshift_version" {
   depends_on = [null_resource.ibmcloud_login]
   count = var.cluster_type == "openshift" || var.cluster_type == "ocp3" ? 1 : 0
