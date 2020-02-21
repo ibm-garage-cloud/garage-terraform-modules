@@ -35,9 +35,9 @@ locals {
   ibmcloud_apikey_chart = "${path.module}/charts/ibmcloud"
   config_file_path      = var.cluster_type == "kubernetes" ? data.ibm_container_cluster_config.cluster.config_file_path : ""
   cluster_type_tag      = var.cluster_type == "kubernetes" ? "iks" : "ocp"
-  server_url            = data.ibm_container_cluster.public_service_endpoint_url
-  ingress_hostname      = data.ibm_container_cluster.ingress_hostname
-  tls_secret            = data.ibm_container_cluster.ingress_secret
+  server_url            = data.ibm_container_cluster.config.public_service_endpoint_url
+  ingress_hostname      = data.ibm_container_cluster.config.ingress_hostname
+  tls_secret            = data.ibm_container_cluster.config.ingress_secret
 }
 
 data "ibm_container_cluster_versions" "cluster_versions" {
