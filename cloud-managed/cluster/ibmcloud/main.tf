@@ -1,4 +1,5 @@
 provider "ibm" {
+  version = "1.2.1"
 }
 provider "null" {
 }
@@ -197,7 +198,7 @@ resource "null_resource" "oc_login" {
   count      = var.cluster_type != "kubernetes" ? 1: 0
 
   provisioner "local-exec" {
-    command = "oc login -u ${var.login_user} -p ${var.ibmcloud_api_key} --server=${data.local_file.server_url.content} > /dev/null"
+    command = "oc login -u ${var.login_user} -p ${var.ibmcloud_api_key} --server=${local.server_url} > /dev/null"
   }
 }
 
