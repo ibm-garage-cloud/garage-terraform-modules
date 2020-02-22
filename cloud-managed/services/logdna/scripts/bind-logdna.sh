@@ -27,10 +27,10 @@ if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
 
     LOGDNA_AGENT_DS_YAML="https://assets.us-south.logging.cloud.ibm.com/clients/logdna-agent-ds.yaml"
 else
-    oc adm new-project ${NAMESPACE}
-    oc project ${NAMESPACE}
+    oc adm new-project "${NAMESPACE}"
+    oc project "${NAMESPACE}"
     oc create serviceaccount logdna-agent
-    oc adm policy add-scc-to-user privileged -n ${NAMESPACE} -z logdna-agent
+    oc adm policy add-scc-to-user privileged -n "${NAMESPACE}" -z logdna-agent
 
     KUSTOMIZE_TEMPLATE="${MODULE_DIR}/kustomize"
     LOGDNA_PATCH_TEMPLATE="${KUSTOMIZE_TEMPLATE}/logdna-os/patch-daemonset.yaml"
@@ -42,7 +42,7 @@ else
 
     mkdir -pv "${KUSTOMIZE_DIR}"
     echo "*** Copying ${KUSTOMIZE_TEMPLATE}/* to ${KUSTOMIZE_DIR}"
-    cp -Rv ${KUSTOMIZE_TEMPLATE}/* ${KUSTOMIZE_DIR}
+    cp -Rv "${KUSTOMIZE_TEMPLATE}"/* "${KUSTOMIZE_DIR}"
 
     curl https://raw.githubusercontent.com/logdna/logdna-agent/master/logdna-agent-ds-os.yaml -o "${LOGDNA_BASE_YAML}"
 

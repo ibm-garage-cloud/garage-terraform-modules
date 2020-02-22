@@ -1,3 +1,9 @@
+provider "ibm" {
+  version = "1.2.1"
+}
+
+provider "null" {}
+
 data "ibm_resource_group" "tools_resource_group" {
   name = var.resource_group_name
 }
