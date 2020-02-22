@@ -42,7 +42,7 @@ locals {
 }
 
 data "ibm_container_cluster_versions" "cluster_versions" {
-  region = var.cluster_region
+  resource_group_id = data.ibm_resource_group.resource_group.id
 }
 
 resource "null_resource" "print_versions" {
