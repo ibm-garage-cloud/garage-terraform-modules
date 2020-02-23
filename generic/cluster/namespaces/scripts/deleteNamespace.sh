@@ -11,5 +11,6 @@ if [[ -n "${KUBECONFIG_IKS}" ]]; then
     export KUBECONFIG="${KUBECONFIG_IKS}"
 fi
 
-kubectl get namespaces "${NAMESPACE}" 1> /dev/null 2> /dev/null && kubectl delete namespace "${NAMESPACE}"
+kubectl get namespaces "${NAMESPACE}" 1> /dev/null 2> /dev/null && \
+  kubectl delete namespace "${NAMESPACE}" --wait
 exit 0
