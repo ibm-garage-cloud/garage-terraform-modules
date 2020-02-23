@@ -7,4 +7,4 @@ if [[ -n "${KUBECONFIG_IKS}" ]]; then
 fi
 
 echo "creating namespace ${NAMESPACE}"
-kubectl create namespace "${NAMESPACE}" --wait
+kubectl create namespace "${NAMESPACE}"
