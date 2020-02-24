@@ -64,7 +64,7 @@ resource "null_resource" "print_openshift_versions" {
   depends_on = [data.ibm_container_cluster_versions.cluster_versions]
 
   provisioner "local-exec" {
-    command = "echo \"OpenShift3: ${local.openshift3_ver}, OpenShift4: ${local.openshift4_ver}\""
+    command = "echo \"OpenShift3: ${jsonencode(local.openshift3_ver)}, OpenShift4: ${jsonencode(local.openshift4_ver)}\""
   }
 }
 
