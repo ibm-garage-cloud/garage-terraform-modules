@@ -42,10 +42,12 @@ locals {
   openshift4_ver        = [
     for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
       "${version}_openshift"
+          if (regex(version, "^\\d") == "4")
   ]
   openshift3_ver        = [
     for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
       "${version}_openshift"
+          if (regex(version, "^\\d") == "3")
   ]
 }
 
