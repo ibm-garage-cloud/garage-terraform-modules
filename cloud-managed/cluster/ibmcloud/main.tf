@@ -43,6 +43,12 @@ locals {
 
 data "ibm_container_cluster_versions" "cluster_versions" {
   resource_group_id = data.ibm_resource_group.resource_group.id
+
+  filter {
+    name = "valid_openshift_versions"
+    values = ["^3.*"]
+    regex = true
+  }
 }
 
 resource "null_resource" "print_versions" {
