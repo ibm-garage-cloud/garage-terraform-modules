@@ -43,7 +43,7 @@ resource "ibm_container_bind_service" "cos_binding" {
   count      = var.namespace_count
 
   cluster_name_id             = var.cluster_id
-  service_instance_name       = ibm_resource_instance.cos_instance.name
+  service_instance_id         = ibm_resource_instance.cos_instance.id
   namespace_id                = var.namespaces[count.index]
   resource_group_id           = data.ibm_resource_group.tools_resource_group.id
   key                         = ibm_resource_key.cos_credentials.name
