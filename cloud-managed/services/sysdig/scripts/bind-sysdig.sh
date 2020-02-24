@@ -11,4 +11,4 @@ fi
 
 echo "*** Binding sysdig to cluster using endpoint ${ENDPOINT}"
 
-curl -sL https://ibm.biz/install-sysdig-k8s-agent | bash -s -- -a ${ACCESS_KEY} -c ${ENDPOINT} ${OPENSHIFT} -ac 'sysdig_capture_enabled: false'
+curl -sL https://ibm.biz/install-sysdig-k8s-agent | bash -s -- -a "${ACCESS_KEY}" -c "${ENDPOINT}" "${OPENSHIFT}" -ac 'sysdig_capture_enabled: false'
