@@ -7,5 +7,5 @@ output "tools_namespace_name" {
 output "release_namespaces" {
   value       = var.release_namespaces
   description = "Namespaces where applications will be deployed"
-  depends_on  = [null_resource.create_release_namespaces]
+  depends_on  = [kubernetes_namespace.releases]
 }
