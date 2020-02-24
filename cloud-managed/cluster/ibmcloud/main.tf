@@ -39,16 +39,10 @@ locals {
   server_url            = data.ibm_container_cluster.config.public_service_endpoint_url
   ingress_hostname      = data.ibm_container_cluster.config.ingress_hostname
   tls_secret            = data.ibm_container_cluster.config.ingress_secret
-  openshift4_ver        = [
+  openshift_versions    = {
     for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
-      "${version}_openshift"
-          if (regex(version, "^\\d") == "4")
-  ]
-  openshift3_ver        = [
-    for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
-      "${version}_openshift"
-          if (regex(version, "^\\d") == "3")
-  ]
+      "${version}_openshift" => regex(version, "^[34]")
+  }
 }
 
 data "ibm_container_cluster_versions" "cluster_versions" {
@@ -66,7 +60,7 @@ resource "null_resource" "print_openshift_versions" {
   depends_on = [data.ibm_container_cluster_versions.cluster_versions]
 
   provisioner "local-exec" {
-    command = "echo \"OpenShift3: ${jsonencode(local.openshift3_ver)}, OpenShift4: ${jsonencode(local.openshift4_ver)}\""
+    command = "echo \"OpenShift: ${jsonencode(local.openshift_versions)}\""
   }
 }
 
