@@ -88,7 +88,7 @@ resource "null_resource" "create_release_namespaces" {
 }
 
 resource "null_resource" "copy_tls_secrets" {
-  depends_on = [null_resource.create_tools_namespace, null_resource.create_release_namespaces]
+  depends_on = [kubernetes_namespace.tools, null_resource.create_release_namespaces]
   count      = length(local.namespaces)
 
   provisioner "local-exec" {
@@ -101,7 +101,7 @@ resource "null_resource" "copy_tls_secrets" {
 }
 
 resource "null_resource" "copy_apikey_secret" {
-  depends_on = [null_resource.create_tools_namespace, null_resource.create_release_namespaces]
+  depends_on = [kubernetes_namespace.tools, null_resource.create_release_namespaces]
   count      = length(local.namespaces)
 
   provisioner "local-exec" {
@@ -114,7 +114,7 @@ resource "null_resource" "copy_apikey_secret" {
 }
 
 resource "null_resource" "create_pull_secrets" {
-  depends_on = [null_resource.create_tools_namespace, null_resource.create_release_namespaces]
+  depends_on = [kubernetes_namespace.tools, null_resource.create_release_namespaces]
   count      = length(local.namespaces)
 
   provisioner "local-exec" {
@@ -127,7 +127,7 @@ resource "null_resource" "create_pull_secrets" {
 }
 
 resource "null_resource" "copy_cloud_configmap" {
-  depends_on = [null_resource.create_tools_namespace, null_resource.create_release_namespaces]
+  depends_on = [kubernetes_namespace.tools, null_resource.create_release_namespaces]
   count      = length(local.namespaces)
 
   provisioner "local-exec" {
