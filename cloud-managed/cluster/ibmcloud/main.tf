@@ -49,7 +49,7 @@ resource "null_resource" "print_versions" {
   depends_on = [data.ibm_container_cluster_versions.cluster_versions]
 
   provisioner "local-exec" {
-    command = "echo \"kube versions: ${data.ibm_container_cluster_versions.cluster_versions.valid_kube_versions}, openshift versions: ${data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions}\""
+    command = "echo \"kube versions: ${jsonencode(data.ibm_container_cluster_versions.cluster_versions.valid_kube_versions)}, openshift versions: ${jsonencode(data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions)}\""
   }
 }
 
