@@ -41,13 +41,12 @@ locals {
   tls_secret            = data.ibm_container_cluster.config.ingress_secret
   openshift4_ver        = [
     for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
-      version
-      if regex(version, "^\\d") == "4"
+      "${version}_openshift"
   ]
   openshift3_ver        = [
     for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
-      version
-      if regex(version, "^\\d") == "3" ]
+      "${version}_openshift"
+  ]
 }
 
 data "ibm_container_cluster_versions" "cluster_versions" {
