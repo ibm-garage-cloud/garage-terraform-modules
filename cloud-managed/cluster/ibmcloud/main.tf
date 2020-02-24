@@ -25,7 +25,6 @@ resource "null_resource" "ibmcloud_login" {
 locals {
   cluster_type_file     = "${path.cwd}/.tmp/cluster_type.val"
   cluster_version_file  = "${path.cwd}/.tmp/cluster_version.val"
-  kube_version_file     = "${path.cwd}/.tmp/kube_version.val"
   registry_url_file     = "${path.cwd}/.tmp/registry_url.val"
   cluster_config_dir    = "${var.kubeconfig_download_dir}/.kube"
   name_prefix           = var.name_prefix != "" ? var.name_prefix : var.resource_group_name
@@ -43,62 +42,11 @@ locals {
     for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
        substr(version, 0, 1) => "${version}_openshift"
   }
+  cluster_type          = var.cluster_type == "openshift" ? "ocp3" : var.cluster_type
 }
 
 data "ibm_container_cluster_versions" "cluster_versions" {
   resource_group_id = data.ibm_resource_group.resource_group.id
-}
-
-resource "null_resource" "print_versions" {
-  depends_on = [data.ibm_container_cluster_versions.cluster_versions]
-
-  provisioner "local-exec" {
-    command = "echo \"kube versions: ${jsonencode(data.ibm_container_cluster_versions.cluster_versions.valid_kube_versions)}, openshift versions: ${jsonencode(data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions)}\""
-  }
-}
-resource "null_resource" "print_openshift_versions" {
-  depends_on = [data.ibm_container_cluster_versions.cluster_versions]
-
-  provisioner "local-exec" {
-    command = "echo \"OpenShift: ${jsonencode(local.openshift_versions)}\""
-  }
-}
-
-resource "null_resource" "get_openshift_version" {
-  depends_on = [null_resource.ibmcloud_login]
-  count = var.cluster_type == "openshift" || var.cluster_type == "ocp3" ? 1 : 0
-
-  provisioner "local-exec" {
-    command = "ibmcloud ks versions --show-version openshift | grep default | sed -E \"s/^(.*) [(]default[)].*/\\1/g\" | xargs echo -n > ${local.kube_version_file}"
-  }
-}
-
-resource "null_resource" "get_openshift4_version" {
-  depends_on = [null_resource.ibmcloud_login]
-  count = var.cluster_type == "ocp4" ? 1 : 0
-
-  provisioner "local-exec" {
-    command = "ibmcloud ks versions --show-version openshift | grep -E \"^4.*\" | xargs echo -n > ${local.kube_version_file}"
-  }
-}
-
-resource "null_resource" "get_kubernetes_version" {
-  depends_on = [null_resource.ibmcloud_login]
-  count = var.cluster_type == "kubernetes" ? 1 : 0
-
-  provisioner "local-exec" {
-    command = "ibmcloud ks versions --show-version kubernetes | grep default | sed -E \"s/^(.*) [(]default[)].*/\\1/g\" | xargs echo -n > ${local.kube_version_file}"
-  }
-}
-
-data "local_file" "latest_kube_version" {
-  depends_on = [
-    null_resource.get_openshift_version,
-    null_resource.get_openshift4_version,
-    null_resource.get_kubernetes_version,
-  ]
-
-  filename = local.kube_version_file
 }
 
 resource "ibm_container_cluster" "create_cluster" {
@@ -106,7 +54,7 @@ resource "ibm_container_cluster" "create_cluster" {
 
   name              = local.cluster_name
   datacenter        = var.vlan_datacenter
-  kube_version      = data.local_file.latest_kube_version.content
+  kube_version      = local.cluster_type == "ocp4" ? local.openshift_versions["4"] : (local.cluster_type == "ocp3" ? local.openshift_versions["4"] : "")
   machine_type      = var.cluster_machine_type
   hardware          = var.cluster_hardware
   default_pool_size = var.cluster_worker_count
@@ -230,6 +178,7 @@ data "local_file" "registry_url" {
   filename = local.registry_url_file
 }
 
+# Move to helm chart
 resource "null_resource" "ibmcloud_apikey_release" {
   depends_on = [null_resource.oc_login]
 
