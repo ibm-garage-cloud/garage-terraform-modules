@@ -41,7 +41,7 @@ locals {
   tls_secret            = data.ibm_container_cluster.config.ingress_secret
   openshift_versions    = {
     for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
-      "${version}_openshift" => regex(version, "^[34]")
+      "${version}_openshift" => regex(version, "^(\\d)[.].*")[0]
   }
 }
 
