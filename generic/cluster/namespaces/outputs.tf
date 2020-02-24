@@ -1,5 +1,5 @@
 output "tools_namespace_name" {
-  value       = kubernetes_namespace.tools.metadata.name
+  value       = var.tools_namespace
   description = "Namespace where development tools will be deployed"
   depends_on  = [kubernetes_namespace.tools]
 }
