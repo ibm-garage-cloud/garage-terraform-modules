@@ -54,7 +54,7 @@ resource "ibm_container_cluster" "create_cluster" {
 
   name              = local.cluster_name
   datacenter        = var.vlan_datacenter
-  kube_version      = local.cluster_type == "ocp4" ? local.openshift_versions["4"] : (local.cluster_type == "ocp3" ? local.openshift_versions["4"] : "")
+  kube_version      = local.cluster_type == "ocp4" ? local.openshift_versions["4"] : (local.cluster_type == "ocp3" ? local.openshift_versions["3"] : "")
   machine_type      = var.cluster_machine_type
   hardware          = var.cluster_hardware
   default_pool_size = var.cluster_worker_count
