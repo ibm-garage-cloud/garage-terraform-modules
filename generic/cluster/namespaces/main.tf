@@ -29,6 +29,8 @@ resource "null_resource" "delete_release_namespaces" {
 }
 
 resource "kubernetes_namespace" "tools" {
+  depends_on = [null_resource.delete_tools_namespace]
+
   metadata {
     name = var.tools_namespace
   }
