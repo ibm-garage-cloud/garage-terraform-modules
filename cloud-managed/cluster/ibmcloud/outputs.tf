@@ -1,7 +1,7 @@
 output "id" {
   value       = data.ibm_container_cluster_config.cluster.id
   description = "ID of the cluster."
-  depends_on  = [null_resource.ibmcloud_apikey_release]
+  depends_on  = [helm_release.ibmcloud_config]
 }
 
 output "name" {
@@ -32,19 +32,19 @@ output "server_url" {
 output "config_file_path" {
   value       = local.config_file_path
   description = "Path to the config file for the cluster."
-  depends_on  = [null_resource.ibmcloud_apikey_release]
+  depends_on  = [helm_release.ibmcloud_config]
 }
 
 output "type" {
-  value       = data.local_file.cluster_type.content
+  value       = local.cluster_type
   description = "The type of cluster (openshift or ocp4 or ocp3 or kubernetes)"
-  depends_on  = [null_resource.ibmcloud_apikey_release]
+  depends_on  = [helm_release.ibmcloud_config]
 }
 
 output "version" {
   value       = data.local_file.cluster_version.content
   description = "The point release version number of cluster (3.11 or 4.3 or 1.16)"
-  depends_on  = [null_resource.ibmcloud_apikey_release]
+  depends_on  = [helm_release.ibmcloud_config]
 }
 
 output "login_user" {
