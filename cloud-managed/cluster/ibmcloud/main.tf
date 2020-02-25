@@ -191,14 +191,15 @@ data "helm_repository" "toolkit-charts" {
 }
 
 resource "helm_release" "ibmcloud-config" {
-  name         = "ibmcloud-config"
+  name         = "ibmcloud"
   chart        = "ibmcloud"
-  repository   = "toolkit-charts"
+  repository   = data.helm_repository.toolkit-charts.name
   version      = "0.1.2"
   namespace    = local.config_namespace
   force_update = true
+  replace      = true
 
-  set {
+  set_sensitive {
     name  = "apikey"
     value = var.ibmcloud_api_key
   }
