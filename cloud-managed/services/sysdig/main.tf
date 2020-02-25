@@ -50,7 +50,7 @@ resource "null_resource" "create_sysdig_agent" {
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/bind-sysdig.sh ${local.access_key} ${local.endpoint}"
+    command = "${path.module}/scripts/bind-sysdig.sh ${local.access_key} ${local.endpoint} ${var.namespace}"
 
     environment = {
       KUBECONFIG_IKS = self.triggers.kubeconfig_iks
