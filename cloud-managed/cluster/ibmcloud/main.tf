@@ -193,6 +193,7 @@ data "helm_repository" "incubator" {
 resource "helm_release" "ibmcloud-config" {
   name         = "ibmcloud-config"
   chart        = "ibmcloud"
+  repository   = "toolkit-charts"
   version      = "0.1.1"
   namespace    = local.config_namespace
   force_update = true
