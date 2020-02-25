@@ -1,5 +1,4 @@
 provider "kubernetes" {
-  config_path = var.cluster_config_file_path
 }
 provider "null" {}
 provider "local" {}
