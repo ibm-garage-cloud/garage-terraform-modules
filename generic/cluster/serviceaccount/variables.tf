@@ -22,3 +22,9 @@ variable "sscs" {
   type        = list(string)
   description = "The list of Security Context Contraints to apply to the service account (e.g. anyuid, hostaccess, hostmount-anyuid, nonroot, privileged, restricted)"
 }
+
+variable "create_namespace" {
+  type        = bool
+  description = "Flag indicating that the namespace should be created"
+  default     = false
+}
