@@ -1,6 +1,8 @@
 provider "ibm" {
   version = "1.2.1"
 }
+provider "helm" {
+}
 provider "null" {
 }
 provider "local" {
@@ -23,10 +25,11 @@ resource "null_resource" "ibmcloud_login" {
 }
 
 locals {
+  cluster_config_dir    = "${var.kubeconfig_download_dir}/.kube"
   cluster_type_file     = "${path.cwd}/.tmp/cluster_type.val"
   cluster_version_file  = "${path.cwd}/.tmp/cluster_version.val"
   registry_url_file     = "${path.cwd}/.tmp/registry_url.val"
-  cluster_config_dir    = "${var.kubeconfig_download_dir}/.kube"
+  registry_url          = data.local_file.registry_url.content
   name_prefix           = var.name_prefix != "" ? var.name_prefix : var.resource_group_name
   name_list             = [local.name_prefix, "cluster"]
   cluster_name          = var.cluster_name != "" ? var.cluster_name : join("-", local.name_list)
@@ -42,7 +45,11 @@ locals {
     for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
        substr(version, 0, 1) => "${version}_openshift"
   }
-  cluster_type          = var.cluster_type == "openshift" ? "ocp3" : var.cluster_type
+  # value should be openshift or kubernetes
+  cluster_type          = var.cluster_type == "ocp3" ? "openshift" : (var.cluster_type == "ocp4" ? "openshift" : var.cluster_type)
+  # value should be ocp4, ocp3, or kubernetes
+  cluster_type_code     = var.cluster_type == "openshift" ? "ocp3" : var.cluster_type
+  cluster_version       = local.cluster_type_code == "ocp4" ? local.openshift_versions["4"] : (local.cluster_type_code == "ocp3" ? local.openshift_versions["3"] : "")
 }
 
 data "ibm_container_cluster_versions" "cluster_versions" {
@@ -54,7 +61,7 @@ resource "ibm_container_cluster" "create_cluster" {
 
   name              = local.cluster_name
   datacenter        = var.vlan_datacenter
-  kube_version      = local.cluster_type == "ocp4" ? local.openshift_versions["4"] : (local.cluster_type == "ocp3" ? local.openshift_versions["3"] : "")
+  kube_version      = local.cluster_version
   machine_type      = var.cluster_machine_type
   hardware          = var.cluster_hardware
   default_pool_size = var.cluster_worker_count
@@ -178,16 +185,79 @@ data "local_file" "registry_url" {
   filename = local.registry_url_file
 }
 
-# Move to helm chart
-resource "null_resource" "ibmcloud_apikey_release" {
-  depends_on = [null_resource.oc_login]
+data "helm_repository" "incubator" {
+  name = "toolkit-charts"
+  url  = "https://ibm-garage-cloud.github.io/toolkit-charts"
+}
 
-  provisioner "local-exec" {
-    command = "${path.module}/scripts/deploy-ibmcloud-config.sh ${local.ibmcloud_apikey_chart} ${local.config_namespace} ${var.ibmcloud_api_key} ${var.resource_group_name} ${local.server_url} ${var.cluster_type} ${local.cluster_name} ${local.ingress_hostname} ${var.cluster_region} ${data.local_file.registry_url.content} ${local.tls_secret} ${data.local_file.cluster_version.content}"
+resource "helm_release" "ibmcloud-config" {
+  name         = "ibmcloud-config"
+  chart        = "stable/ibmcloud"
+  version      = "0.1.1"
+  namespace    = local.config_namespace
+  force_update = true
 
-    environment = {
-      KUBECONFIG_IKS = local.config_file_path
-      TMP_DIR        = local.tmp_dir
-    }
+  set {
+    name  = "apikey"
+    value = var.ibmcloud_api_key
+  }
+
+  set {
+    name  = "resource_group"
+    value = var.resource_group_name
+  }
+
+  set {
+    name  = "server_url"
+    value = local.server_url
+  }
+
+  set {
+    name  = "cluster_type"
+    value = local.cluster_type
+  }
+
+  set {
+    name  = "cluster_name"
+    value = var.cluster_name
+  }
+
+  set {
+    name  = "tls_secret_name"
+    value = local.tls_secret
+  }
+
+  set {
+    name  = "ingress_subdomain"
+    value = local.ingress_hostname
+  }
+
+  set {
+    name  = "region"
+    value = var.cluster_region
+  }
+
+  set {
+    name  = "registry_url"
+    value = local.registry_url
+  }
+
+  set {
+    name  = "cluster_version"
+    value = local.cluster_version
   }
 }
+
+# Move to helm chart
+//resource "null_resource" "ibmcloud_apikey_release" {
+//  depends_on = [null_resource.oc_login]
+//
+//  provisioner "local-exec" {
+//    command = "${path.module}/scripts/deploy-ibmcloud-config.sh ${local.ibmcloud_apikey_chart} ${local.config_namespace} ${var.ibmcloud_api_key} ${var.resource_group_name} ${local.server_url} ${var.cluster_type} ${local.cluster_name} ${local.ingress_hostname} ${var.cluster_region} ${data.local_file.registry_url.content} ${local.tls_secret} ${data.local_file.cluster_version.content}"
+//
+//    environment = {
+//      KUBECONFIG_IKS = local.config_file_path
+//      TMP_DIR        = local.tmp_dir
+//    }
+//  }
+//}
