@@ -35,6 +35,12 @@ output "config_file_path" {
   depends_on  = [helm_release.ibmcloud_config]
 }
 
+output "config_path" {
+  value       = "${local.cluster_config_dir}/config"
+  description = "Path to the config file for the cluster."
+  depends_on  = [helm_release.ibmcloud_config]
+}
+
 output "type" {
   value       = local.cluster_type
   description = "The type of cluster (openshift or ocp4 or ocp3 or kubernetes)"
