@@ -47,19 +47,20 @@ resource "kubernetes_service_account" "create" {
 
   metadata {
     name      = var.service_account_name
-    namespace = kubernetes_namespace.create.metadata.0.name
+    namespace = var.namespace
   }
 }
 
 resource "null_resource" "add_ssc_openshift" {
-  count = var.cluster_type != "kubernetes" ? 1 : 0
+  depends_on = [kubernetes_service_account.create]
+  count      = var.cluster_type != "kubernetes" ? 1 : 0
 
   provisioner "local-exec" {
     command = "${path.module}/scripts/add-sccs-to-user.sh ${jsonencode(var.sscs)}"
 
     environment={
-      SERVICE_ACCOUNT_NAME = kubernetes_service_account.create.metadata.0.name
-      NAMESPACE            = kubernetes_service_account.create.metadata.0.namespace
+      SERVICE_ACCOUNT_NAME = var.service_account_name
+      NAMESPACE            = var.namespace
     }
   }
 }
