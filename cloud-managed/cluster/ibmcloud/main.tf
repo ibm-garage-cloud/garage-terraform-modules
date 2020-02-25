@@ -190,8 +190,13 @@ data "helm_repository" "toolkit-charts" {
   url  = "https://ibm-garage-cloud.github.io/toolkit-charts"
 }
 
+resource "random_string" "ibmcloud-config-name" {
+  length = 8
+  special = false
+}
+
 resource "helm_release" "ibmcloud-config" {
-  name         = "ibmcloud"
+  name         = "ibmcloud-config-${random_string.ibmcloud-config-name.result}"
   chart        = "ibmcloud"
   repository   = data.helm_repository.toolkit-charts.name
   version      = "0.1.2"
