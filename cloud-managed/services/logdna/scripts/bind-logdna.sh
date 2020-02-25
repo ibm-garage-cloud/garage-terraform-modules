@@ -7,6 +7,7 @@ CLUSTER_TYPE="$1"
 LOGDNA_AGENT_KEY="$2"
 REGION="$3"
 NAMESPACE="$4"
+SERVICE_ACCOUNT_NAME="$5"
 
 if [[ -n "${KUBECONFIG_IKS}" ]]; then
    export KUBECONFIG="${KUBECONFIG_IKS}"
@@ -19,19 +20,9 @@ fi
 mkdir -p ${TMP_DIR}
 YAML_FILE=${TMP_DIR}/logdna-agent-key.yaml
 
-echo "*** Cleaning up existing namespace: ${NAMESPACE}"
-kubectl delete namespace "${NAMESPACE}"
-
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
-    kubectl create namespace "${NAMESPACE}"
-
     LOGDNA_AGENT_DS_YAML="https://assets.us-south.logging.cloud.ibm.com/clients/logdna-agent-ds.yaml"
 else
-    oc adm new-project "${NAMESPACE}"
-    oc project "${NAMESPACE}"
-    oc create serviceaccount logdna-agent
-    oc adm policy add-scc-to-user privileged -n "${NAMESPACE}" -z logdna-agent
-
     KUSTOMIZE_TEMPLATE="${MODULE_DIR}/kustomize"
     LOGDNA_PATCH_TEMPLATE="${KUSTOMIZE_TEMPLATE}/logdna-os/patch-daemonset.yaml"
 
