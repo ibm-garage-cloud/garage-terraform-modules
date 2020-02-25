@@ -53,8 +53,8 @@ helm template "${CHART}" \
     --set tls_secret_name="${TLS_SECRET_NAME}" \
     --set ingress_subdomain="${INGRESS_SUBDOMAIN}" \
     --set region="${REGION}" \
-    --set registry_url="${REGISTRY_URL}" > "${OUTPUT_YAML}" \
-    --set cluster_version="${CLUSTER_VERSION}"
+    --set registry_url="${REGISTRY_URL}" \
+    --set cluster_version="${CLUSTER_VERSION}" > "${OUTPUT_YAML}"
 
 echo "*** Applying kube yaml ${OUTPUT_YAML}"
 kubectl create -n "${NAMESPACE}" -f "${OUTPUT_YAML}"
