@@ -185,7 +185,7 @@ data "local_file" "registry_url" {
   filename = local.registry_url_file
 }
 
-data "helm_repository" "incubator" {
+data "helm_repository" "toolkit-charts" {
   name = "toolkit-charts"
   url  = "https://ibm-garage-cloud.github.io/toolkit-charts"
 }
@@ -193,8 +193,8 @@ data "helm_repository" "incubator" {
 resource "helm_release" "ibmcloud-config" {
   name         = "ibmcloud-config"
   chart        = "ibmcloud"
-  repository   = "toolkit-charts"
-  version      = "0.1.1"
+  repository   = data.helm_repository.toolkit-charts.name
+  version      = "0.1.2"
   namespace    = local.config_namespace
   force_update = true
 
