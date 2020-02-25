@@ -191,7 +191,7 @@ data "helm_repository" "toolkit-charts" {
 }
 
 resource "helm_release" "ibmcloud-config" {
-  name         = "ibmcloud-config"
+  name         = "ibmcloud"
   chart        = "ibmcloud"
   repository   = data.helm_repository.toolkit-charts.name
   version      = "0.1.2"
