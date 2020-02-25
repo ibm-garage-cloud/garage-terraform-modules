@@ -35,7 +35,6 @@ locals {
   cluster_name          = var.cluster_name != "" ? var.cluster_name : join("-", local.name_list)
   tmp_dir               = "${path.cwd}/.tmp"
   config_namespace      = "default"
-  ibmcloud_apikey_chart = "${path.module}/charts/ibmcloud"
   config_file_path      = var.cluster_type == "kubernetes" ? data.ibm_container_cluster_config.cluster.config_file_path : ""
   cluster_type_tag      = var.cluster_type == "kubernetes" ? "iks" : "ocp"
   server_url            = data.ibm_container_cluster.config.public_service_endpoint_url
@@ -50,6 +49,7 @@ locals {
   # value should be ocp4, ocp3, or kubernetes
   cluster_type_code     = var.cluster_type == "openshift" ? "ocp3" : var.cluster_type
   cluster_version       = local.cluster_type_code == "ocp4" ? local.openshift_versions["4"] : (local.cluster_type_code == "ocp3" ? local.openshift_versions["3"] : "")
+  ibmcloud_release_name = "ibmcloud-config"
 }
 
 data "ibm_container_cluster_versions" "cluster_versions" {
@@ -96,6 +96,7 @@ data "ibm_container_cluster_config" "cluster" {
   config_dir        = local.cluster_config_dir
 }
 
+# is this still needed?
 resource "null_resource" "create_cluster_pull_secret_iks" {
   provisioner "local-exec" {
     command = "${path.module}/scripts/cluster-pull-secret-apply.sh ${local.cluster_name}"
@@ -104,28 +105,6 @@ resource "null_resource" "create_cluster_pull_secret_iks" {
       KUBECONFIG_IKS = local.config_file_path
     }
   }
-}
-
-resource "null_resource" "get_cluster_type" {
-  depends_on = [
-    data.ibm_container_cluster_config.cluster,
-    null_resource.ibmcloud_login,
-  ]
-
-  provisioner "local-exec" {
-    command = "if [[ -n $(ibmcloud ks cluster get --cluster $${CLUSTER_NAME} | grep -E \"Version.*openshift\") ]]; then echo -n \"openshift\" > $${FILE}; else echo -n \"kubernetes\" > $${FILE}; fi"
-
-    environment = {
-      CLUSTER_NAME = local.cluster_name
-      FILE         = local.cluster_type_file
-    }
-  }
-}
-
-data "local_file" "cluster_type" {
-  depends_on = [null_resource.get_cluster_type]
-
-  filename = local.cluster_type_file
 }
 
 resource "null_resource" "get_cluster_version" {
@@ -150,17 +129,6 @@ data "local_file" "cluster_version" {
   filename = local.cluster_version_file
 }
 
-resource "null_resource" "check_cluster_type" {
-  provisioner "local-exec" {
-    command = "if [[ \"$${PROVIDED_CLUSTER_TYPE}\" != \"$${ACTUAL_CLUSTER_TYPE}\" ]]; then echo \"Provided cluster type does not match the value from the server: $${ACTUAL_CLUSTER_TYPE}\"; exit 1; fi"
-
-    environment = {
-      PROVIDED_CLUSTER_TYPE = replace(var.cluster_type, "/ocp[34]/", "openshift")
-      ACTUAL_CLUSTER_TYPE   = data.local_file.cluster_type.content
-    }
-  }
-}
-
 resource "null_resource" "oc_login" {
   count      = var.cluster_type != "kubernetes" ? 1: 0
 
@@ -169,6 +137,7 @@ resource "null_resource" "oc_login" {
   }
 }
 
+# this should probably be moved to a separate module that operates at a namespace level
 resource "null_resource" "create_registry_namespace" {
   provisioner "local-exec" {
     command = "${path.module}/scripts/create-registry-namespace.sh ${var.resource_group_name} ${var.cluster_region} ${local.registry_url_file}"
@@ -190,19 +159,22 @@ data "helm_repository" "toolkit-charts" {
   url  = "https://ibm-garage-cloud.github.io/toolkit-charts"
 }
 
-resource "random_string" "ibmcloud-config-name" {
-  length = 8
-  special = false
+resource "null_resource" "delete_ibmcloud_chart" {
+  depends_on = [null_resource.oc_login]
+
+  provisioner "local-exec" {
+    command = "helm uninstall ${local.ibmcloud_release_name}"
+  }
 }
 
-resource "helm_release" "ibmcloud-config" {
-  name         = "ibmcloud-config-${random_string.ibmcloud-config-name.result}"
+resource "helm_release" "ibmcloud_config" {
+  depends_on = [null_resource.delete_ibmcloud_chart]
+
+  name         = local.ibmcloud_release_name
   chart        = "ibmcloud"
   repository   = data.helm_repository.toolkit-charts.name
-  version      = "0.1.2"
+  version      = "0.1.3"
   namespace    = local.config_namespace
-  force_update = true
-  replace      = true
 
   set_sensitive {
     name  = "apikey"
@@ -254,17 +226,3 @@ resource "helm_release" "ibmcloud-config" {
     value = local.cluster_version
   }
 }
-
-# Move to helm chart
-//resource "null_resource" "ibmcloud_apikey_release" {
-//  depends_on = [null_resource.oc_login]
-//
-//  provisioner "local-exec" {
-//    command = "${path.module}/scripts/deploy-ibmcloud-config.sh ${local.ibmcloud_apikey_chart} ${local.config_namespace} ${var.ibmcloud_api_key} ${var.resource_group_name} ${local.server_url} ${var.cluster_type} ${local.cluster_name} ${local.ingress_hostname} ${var.cluster_region} ${data.local_file.registry_url.content} ${local.tls_secret} ${data.local_file.cluster_version.content}"
-//
-//    environment = {
-//      KUBECONFIG_IKS = local.config_file_path
-//      TMP_DIR        = local.tmp_dir
-//    }
-//  }
-//}
