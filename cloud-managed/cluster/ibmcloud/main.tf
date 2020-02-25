@@ -163,7 +163,7 @@ resource "null_resource" "delete_ibmcloud_chart" {
   depends_on = [null_resource.oc_login]
 
   provisioner "local-exec" {
-    command = "helm del ${local.ibmcloud_release_name}"
+    command = "helm3 uninstall ${local.ibmcloud_release_name} --namespace ${local.config_namespace}"
   }
 }
 
