@@ -21,7 +21,7 @@ variable "cluster_type" {
 variable "service_account_name" {
   type        = string
   description = "The service account that the logdna agent should run under"
-  default     = "default"
+  default     = "logdna-agent"
 }
 
 variable "name_prefix" {
@@ -39,7 +39,7 @@ variable "plan" {
 variable "namespace" {
   type        = string
   description = "The namespace where the agent should be deployed"
-  default     = "logdna-agent"
+  default     = "ibm-observe"
 }
 
 variable "tags" {

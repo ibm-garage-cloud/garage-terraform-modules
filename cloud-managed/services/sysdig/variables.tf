@@ -35,3 +35,9 @@ variable "plan" {
   description = "The type of plan the service instance should run under (trial or graduated-tier)"
   default     = "graduated-tier"
 }
+
+variable "namespace" {
+  type        = string
+  description = "The namespace where the agent should be deployed"
+  default     = "ibm-observe"
+}
