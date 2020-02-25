@@ -44,7 +44,7 @@ resource "ibm_container_bind_service" "appid_service_binding" {
   count = var.namespace_count
 
   cluster_name_id       = var.cluster_id
-  service_instance_id   = ibm_resource_instance.appid_instance.id
+  service_instance_name = ibm_resource_instance.appid_instance.name
   namespace_id          = var.namespaces[count.index]
   resource_group_id     = data.ibm_resource_group.tools_resource_group.id
   key                   = ibm_resource_key.appid_key.name
