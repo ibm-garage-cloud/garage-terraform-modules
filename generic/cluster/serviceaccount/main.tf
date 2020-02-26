@@ -1,5 +1,3 @@
-provider "kubernetes" {
-}
 provider "null" {}
 provider "local" {}
 

@@ -6,9 +6,6 @@ provider "helm" {
     config_path = local.config_file_path
   }
 }
-provider "kubernetes" {
-  config_path = local.config_file_path
-}
 provider "null" {
 }
 provider "local" {
@@ -34,7 +31,6 @@ locals {
   cluster_config_dir    = "${var.kubeconfig_download_dir}/.kube"
   cluster_type_file     = "${path.cwd}/.tmp/cluster_type.val"
   cluster_version_file  = "${path.cwd}/.tmp/cluster_version.val"
-  kube_config_file      = "${path.cwd}/.tmp/kube_config.val"
   registry_url_file     = "${path.cwd}/.tmp/registry_url.val"
   registry_url          = data.local_file.registry_url.content
   name_prefix           = var.name_prefix != "" ? var.name_prefix : var.resource_group_name
@@ -238,16 +234,15 @@ resource "helm_release" "ibmcloud_config" {
   }
 }
 
-resource "null_resource" "write_kube_config_file" {
-  depends_on = [helm_release.ibmcloud_config]
+resource "null_resource" "setup_kube_config" {
+  count = var.cluster_type == "kubernetes" ? 1 : 0
 
   provisioner "local-exec" {
-    command = "echo \"${local.config_file_path}\" > ${local.kube_config_file}"
+    command = "rm -f ${local.cluster_config_dir}/config && ln -s ${data.ibm_container_cluster_config.cluster.config_file_path} ${local.cluster_config_dir}/config"
+  }
+
+  provisioner "local-exec" {
+    command = "cp ${regex("(.*)/config.yml", data.ibm_container_cluster_config.cluster.config_file_path)[0]}/* ${local.cluster_config_dir}"
   }
 }
 
-data "local_file" "kube_config" {
-  depends_on = [null_resource.write_kube_config_file]
-
-  filename = local.kube_config_file
-}
