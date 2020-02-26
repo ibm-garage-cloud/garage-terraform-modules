@@ -3,7 +3,7 @@ provider "ibm" {
 }
 provider "helm" {
   kubernetes {
-    config_path = local.config_file_path
+    config_path = "${local.cluster_config_dir}/config"
   }
 }
 provider "null" {
