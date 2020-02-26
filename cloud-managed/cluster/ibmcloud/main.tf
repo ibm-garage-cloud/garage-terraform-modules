@@ -2,9 +2,6 @@ provider "ibm" {
   version = "1.2.1"
 }
 provider "helm" {
-  kubernetes {
-    config_path = "${local.cluster_config_dir}/config"
-  }
 }
 provider "null" {
 }
@@ -166,7 +163,11 @@ resource "null_resource" "delete_ibmcloud_chart" {
   depends_on = [null_resource.oc_login]
 
   provisioner "local-exec" {
-    command = "helm3 uninstall ${local.ibmcloud_release_name} --namespace ${local.config_namespace} 1> /dev/null 2> /dev/null || exit 0"
+    command = "${path.module}/scripts/helm3-uninstall.sh ${local.ibmcloud_release_name} ${local.config_namespace}"
+
+    environment={
+      KUBECONFIG_IKS = local.config_file_path
+    }
   }
 }
 
