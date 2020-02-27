@@ -28,7 +28,7 @@ resource "null_resource" "ibmcloud_login" {
 }
 
 locals {
-  cluster_config_dir    = "${var.kubeconfig_download_dir}/.kube"
+  cluster_config_dir    = "${var.kubeconfig_download_dir}/.kube/config"
   cluster_type_file     = "${path.cwd}/.tmp/cluster_type.val"
   cluster_version_file  = "${path.cwd}/.tmp/cluster_version.val"
   registry_url_file     = "${path.cwd}/.tmp/registry_url.val"
