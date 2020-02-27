@@ -240,4 +240,9 @@ resource "null_resource" "setup_kube_config" {
   provisioner "local-exec" {
     command = "ln -s ${data.ibm_container_cluster_config.cluster.config_file_path} ${local.cluster_config_dir}/config"
   }
+
+  provisioner "local-exec" {
+    command = "cp ${regex("(.*)/config.yml", data.ibm_container_cluster_config.cluster.config_file_path)[0]}/* ${local.cluster_config_dir}"
+  }
 }
+
