@@ -36,7 +36,7 @@ output "config_file_path" {
 }
 
 output "config_path" {
-  value       = "${local.cluster_config_dir}/config"
+  value       = local.cluster_config_dir
   description = "Path to the config file for the cluster."
   depends_on  = [helm_release.ibmcloud_config]
 }
