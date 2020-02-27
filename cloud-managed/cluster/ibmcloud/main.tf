@@ -6,6 +6,9 @@ provider "helm" {
     config_path = local.config_file_path
   }
 }
+provider "kubernetes" {
+  config_path = local.config_file_path
+}
 provider "null" {
 }
 provider "local" {
