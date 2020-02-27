@@ -5,8 +5,6 @@ resource "null_resource" "print_kube_config" {
 }
 
 provider "kubernetes" {
-  depends_on = [null_resource.print_kube_config]
-
   config_path = var.cluster_config_file_path == "" ? "" : ""
 }
 provider "null" {}
