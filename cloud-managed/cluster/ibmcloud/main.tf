@@ -28,9 +28,10 @@ resource "null_resource" "ibmcloud_login" {
 }
 
 locals {
-  cluster_config_dir    = "${var.kubeconfig_download_dir}/.kube/config"
+  cluster_config_dir    = "${var.kubeconfig_download_dir}/.kube"
   cluster_type_file     = "${path.cwd}/.tmp/cluster_type.val"
   cluster_version_file  = "${path.cwd}/.tmp/cluster_version.val"
+  kube_config_file      = "${path.cwd}/.tmp/kube_config.val"
   registry_url_file     = "${path.cwd}/.tmp/registry_url.val"
   registry_url          = data.local_file.registry_url.content
   name_prefix           = var.name_prefix != "" ? var.name_prefix : var.resource_group_name
@@ -44,8 +45,8 @@ locals {
   ingress_hostname      = data.ibm_container_cluster.config.ingress_hostname
   tls_secret            = data.ibm_container_cluster.config.ingress_secret
   openshift_versions    = {
-    for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
-       substr(version, 0, 1) => "${version}_openshift"
+  for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
+  substr(version, 0, 1) => "${version}_openshift"
   }
   # value should be openshift or kubernetes
   cluster_type          = var.cluster_type == "ocp3" ? "openshift" : (var.cluster_type == "ocp4" ? "openshift" : var.cluster_type)
@@ -232,4 +233,18 @@ resource "helm_release" "ibmcloud_config" {
     name  = "cluster_version"
     value = local.cluster_version
   }
+}
+
+resource "null_resource" "write_kube_config_file" {
+  depends_on = [helm_release.ibmcloud_config]
+
+  provisioner "local-exec" {
+    command = "echo \"${local.config_file_path}\" > ${local.kube_config_file}"
+  }
+}
+
+data "local_file" "kube_config" {
+  depends_on = [null_resource.write_kube_config_file]
+
+  filename = local.kube_config_file
 }
