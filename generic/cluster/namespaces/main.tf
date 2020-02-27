@@ -37,33 +37,6 @@ resource "kubernetes_namespace" "tools" {
     name = var.tools_namespace
   }
 }
-//
-//resource "null_resource" "create_tools_namespace" {
-//  depends_on = [null_resource.delete_tools_namespace]
-//
-//  triggers = {
-//    namespace      = var.tools_namespace
-//    kubeconfig_iks = var.cluster_config_file_path
-//  }
-//
-//  provisioner "local-exec" {
-//    command = "${path.module}/scripts/createNamespace.sh ${self.triggers.namespace}"
-//
-//    environment = {
-//      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
-//    }
-//  }
-//
-//  provisioner "local-exec" {
-//    when    = destroy
-//    command = "${path.module}/scripts/deleteNamespace.sh ${self.triggers.namespace}"
-//
-//    environment = {
-//      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
-//    }
-//  }
-//}
-
 
 resource "kubernetes_namespace" "releases" {
   depends_on = [null_resource.delete_release_namespaces]
@@ -73,33 +46,6 @@ resource "kubernetes_namespace" "releases" {
     name = var.release_namespaces[count.index]
   }
 }
-//
-//resource "null_resource" "create_release_namespaces" {
-//  depends_on = [null_resource.delete_release_namespaces]
-//  count      = length(var.release_namespaces)
-//
-//  triggers = {
-//    namespace      = var.release_namespaces[count.index]
-//    kubeconfig_iks = var.cluster_config_file_path
-//  }
-//
-//  provisioner "local-exec" {
-//    command = "${path.module}/scripts/createNamespace.sh ${self.triggers.namespace}"
-//
-//    environment = {
-//      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
-//    }
-//  }
-//
-//  provisioner "local-exec" {
-//    when    = destroy
-//    command = "${path.module}/scripts/deleteNamespace.sh ${self.triggers.namespace}"
-//
-//    environment = {
-//      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
-//    }
-//  }
-//}
 
 resource "null_resource" "copy_tls_secrets" {
   depends_on = [kubernetes_namespace.tools, kubernetes_namespace.releases]
