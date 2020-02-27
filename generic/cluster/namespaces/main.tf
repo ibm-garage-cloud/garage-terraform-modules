@@ -4,7 +4,7 @@ resource "null_resource" "print_kube_config" {
   }
 }
 provider "kubernetes" {
-  config_path = var.cluster_config_path
+  config_path = var.cluster_config_file_path
 }
 provider "null" {}
 
