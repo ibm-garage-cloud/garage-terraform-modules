@@ -238,7 +238,7 @@ resource "null_resource" "setup_kube_config" {
   count = var.cluster_type == "kubernetes" ? 1 : 0
 
   provisioner "local-exec" {
-    command = "ln -s ${data.ibm_container_cluster_config.cluster.config_file_path} ${local.cluster_config_dir}/config"
+    command = "rm -f ${local.cluster_config_dir}/config && ln -s ${data.ibm_container_cluster_config.cluster.config_file_path} ${local.cluster_config_dir}/config"
   }
 
   provisioner "local-exec" {
