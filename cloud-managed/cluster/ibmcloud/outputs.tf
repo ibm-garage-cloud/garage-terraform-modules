@@ -30,7 +30,7 @@ output "server_url" {
 }
 
 output "config_file_path" {
-  value       = local.config_file_path
+  value       = data.local_file.kube_config.content
   description = "Path to the config file for the cluster."
   depends_on  = [helm_release.ibmcloud_config]
 }
