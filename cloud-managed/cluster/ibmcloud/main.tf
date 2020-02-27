@@ -157,11 +157,6 @@ data "local_file" "registry_url" {
   filename = local.registry_url_file
 }
 
-data "helm_repository" "toolkit-charts" {
-  name = "toolkit-charts"
-  url  = "https://ibm-garage-cloud.github.io/toolkit-charts"
-}
-
 resource "null_resource" "delete_ibmcloud_chart" {
   depends_on = [null_resource.oc_login]
 
@@ -172,6 +167,11 @@ resource "null_resource" "delete_ibmcloud_chart" {
       KUBECONFIG_IKS = local.config_file_path
     }
   }
+}
+
+data "helm_repository" "toolkit-charts" {
+  name = "toolkit-charts"
+  url  = "https://ibm-garage-cloud.github.io/toolkit-charts"
 }
 
 resource "helm_release" "ibmcloud_config" {
