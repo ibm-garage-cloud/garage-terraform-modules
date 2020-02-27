@@ -1,11 +1,3 @@
-resource "null_resource" "print_kube_config" {
-  provisioner "local-exec" {
-    command = "echo \"path=${var.cluster_config_path}, file=${var.cluster_config_file_path}\""
-  }
-}
-provider "kubernetes" {
-  config_path = var.cluster_config_file_path
-}
 provider "null" {}
 
 locals {
