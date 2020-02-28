@@ -23,7 +23,7 @@ resource "null_resource" "deploy_logdna" {
     command = "${path.module}/scripts/deploy-service.sh ${self.triggers.service_name} ${self.triggers.service_namespace} ${var.plan} ${local.service_class} ${local.binding_name} ${local.binding_namespaces} ${var.namespace}"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
       REGION         = local.resource_location
       RESOURCE_GROUP = var.resource_group_name
       TMP_DIR        = local.tmp_dir
@@ -52,7 +52,7 @@ resource "null_resource" "write_ingestion_key" {
     command = "${path.module}/scripts/get-secret-value.sh ${local.binding_name} ${var.namespace} ingestion_key > ${local.ingestion_key_file}"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -71,7 +71,7 @@ resource "null_resource" "logdna_bind" {
     command = "${path.module}/scripts/bind-logdna.sh ${var.cluster_type} ${data.local_file.injestion_key.content} ${local.resource_location} ${var.bind_script_version}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig
+      KUBECONFIG = self.triggers.kubeconfig
       TMP_DIR        = local.tmp_dir
     }
   }
@@ -81,7 +81,7 @@ resource "null_resource" "logdna_bind" {
     command = "${path.module}/scripts/unbind-logdna.sh"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig
+      KUBECONFIG = self.triggers.kubeconfig
     }
   }
 }

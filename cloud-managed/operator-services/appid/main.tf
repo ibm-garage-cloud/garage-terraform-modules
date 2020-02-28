@@ -21,7 +21,7 @@ resource "null_resource" "deploy_appid" {
     command = "${path.module}/scripts/deploy-service.sh ${self.triggers.service_name} ${self.triggers.service_namespace} ${var.plan} ${local.service_class} ${local.binding_name} ${local.binding_namespaces} ${local.tools_namespace}"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file
+      KUBECONFIG = var.cluster_config_file
       REGION         = local.region
       RESOURCE_GROUP = var.resource_group_name
       TMP_DIR        = "${path.cwd}/.tmp"
@@ -42,7 +42,7 @@ resource "null_resource" "appid_bind_credentials" {
     command = "${path.module}/scripts/bind-classic-credentials.sh ${local.service_name} ${local.role} ${var.cluster_name} ${local.tools_namespace}"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file
+      KUBECONFIG = var.cluster_config_file
     }
   }
 }

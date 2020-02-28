@@ -25,7 +25,7 @@ resource "null_resource" "deploy_sysdig" {
     command = "${path.module}/scripts/deploy-service.sh ${self.triggers.service_name} ${self.triggers.service_namespace} ${var.plan} ${local.service_class} ${local.binding_name} ${local.binding_namespaces} ${var.tools_namespace}"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
       REGION         = var.resource_location
       RESOURCE_GROUP = var.resource_group_name
       TMP_DIR        = local.tmp_dir
@@ -54,7 +54,7 @@ resource "null_resource" "write_access_key" {
     command = "${path.module}/scripts/get-secret-value.sh ${local.binding_name} ${var.tools_namespace} Sysdig_Access_Key > ${local.access_key_file}"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -69,7 +69,7 @@ resource "null_resource" "write_endpoint" {
     command = "${path.module}/scripts/get-secret-value.sh ${local.binding_name} ${var.tools_namespace} Sysdig_Collector_Endpoint > ${local.endpoint_file}"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -88,14 +88,14 @@ data "local_file" "endpoint" {
 
 resource "null_resource" "create_sysdig_agent" {
   triggers = {
-    kubeconfig_iks = var.cluster_config_file_path
+    KUBECONFIG = var.cluster_config_file_path
   }
 
   provisioner "local-exec" {
     command = "${path.module}/scripts/bind-sysdig.sh ${data.local_file.access_key.content} ${data.local_file.endpoint.content}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
+      KUBECONFIG = self.triggers.KUBECONFIG
     }
   }
 
@@ -104,7 +104,7 @@ resource "null_resource" "create_sysdig_agent" {
     command = "${path.module}/scripts/unbind-sysdig.sh"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
+      KUBECONFIG = self.triggers.KUBECONFIG
     }
   }
 }
