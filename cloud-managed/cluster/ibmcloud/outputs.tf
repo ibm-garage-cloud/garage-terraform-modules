@@ -32,13 +32,7 @@ output "server_url" {
 output "config_file_path" {
   value       = "${local.cluster_config_dir}/config"
   description = "Path to the config file for the cluster."
-  depends_on  = [null_resource.setup_kube_config]
-}
-
-output "config_path" {
-  value       = regex("(.*)/config.yml", data.ibm_container_cluster_config.cluster.config_file_path)[0]
-  description = "Path to the config file for the cluster."
-  depends_on  = [helm_release.ibmcloud_config]
+  depends_on  = [null_resource.oc_login, null_resource.setup_kube_config]
 }
 
 output "type" {
