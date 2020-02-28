@@ -10,10 +10,10 @@ locals {
 
 resource "null_resource" "delete_tools_namespace" {
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deleteNamespace.sh ${var.tools_namespace}"
+    command = "kubectl delete namespace ${var.tools_namespace} --wait || exit 0"
 
     environment = {
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -22,10 +22,10 @@ resource "null_resource" "delete_release_namespaces" {
   count      = length(var.release_namespaces)
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deleteNamespace.sh ${var.release_namespaces[count.index]}"
+    command = "kubectl delete namespace ${var.release_namespaces[count.index]} --wait || exit 0"
 
     environment = {
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -55,7 +55,7 @@ resource "null_resource" "copy_tls_secrets" {
     command = "${path.module}/scripts/copy-secret-to-namespace.sh \"${var.tls_secret_name}\" ${local.namespaces[count.index]}"
 
     environment = {
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -68,7 +68,7 @@ resource "null_resource" "copy_apikey_secret" {
     command = "${path.module}/scripts/copy-secret-to-namespace.sh ibmcloud-apikey ${local.namespaces[count.index]}"
 
     environment = {
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -81,7 +81,7 @@ resource "null_resource" "create_pull_secrets" {
     command = "${path.module}/scripts/setup-namespace-pull-secrets.sh ${local.namespaces[count.index]}"
 
     environment = {
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -94,7 +94,7 @@ resource "null_resource" "copy_cloud_configmap" {
     command = "${path.module}/scripts/copy-configmap-to-namespace.sh ibmcloud-config ${local.namespaces[count.index]}"
 
     environment = {
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }

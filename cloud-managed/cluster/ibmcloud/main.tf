@@ -99,17 +99,6 @@ data "ibm_container_cluster_config" "cluster" {
   config_dir        = local.cluster_config_dir
 }
 
-# is this still needed?
-resource "null_resource" "create_cluster_pull_secret_iks" {
-  provisioner "local-exec" {
-    command = "${path.module}/scripts/cluster-pull-secret-apply.sh ${local.cluster_name}"
-
-    environment = {
-      KUBECONFIG_IKS = local.config_file_path
-    }
-  }
-}
-
 resource "null_resource" "get_cluster_version" {
   depends_on = [
     data.ibm_container_cluster_config.cluster,
@@ -157,15 +146,32 @@ data "local_file" "registry_url" {
   filename = local.registry_url_file
 }
 
+resource "null_resource" "setup_kube_config" {
+  count = var.cluster_type == "kubernetes" ? 1 : 0
+
+  provisioner "local-exec" {
+    command = "rm -f ${local.cluster_config_dir}/config && ln -s ${data.ibm_container_cluster_config.cluster.config_file_path} ${local.cluster_config_dir}/config"
+  }
+
+  provisioner "local-exec" {
+    command = "cp ${regex("(.*)/config.yml", data.ibm_container_cluster_config.cluster.config_file_path)[0]}/* ${local.cluster_config_dir}"
+  }
+}
+
+resource "null_resource" "create_cluster_pull_secret_iks" {
+  depends_on = [null_resource.setup_kube_config]
+  count      = var.cluster_type == "kubernetes" ? 1 : 0
+
+  provisioner "local-exec" {
+    command = "${path.module}/scripts/cluster-pull-secret-apply.sh ${local.cluster_name}"
+  }
+}
+
 resource "null_resource" "delete_ibmcloud_chart" {
-  depends_on = [null_resource.oc_login]
+  depends_on = [null_resource.oc_login, null_resource.setup_kube_config]
 
   provisioner "local-exec" {
     command = "${path.module}/scripts/helm3-uninstall.sh ${local.ibmcloud_release_name} ${local.config_namespace}"
-
-    environment={
-      KUBECONFIG_IKS = local.config_file_path
-    }
   }
 }
 
@@ -231,18 +237,6 @@ resource "helm_release" "ibmcloud_config" {
   set {
     name  = "cluster_version"
     value = local.cluster_version
-  }
-}
-
-resource "null_resource" "setup_kube_config" {
-  count = var.cluster_type == "kubernetes" ? 1 : 0
-
-  provisioner "local-exec" {
-    command = "rm -f ${local.cluster_config_dir}/config && ln -s ${data.ibm_container_cluster_config.cluster.config_file_path} ${local.cluster_config_dir}/config"
-  }
-
-  provisioner "local-exec" {
-    command = "cp ${regex("(.*)/config.yml", data.ibm_container_cluster_config.cluster.config_file_path)[0]}/* ${local.cluster_config_dir}"
   }
 }
 
