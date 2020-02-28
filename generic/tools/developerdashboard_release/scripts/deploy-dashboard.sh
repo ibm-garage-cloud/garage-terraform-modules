@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Sample usage :
+# ./deploy-dashboard.sh tools openshift dashboard gsi-learning-ocp311-clu-7ec5d722a0ab3f463fdc90eeb94dbc70-0000.eu-gb.containers.appdomain.cloud dev
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd -P)
 MODULE_DIR=$(cd ${SCRIPT_DIR}/..; pwd -P)
@@ -8,7 +10,6 @@ CLUSTER_TYPE="$2"
 INGRESS_HOST="$3"
 INGRESS_SUBDOMAIN="$4"
 IMAGE_TAG="$5"
-CONFIG_MAPS="$6"
 
 if [[ -n "${KUBECONFIG_IKS}" ]]; then
     export KUBECONFIG="${KUBECONFIG_IKS}"
@@ -22,12 +23,12 @@ if [[ -z "${IMAGE_TAG}" ]]; then
     IMAGE_TAG="latest"
 fi
 
-CHART="${MODULE_DIR}/charts/catalyst-dashboard"
+CHART="${MODULE_DIR}/charts/developer-dashboard"
 CONFIG_CHART="${MODULE_DIR}/charts/dashboard-config"
 
-NAME="catalyst-dashboard"
-OUTPUT_YAML="${TMP_DIR}/catalystdashboard.yaml"
-CONFIG_OUTPUT_YAML="${TMP_DIR}/catalystdashboard-config.yaml"
+NAME="developer-dashboard"
+OUTPUT_YAML="${TMP_DIR}/developerdashboard.yaml"
+CONFIG_OUTPUT_YAML="${TMP_DIR}/developerdashboard-config.yaml"
 
 CONFIG_MAP_YAML=$(echo "${CONFIG_MAPS}" | sed -E "s/[[](.+)[]]/{\1}/g" | sed "s/[[][]]//g")
 
@@ -44,10 +45,9 @@ if [[ -n "${TLS_SECRET_NAME}" ]]; then
 fi
 
 echo "*** Generating kube yaml from helm template into ${OUTPUT_YAML}"
-helm init --client-only
-helm template "${CHART}" \
+#helm init --client-only
+helm3 template "${NAME}" "${CHART}" \
     --namespace "${NAMESPACE}" \
-    --name "${NAME}" \
     --set "clusterType=${CLUSTER_TYPE}" \
     --set "host=${INGRESS_HOST}" \
     --set "ingressSubdomain=${INGRESS_SUBDOMAIN}" \
@@ -60,13 +60,13 @@ if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
   kubectl apply -n "${NAMESPACE}" -f ${OUTPUT_YAML}
 else
   oc apply -n "${NAMESPACE}" -f ${OUTPUT_YAML}
-
   DASHBOARD_HOST=$(oc get route "dashboard" -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
   DASHBOARD_URL="https://${DASHBOARD_HOST}"
 fi
 
-helm template "${CONFIG_CHART}" \
+helm3 template "${NAME}" "${CONFIG_CHART}" \
     --namespace "${NAMESPACE}" \
-    --name "dashboard" \
     --set url="${DASHBOARD_URL}" > ${CONFIG_OUTPUT_YAML}
 kubectl apply -n "${NAMESPACE}" -f ${CONFIG_OUTPUT_YAML}
+
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${DASHBOARD_URL}" 150 12
