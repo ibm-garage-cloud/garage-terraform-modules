@@ -9,8 +9,8 @@ ingressSubdomain: ""
 
 image:
   repository: garagecatalyst/catalyst-dashboard
-  tag: latest
-  pullPolicy: Always
+  tag: 1.0.19
+  pullPolicy: IfNotPresent
   port: 3000
 
 service:
