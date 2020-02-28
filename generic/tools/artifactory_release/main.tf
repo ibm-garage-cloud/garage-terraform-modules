@@ -17,7 +17,7 @@ resource "null_resource" "artifactory_release" {
     command = "${path.module}/scripts/deploy-artifactory.sh ${self.triggers.releases_namespace} ${local.ingress_host} ${local.values_file} ${var.chart_version} ${var.service_account} ${var.tls_secret_name}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
+      KUBECONFIG = self.triggers.kubeconfig_iks
       STORAGE_CLASS  = var.storage_class
       TMP_DIR        = local.tmp_dir
       CLUSTER_TYPE   = var.cluster_type
@@ -29,7 +29,7 @@ resource "null_resource" "artifactory_release" {
     command = "${path.module}/scripts/destroy-artifactory.sh ${self.triggers.releases_namespace}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
+      KUBECONFIG = self.triggers.kubeconfig_iks
     }
   }
 }
