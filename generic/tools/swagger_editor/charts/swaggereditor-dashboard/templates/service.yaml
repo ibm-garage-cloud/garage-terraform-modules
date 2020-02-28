@@ -12,17 +12,14 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    {{- if eq .Values.clusterType "openshift-fix" }}
     - port: 443
       targetPort: 8443
       protocol: TCP
-      name: http
-    {{- else }}
+      name: proxy
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.image.port }}
       protocol: TCP
       name: http
-    {{- end}}
   selector:
     app: {{ include "catalyst-dashboard.name" . }}
     release: {{ .Release.Name }}

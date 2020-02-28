@@ -3,6 +3,11 @@ kind: Role
 metadata:
   name: {{ template "catalyst-dashboard.name" . }}-agent
   namespace: {{ .Release.Namespace }}
+  labels:
+    "app.kubernetes.io/name": {{ template "catalyst-dashboard.name" . }}
+    "helm.sh/chart": {{ template "catalyst-dashboard.chart" . }}
+    "app.kubernetes.io/instance": {{ .Release.Name }}
+    "app.kubernetes.io/component": {{ template "catalyst-dashboard.name" . }}-role
 rules:
   - apiGroups:
       - security.openshift.io

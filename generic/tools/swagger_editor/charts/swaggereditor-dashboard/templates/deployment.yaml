@@ -30,8 +30,8 @@ spec:
       serviceAccountName: {{ include "catalyst-dashboard.name" . }}
       volumes:
         - name: cache
-          empty-dir: {}
-      {{- if eq .Values.clusterType "openshift-fix" }}
+          emptyDir: {}
+      {{- if eq .Values.clusterType "openshift" }}
         - name: proxy-tls
           secret:
             secretName: {{ .Values.host }}-tls
@@ -52,7 +52,7 @@ spec:
             - mountPath: /mount
               name: cache
       containers:
-        {{- if eq .Values.clusterType "openshift-fix" }}
+        {{- if eq .Values.clusterType "openshift" }}
         - name: oauth-proxy
           image: openshift/oauth-proxy:latest
           imagePullPolicy: IfNotPresent
