@@ -1,0 +1,12 @@
+{{- if eq .Values.clusterType "openshift" }}
+apiVersion: v1
+kind: Route
+metadata:
+  name: {{ .Values.host }}
+spec:
+  to:
+    kind: Service
+    name: {{ include "catalyst-dashboard.fullname" . }}
+  tls:
+    termination: Reencrypt
+{{- end }}
