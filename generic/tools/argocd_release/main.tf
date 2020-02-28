@@ -19,7 +19,7 @@ resource "null_resource" "argocd_release" {
     command = "${path.module}/scripts/deploy-argocd.sh ${local.chart_name} ${self.triggers.releases_namespace} ${var.helm_version} ${local.ingress_host} ${local.ingress_subdomain} ${local.enable_cache}"
 
     environment = {
-      KUBECONFIG_IKS  = self.triggers.kubeconfig_iks
+      KUBECONFIG  = self.triggers.kubeconfig_iks
       CLUSTER_TYPE    = var.cluster_type
       TLS_SECRET_NAME = var.tls_secret_name
       TMP_DIR         = local.tmp_dir
@@ -31,7 +31,7 @@ resource "null_resource" "argocd_release" {
     command = "${path.module}/scripts/destroy-argocd.sh ${self.triggers.releases_namespace}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
+      KUBECONFIG = self.triggers.kubeconfig_iks
     }
   }
 }

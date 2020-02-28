@@ -28,7 +28,7 @@ resource "null_resource" "ibmcloud_apikey_release" {
     command = "${path.module}/scripts/deploy-ibmcloud-config.sh"
 
     environment = {
-      KUBECONFIG_IKS    = local.config_file_path
+      KUBECONFIG    = local.config_file_path
       TMP_DIR           = local.tmp_dir
       CHART             = local.ibmcloud_apikey_chart
       NAMESPACE         = local.config_namespace

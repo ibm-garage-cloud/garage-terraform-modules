@@ -19,7 +19,7 @@ resource "null_resource" "deploy_cloud_object_store" {
     command = "${path.module}/scripts/deploy-service.sh ${self.triggers.service_name} ${self.triggers.service_namespace} ${var.plan} ${local.service_class} ${local.binding_name} ${local.binding_namespaces}"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file
+      KUBECONFIG = var.cluster_config_file
       REGION         = local.location
       RESOURCE_GROUP = var.resource_group_name
       TMP_DIR        = "${path.cwd}/.tmp"

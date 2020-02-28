@@ -20,7 +20,7 @@ resource "null_resource" "pactbroker_release" {
     command = "${path.module}/scripts/deploy-pactbroker.sh ${local.chart} ${self.triggers.releases_namespace} ${local.ingress_host} ${local.database_type} ${local.database_name} ${var.tls_secret_name}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
+      KUBECONFIG = self.triggers.kubeconfig_iks
       TMP_DIR        = local.tmp_dir
       CLUSTER_TYPE   = local.cluster_type
     }
@@ -31,7 +31,7 @@ resource "null_resource" "pactbroker_release" {
     command = "${path.module}/scripts/destroy-pactbroker.sh ${self.triggers.releases_namespace}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
+      KUBECONFIG = self.triggers.kubeconfig_iks
     }
   }
 }

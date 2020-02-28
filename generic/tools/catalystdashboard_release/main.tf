@@ -13,7 +13,7 @@ resource "null_resource" "catalystdashboard_release" {
     command = "${path.module}/scripts/deploy-catalystdashboard.sh ${self.triggers.releases_namespace} ${var.cluster_type} dashboard ${var.cluster_ingress_hostname} ${var.image_tag} \"${jsonencode(var.tool_config_maps)}\""
 
     environment = {
-      KUBECONFIG_IKS  = self.triggers.kubeconfig_iks
+      KUBECONFIG  = self.triggers.kubeconfig_iks
       TLS_SECRET_NAME = var.tls_secret_name
       TMP_DIR         = local.tmp_dir
     }
@@ -24,7 +24,7 @@ resource "null_resource" "catalystdashboard_release" {
     command = "${path.module}/scripts/destroy-catalystdashboard.sh ${self.triggers.releases_namespace}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
+      KUBECONFIG = self.triggers.kubeconfig_iks
     }
   }
 }

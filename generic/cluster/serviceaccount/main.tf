@@ -16,7 +16,7 @@ resource "null_resource" "delete_namespace" {
     command = "kubectl delete namespace ${var.namespace} --wait 1> /dev/null 2> /dev/null || exit 0"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -37,7 +37,7 @@ resource "null_resource" "delete_serviceaccount" {
     command = "kubectl delete serviceaccount -n ${var.namespace} ${var.service_account_name} 1> /dev/null 2> /dev/null || exit 0"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }

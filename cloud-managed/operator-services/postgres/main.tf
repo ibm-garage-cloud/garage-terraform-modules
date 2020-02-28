@@ -25,7 +25,7 @@ resource "null_resource" "deploy_postgres" {
     command = "${path.module}/scripts/deploy-service.sh ${self.triggers.service_name} ${self.triggers.service_namespace} ${var.plan} ${local.service_class} ${local.binding_name} ${local.binding_namespaces} ${local.base_namespace}"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file
+      KUBECONFIG = var.cluster_config_file
       RESOURCE_GROUP = var.resource_group_name
       REGION         = var.resource_location
       TMP_DIR        = local.tmp_dir
@@ -55,7 +55,7 @@ resource "null_resource" "write_postgres_credentials" {
     command = "${path.module}/scripts/get-secret-value.sh ${local.binding_name} ${local.base_namespace} connection > ${local.credentials_file}"
 
     environment={
-      KUBECONFIG_IKS = var.cluster_config_file
+      KUBECONFIG = var.cluster_config_file
     }
   }
 }

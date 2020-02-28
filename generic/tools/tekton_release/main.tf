@@ -11,7 +11,7 @@ resource "null_resource" "tekton" {
     command = "${path.module}/scripts/deploy-tekton.sh"
 
     environment = {
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -22,7 +22,7 @@ resource "null_resource" "tekton_dashboard" {
     command = "${path.module}/scripts/deploy-tekton-dashboard.sh ${local.ingress_host} ${local.namespace}"
 
     environment = {
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }
@@ -34,7 +34,7 @@ resource "null_resource" "copy_cloud_configmap" {
     command = "${path.module}/scripts/copy-configmap-to-namespace.sh tekton-config ${var.tools_namespace} ${local.namespace}"
 
     environment = {
-      KUBECONFIG_IKS = var.cluster_config_file_path
+      KUBECONFIG = var.cluster_config_file_path
     }
   }
 }

@@ -45,16 +45,16 @@ resource "ibm_resource_key" "logdna_instance_key" {
 
 resource "null_resource" "logdna_bind" {
   triggers = {
-    namespace      = var.namespace
-    kubeconfig_iks = var.cluster_config_file_path
+    namespace  = var.namespace
+    KUBECONFIG = var.cluster_config_file_path
   }
 
   provisioner "local-exec" {
     command = "${path.module}/scripts/bind-logdna.sh ${var.cluster_type} ${ibm_resource_key.logdna_instance_key.credentials.ingestion_key} ${local.resource_location} ${var.namespace} ${var.service_account_name}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
-      TMP_DIR        = "${path.cwd}/.tmp"
+      KUBECONFIG = self.triggers.KUBECONFIG
+      TMP_DIR    = "${path.cwd}/.tmp"
     }
   }
 
@@ -63,7 +63,7 @@ resource "null_resource" "logdna_bind" {
     command = "${path.module}/scripts/unbind-logdna.sh ${self.triggers.namespace}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
+      KUBECONFIG = self.triggers.KUBECONFIG
     }
   }
 }

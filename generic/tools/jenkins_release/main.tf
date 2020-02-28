@@ -33,7 +33,7 @@ resource "null_resource" "jenkins_release_iks" {
     command = "${path.module}/scripts/destroy-jenkins.sh ${self.triggers.releases_namespace}"
 
     environment = {
-      KUBECONFIG_IKS = self.triggers.kubeconfig
+      KUBECONFIG = self.triggers.kubeconfig
     }
   }
 }
