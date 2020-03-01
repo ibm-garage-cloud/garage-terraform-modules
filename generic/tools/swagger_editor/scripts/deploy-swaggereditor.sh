@@ -51,8 +51,12 @@ helm3 template "${NAME}" "${CHART}" \
     --set "image.tag=${IMAGE_TAG}" \
     --set "${VALUES}"  > ${OUTPUT_YAML}
 
+SERVICE_ACCOUNT_NAME="swaggereditor-dashboard"
+kubectl create serviceaccount -n "${NAMESPACE}" ${SERVICE_ACCOUNT_NAME}
+
 echo "*** Applying kube yaml ${OUTPUT_YAML}"
 if [[ "${CLUSTER_TYPE}" == "openshift" ]]; then
+  oc adm policy add-scc-to-user privileged "${NAMESPACE}" -z ${SERVICE_ACCOUNT_NAME}
   oc apply -n "${NAMESPACE}" -f ${OUTPUT_YAML}
 
   DASHBOARD_HOST=$(oc get route "apieditor" -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')

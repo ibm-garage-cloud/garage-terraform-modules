@@ -12,11 +12,11 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    {{- if eq .Values.clusterType "openshift" }}
+    {{- if eq .Values.clusterType "openshift-fix" }}
     - port: 443
       targetPort: 8443
       protocol: TCP
-      name: proxy
+      name: http
     {{- else }}
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.image.port }}
