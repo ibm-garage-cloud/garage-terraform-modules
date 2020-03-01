@@ -8,10 +8,18 @@ spec:
     kind: Service
     name: {{ include "catalyst-dashboard.fullname" . }}
     weight: 100
+  {{- if and .Values.oauth-enabled (eq .Values.clusterType "openshift") }}
   port:
-    targetPort: http
+    targetPort: proxy
   tls:
     termination: Reencrypt
     insecureEdgeTerminationPolicy: Redirect
+  {{- else }}
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  {{- end }}
   wildcardPolicy: None
 {{- end }}
