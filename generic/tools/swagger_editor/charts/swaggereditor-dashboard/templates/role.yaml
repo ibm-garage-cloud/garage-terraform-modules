@@ -2,12 +2,13 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ template "catalyst-dashboard.name" . }}-agent
-  labels:
-    "app.kubernetes.io/name": {{ template "catalyst-dashboard.name" . }}
-    "helm.sh/chart": {{ template "catalyst-dashboard.chart" . }}
-    "app.kubernetes.io/instance": {{ .Release.Name }}
-    "app.kubernetes.io/component": {{ template "catalyst-dashboard.name" . }}-role
+  namespace: {{ .Release.Namespace }}
 rules:
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    verbs: ["*"]
+  - apiGroups:
+      - security.openshift.io
+    resourceNames:
+      - privileged
+    resources:
+      - securitycontextconstraints
+    verbs:
+      - use

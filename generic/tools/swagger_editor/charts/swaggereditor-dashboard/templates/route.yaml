@@ -7,6 +7,15 @@ spec:
   to:
     kind: Service
     name: {{ include "catalyst-dashboard.fullname" . }}
+    weight: 100
+  port:
+    targetPort: http
   tls:
+    {{- if eq .Values.clusterType "openshift-fix" }}
     termination: Reencrypt
+    {{- else }}
+    termination: edge
+    {{- end }}
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
 {{- end }}
