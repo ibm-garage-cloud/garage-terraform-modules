@@ -18,24 +18,14 @@ variable "cluster_id" {
   description = "Id of the cluster"
 }
 
-variable "tools_namespace" {
-  type        = string
-  description = "Tools namespace"
+variable "namespace_count" {
+  type        = number
+  description = "The number of namespaces"
 }
 
-variable "dev_namespace" {
-  type        = string
-  description = "Development namespace"
-}
-
-variable "test_namespace" {
-  type        = string
-  description = "Test namespace"
-}
-
-variable "staging_namespace" {
-  type        = string
-  description = "Staging namespace"
+variable "namespaces" {
+  type        = list(string)
+  description = "Namespaces"
 }
 
 variable "cluster_type" {
