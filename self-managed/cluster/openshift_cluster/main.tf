@@ -2,7 +2,8 @@ provider "null" {
 }
 
 locals {
-  config_file_path       = ""
+  cluster_config_dir    = "${var.kubeconfig_download_dir}/.kube"
+  config_file_path       = "${local.cluster_config_dir}/config"
   config_namespace       = "default"
   ibmcloud_apikey_chart  = "${path.module}/charts/ibmcloud"
   cluster_name           = "crc"
