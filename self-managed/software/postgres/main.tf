@@ -1,6 +1,4 @@
 locals {
-  namespaces      = [var.tools_namespace, var.dev_namespace, var.test_namespace, var.staging_namespace]
-  namespace_count = 0
   tmp_dir          = "${path.cwd}/.tmp"
   volume_capacity       = "5Gi"
 }
@@ -9,7 +7,7 @@ resource "null_resource" "postgresql_release" {
   count = var.cluster_type != "kubernetes" ? 1 : 0
 
   triggers = {
-    tools_namespace = var.tools_namespace
+    tools_namespace = var.namespaces[0]
   }
   
   provisioner "local-exec" {
