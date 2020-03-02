@@ -28,7 +28,7 @@ if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
     VALUES="${VALUES},ingress.annotations.ingress\.bluemix\.net/redirect-to-https='True'"
   fi
 else
-  VALUES="ingress.enable=false,route.enabled=true"
+  VALUES="ingress.enabled=false,route.enabled=true"
 fi
 
 echo "*** Generating kube yaml from helm template into ${OUTPUT_YAML}"
@@ -41,7 +41,7 @@ helm template ${CHART} \
     --set database.name=${DATABASE_NAME} > ${OUTPUT_YAML}
 
 echo "*** Applying kube yaml ${OUTPUT_YAML}"
-kubectl apply -n ${NAMESPACE} -f ${OUTPUT_YAML}
+kubectl apply -n ${NAMESPACE} -f ${OUTPUT_YAML} --validate=false
 
 if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
   sleep 5

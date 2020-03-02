@@ -14,7 +14,7 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.image.port }}
       protocol: TCP
-      name: http
+      name: {{ .Values.service.portName }}
   selector:
     app.kubernetes.io/name: {{ include "pact-broker.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

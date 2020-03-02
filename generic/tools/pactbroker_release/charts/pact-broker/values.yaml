@@ -8,7 +8,7 @@ group: catalyst-tools
 
 image:
   repository: pactfoundation/pact-broker
-  tag: 2.32.0-2
+  tag: 2.50.1-1
   pullPolicy: IfNotPresent
   port: 9292
 
@@ -26,10 +26,12 @@ fullnameOverride: ""
 service:
   type: ClusterIP
   port: 80
+  portName: http
 
 route:
   enabled: false
   termination: edge
+  insecure: Redirect
 
 ingress:
   enabled: true
