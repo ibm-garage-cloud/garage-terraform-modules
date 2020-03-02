@@ -28,7 +28,7 @@ if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
     VALUES="${VALUES},ingress.annotations.ingress\.bluemix\.net/redirect-to-https='True'"
   fi
 else
-  VALUES="ingress.enable=false,route.enabled=true"
+  VALUES="ingress.enabled=false,route.enabled=true"
 fi
 
 echo "*** Generating kube yaml from helm template into ${OUTPUT_YAML}"
