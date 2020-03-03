@@ -1,5 +1,4 @@
 locals {
-  namespace_count = 0
   tmp_dir          = "${path.cwd}/.tmp"
   volume_capacity       = "5Gi"
 }
