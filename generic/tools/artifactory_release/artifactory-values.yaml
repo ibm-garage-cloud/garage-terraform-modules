@@ -8,6 +8,7 @@ artifactory:
   persistence:
     enabled: true
     size: 5Gi
+  uid: 0
 
 ingress:
   enabled: true
