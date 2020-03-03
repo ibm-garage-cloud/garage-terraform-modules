@@ -45,9 +45,9 @@ mkdir -p "${KUSTOMIZE_DIR}"
 cp -R "${KUSTOMIZE_TEMPLATE}" "${KUSTOMIZE_DIR}"
 
 echo "*** Fetching helm chart artifactory:${CHART_VERSION} from ${CHART_REPO}"
-mkdir -p ${CHART_DIR}
-helm init --client-only
-helm fetch --repo "${CHART_REPO}" --untar --untardir "${CHART_DIR}" --version ${CHART_VERSION} artifactory
+#mkdir -p ${CHART_DIR}
+#helm init --client-only
+#helm fetch --repo "${CHART_REPO}" --untar --untardir "${CHART_DIR}" --version "${CHART_VERSION}" artifactory
 
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
   VALUES="ingress.hosts.0=${INGRESS_HOST}"
@@ -60,10 +60,11 @@ else
   VALUES="ingress.enabled=false"
 fi
 
+helm3 repo add artifactory-repo ${CHART_REPO}
+
 echo "*** Generating kube yaml from helm template into ${ARTIFACTORY_OUTPUT_YAML}"
-helm template "${ARTIFACTORY_CHART}" \
+helm3 template artifactory artifactory-repo/artifactory \
     --namespace "${NAMESPACE}" \
-    --name "artifactory" \
     --set "${VALUES}" \
     --set artifactory.persistence.storageClass="${STORAGE_CLASS}" \
     --set "serviceAccount.create=false" \
@@ -94,7 +95,15 @@ if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] |
   URL="https://${ARTIFACTORY_HOST}"
 fi
 
-if [[ ! $(command -v igc) ]]; then
-  npm i -g @ibmgaragecloud/cloud-native-toolkit-cli
-fi
-igc tool-config --name artifactory --url "${URL}" --username admin --password password
+helm3 repo add toolkit-charts https://ibm-garage-cloud.github.io/toolkit-charts/
+helm3 template artifactory-config toolkit-charts/tool-config \
+  --namespace "${NAMESPACE}" \
+  --set name=artifactory \
+  --set username=admin \
+  --set password=password \
+  --set url="${URL}" \
+  --set otherSecrets.encrypt="" \
+  --set otherSecrets.ADMIN_ACCESS_USER="admin-access" \
+  --set otherSecrets.ADMIN_ACCESS_PASSWORD="admin" > "${SECRET_OUTPUT_YAML}"
+
+kubectl apply -n "${NAMESPACE}" -f "${SECRET_OUTPUT_YAML}"
