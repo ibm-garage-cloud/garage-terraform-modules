@@ -26,10 +26,12 @@ fullnameOverride: ""
 service:
   type: ClusterIP
   port: 80
+  portName: http
 
 route:
   enabled: false
   termination: edge
+  insecure: Redirect
 
 ingress:
   enabled: true
