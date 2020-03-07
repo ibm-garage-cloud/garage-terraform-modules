@@ -3,9 +3,14 @@ variable "cluster_config_file" {
   description = "Cluster config file for Kubernetes cluster."
 }
 
-variable "releases_namespace" {
+variable "tools_namespace" {
   type        = string
-  description = "Name of the existing namespace where the Helm Releases will be deployed."
+  description = "Name of the existing namespace where tools are deployed."
+}
+
+variable "ci_namespace" {
+  type        = string
+  description = "Name of the existing namespace where the CI deployments will be validated."
 }
 
 variable "cluster_ingress_hostname" {

@@ -14,7 +14,7 @@ resource "null_resource" "jenkins_release_iks" {
 
   triggers = {
     kubeconfig         = var.cluster_config_file
-    releases_namespace = var.releases_namespace
+    releases_namespace = var.tools_namespace
   }
 
   provisioner "local-exec" {
@@ -42,7 +42,7 @@ resource "null_resource" "jenkins_release_openshift" {
   count = var.cluster_type != "kubernetes" ? 1 : 0
 
   triggers = {
-    releases_namespace = var.releases_namespace
+    releases_namespace = var.ci_namespace
   }
 
   provisioner "local-exec" {
