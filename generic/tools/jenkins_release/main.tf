@@ -42,11 +42,12 @@ resource "null_resource" "jenkins_release_openshift" {
   count = var.cluster_type != "kubernetes" ? 1 : 0
 
   triggers = {
-    releases_namespace = var.ci_namespace
+    ci_namespace = var.ci_namespace
+    tools_namespace = var.ci_namespace
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deploy-jenkins-openshift.sh ${self.triggers.releases_namespace} ${var.volume_capacity} ${var.storage_class}"
+    command = "${path.module}/scripts/deploy-jenkins-openshift.sh ${self.triggers.ci_namespace} ${self.triggers.tools_namespace}"
 
     environment = {
       TMP_DIR    = local.tmp_dir
@@ -56,6 +57,6 @@ resource "null_resource" "jenkins_release_openshift" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "${path.module}/scripts/destroy-jenkins.sh ${self.triggers.releases_namespace}"
+    command = "${path.module}/scripts/destroy-jenkins.sh ${self.triggers.ci_namespace} ${self.triggers.tools_namespace}"
   }
 }
