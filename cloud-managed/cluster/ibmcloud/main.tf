@@ -1,5 +1,4 @@
 provider "ibm" {
-  version = "1.2.1"
 }
 provider "helm" {
   kubernetes {
@@ -38,7 +37,7 @@ locals {
   cluster_name          = var.cluster_name != "" ? var.cluster_name : join("-", local.name_list)
   tmp_dir               = "${path.cwd}/.tmp"
   config_namespace      = "default"
-  config_file_path      = var.cluster_type == "kubernetes" ? data.ibm_container_cluster_config.cluster.config_file_path : ""
+  config_file_path      = var.cluster_type == "kubernetes" ? data.ibm_container_cluster_config.cluster[0].config_file_path : ""
   cluster_type_tag      = var.cluster_type == "kubernetes" ? "iks" : "ocp"
   server_url            = data.ibm_container_cluster.config.public_service_endpoint_url
   ingress_hostname      = data.ibm_container_cluster.config.ingress_hostname
@@ -88,6 +87,7 @@ resource "null_resource" "create_cluster_config_dir" {
 }
 
 data "ibm_container_cluster_config" "cluster" {
+  count = var.cluster_type == "kubernetes" ? 1 : 0
   depends_on        = [
     ibm_container_cluster.create_cluster,
     null_resource.ibmcloud_login,
@@ -150,11 +150,11 @@ resource "null_resource" "setup_kube_config" {
   count = var.cluster_type == "kubernetes" ? 1 : 0
 
   provisioner "local-exec" {
-    command = "rm -f ${local.cluster_config_dir}/config && ln -s ${data.ibm_container_cluster_config.cluster.config_file_path} ${local.cluster_config_dir}/config"
+    command = "rm -f ${local.cluster_config_dir}/config && ln -s ${data.ibm_container_cluster_config.cluster[0].config_file_path} ${local.cluster_config_dir}/config"
   }
 
   provisioner "local-exec" {
-    command = "cp ${regex("(.*)/config.yml", data.ibm_container_cluster_config.cluster.config_file_path)[0]}/* ${local.cluster_config_dir}"
+    command = "cp ${regex("(.*)/config.yml", data.ibm_container_cluster_config.cluster[0].config_file_path)[0]}/* ${local.cluster_config_dir}"
   }
 }
 
