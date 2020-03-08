@@ -43,7 +43,7 @@ resource "null_resource" "jenkins_release_openshift" {
 
   triggers = {
     ci_namespace = var.ci_namespace
-    tools_namespace = var.ci_namespace
+    tools_namespace = var.tools_namespace
   }
 
   provisioner "local-exec" {
