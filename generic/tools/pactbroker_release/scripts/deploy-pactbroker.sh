@@ -41,7 +41,7 @@ helm template ${CHART} \
     --set database.name=${DATABASE_NAME} > ${OUTPUT_YAML}
 
 echo "*** Applying kube yaml ${OUTPUT_YAML}"
-kubectl apply -n ${NAMESPACE} -f ${OUTPUT_YAML}
+kubectl apply -n ${NAMESPACE} -f ${OUTPUT_YAML} --validate=false
 
 if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
   sleep 5
