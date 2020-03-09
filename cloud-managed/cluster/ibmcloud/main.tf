@@ -78,6 +78,7 @@ data "ibm_container_cluster" "config" {
   depends_on = [ibm_container_cluster.create_cluster]
 
   cluster_name_id   = local.cluster_name
+  alb_type          = "public"
   resource_group_id = data.ibm_resource_group.resource_group.id
 }
 
