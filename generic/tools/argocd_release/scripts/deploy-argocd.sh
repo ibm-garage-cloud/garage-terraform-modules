@@ -77,7 +77,7 @@ if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] |
   sleep 5
 
   oc project "${NAMESPACE}"
-  oc create route passthrough argocd --service=argocd-server --port=https --insecure-policy=Redirect
+  oc create route reencrypt argocd --service=argocd-server --port=https --insecure-policy=Redirect
 
   HOST=$(oc get route argocd -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
 
