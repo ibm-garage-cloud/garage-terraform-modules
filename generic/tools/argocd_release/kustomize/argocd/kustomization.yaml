@@ -6,3 +6,10 @@ resources:
 patchesStrategicMerge:
  - solsa/argocd-reposerver.yaml
  - solsa/argocd-cm.yaml
+patchesJson6902:
+ - path: patch-dex-deployment.yaml
+   target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: argocd-dex-server
