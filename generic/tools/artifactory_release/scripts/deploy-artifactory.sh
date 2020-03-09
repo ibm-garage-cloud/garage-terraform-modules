@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd $(dirname $0); pwd -P)"
+MODULE_DIR=$(cd "${SCRIPT_DIR}/.."; pwd -P)
 LOCAL_CHART_DIR=$(cd "${SCRIPT_DIR}/../charts"; pwd -P)
 LOCAL_KUSTOMIZE_DIR=$(cd "${SCRIPT_DIR}/../kustomize"; pwd -P)
 
@@ -37,6 +38,7 @@ ARTIFACTORY_KUSTOMIZE="${KUSTOMIZE_DIR}/artifactory"
 NAME="artifactory"
 ARTIFACTORY_OUTPUT_YAML="${ARTIFACTORY_KUSTOMIZE}/base.yaml"
 
+CONFIG_VALUES_FILE="${MODULE_DIR}/artifactory-config-values.yaml"
 OUTPUT_YAML="${TMP_DIR}/artifactory.yaml"
 SECRET_OUTPUT_YAML="${TMP_DIR}/artifactory-secret.yaml"
 
@@ -67,9 +69,6 @@ helm3 template artifactory artifactory-repo/artifactory \
     --namespace "${NAMESPACE}" \
     --set "${VALUES}" \
     --set artifactory.persistence.storageClass="${STORAGE_CLASS}" \
-    --set "serviceAccount.create=false" \
-    --set "serviceAccount.name=artifactory-artifactory" \
-    --set "artifactory.uid=0" \
     --values "${VALUES_FILE}" > "${ARTIFACTORY_OUTPUT_YAML}"
 
 if [[ -n "${TLS_SECRET_NAME}" ]]; then
@@ -98,12 +97,7 @@ fi
 helm3 repo add toolkit-charts https://ibm-garage-cloud.github.io/toolkit-charts/
 helm3 template artifactory-config toolkit-charts/tool-config \
   --namespace "${NAMESPACE}" \
-  --set name=artifactory \
-  --set username=admin \
-  --set password=password \
   --set url="${URL}" \
-  --set otherSecrets.encrypt="" \
-  --set otherSecrets.ADMIN_ACCESS_USER="admin-access" \
-  --set otherSecrets.ADMIN_ACCESS_PASSWORD="admin" > "${SECRET_OUTPUT_YAML}"
+  --values "${CONFIG_VALUES_FILE}" > "${SECRET_OUTPUT_YAML}"
 
 kubectl apply -n "${NAMESPACE}" -f "${SECRET_OUTPUT_YAML}"
