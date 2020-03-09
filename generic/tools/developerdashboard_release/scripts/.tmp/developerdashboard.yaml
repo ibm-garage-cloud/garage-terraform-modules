@@ -1,0 +1,136 @@
+---
+# Source: developer-dashboard/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: developer-dashboard
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"dashboard"}}'
+  labels:
+    "app.kubernetes.io/name": developer-dashboard
+    "helm.sh/chart": developer-dashboard-0.1.0
+    "app.kubernetes.io/instance": developer-dashboard
+    "app.kubernetes.io/component": developer-dashboard-serviceAccount
+---
+# Source: developer-dashboard/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: developer-dashboard-agent
+  labels:
+    "app.kubernetes.io/name": developer-dashboard
+    "helm.sh/chart": developer-dashboard-0.1.0
+    "app.kubernetes.io/instance": developer-dashboard
+    "app.kubernetes.io/component": developer-dashboard-role
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["*"]
+---
+# Source: developer-dashboard/templates/role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer-dashboard-agent
+  labels:
+    "app.kubernetes.io/name": developer-dashboard
+    "helm.sh/chart": developer-dashboard-0.1.0
+    "app.kubernetes.io/instance": developer-dashboard
+    "app.kubernetes.io/component": developer-dashboard-roleBinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: developer-dashboard-agent
+subjects:
+  - kind: ServiceAccount
+    name: developer-dashboard
+    namespace: tools
+---
+# Source: developer-dashboard/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: developer-dashboard
+  annotations:
+    service.alpha.openshift.io/serving-cert-secret-name: dashboard-tls
+  labels:
+    app: developer-dashboard
+    chart: developer-dashboard-0.1.0
+    release: developer-dashboard
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: developer-dashboard
+    release: developer-dashboard
+---
+# Source: developer-dashboard/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: developer-dashboard
+  labels:
+    app: developer-dashboard
+    chart: developer-dashboard-0.1.0
+    release: developer-dashboard
+    heritage: Helm
+    "app.kubernetes.io/name": developer-dashboard
+    "helm.sh/chart": developer-dashboard-0.1.0
+    "app.kubernetes.io/instance": developer-dashboard
+    "app.kubernetes.io/component": developer-dashboard-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: developer-dashboard
+      release: developer-dashboard
+  template:
+    metadata:
+      labels:
+        app: developer-dashboard
+        release: developer-dashboard
+        "app.kubernetes.io/name": developer-dashboard
+        "helm.sh/chart": developer-dashboard-0.1.0
+        "app.kubernetes.io/instance": developer-dashboard
+        "app.kubernetes.io/component": developer-dashboard-pod
+    spec:
+      serviceAccountName: developer-dashboard
+      containers:
+        - name: developer-dashboard
+          image: "ibmgaragecloud/developer-dashboard:dev"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          envFrom:
+            - configMapRef:
+                name: "ibmcloud-config"
+                optional: true
+          resources:
+            {}
+---
+# Source: developer-dashboard/templates/route.yaml
+apiVersion: v1
+kind: Route
+metadata:
+  name: dashboard
+spec:
+  to:
+    kind: Service
+    name: developer-dashboard
+  tls:
+    termination: Edge

@@ -6,4 +6,4 @@ if [[ -n "${KUBECONFIG_IKS}" ]]; then
     export KUBECONFIG="${KUBECONFIG_IKS}"
 fi
 
-kubectl delete all -n "${NAMESPACE}" -l app=catalyst-dashboard
+kubectl delete all -n "${NAMESPACE}" -l app=developer-dashboard

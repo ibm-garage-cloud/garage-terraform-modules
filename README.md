@@ -4,6 +4,7 @@ This repository contains a collection of terraform modules that
 can be used to provision an environment in an IBM Cloud or OpenShift
 environment.
 
+
 The modules have been organized into three major categories:
 - **cluster** - modules that are related to creating or preparing a cluster for use (e.g. creating namespaces, creating service accounts)
 - **infrastructure** - modules that are related to provisioning infrastructure like Sysdig, LogDNA, Cloudant, and PostgreSQL
@@ -50,3 +51,9 @@ Read the following contribution guidelines to help support the work.
 
 - [Governance Process](./governance.md)
 - [Developer Contribution](./developer_contribution.md)
+
+```
+Current Release : 2.0.6
+```
+
+
