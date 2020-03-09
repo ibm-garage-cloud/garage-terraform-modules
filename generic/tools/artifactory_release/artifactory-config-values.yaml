@@ -1,0 +1,7 @@
+name: artifactory
+username: admin
+password: password
+otherSecrets
+  encrypt: ""
+  ADMIN_ACCESS_USER: admin-access
+  ADMIN_ACCESS_PASSWORD: admin
