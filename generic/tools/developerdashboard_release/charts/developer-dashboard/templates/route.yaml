@@ -6,7 +6,7 @@ metadata:
 spec:
   to:
     kind: Service
-    name: {{ include "catalyst-dashboard.fullname" . }}
+    name: {{ include "developer-dashboard.fullname" . }}
   tls:
-    termination: Reencrypt
+    termination: Edge
 {{- end }}

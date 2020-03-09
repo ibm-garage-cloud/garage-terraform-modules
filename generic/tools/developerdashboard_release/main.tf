@@ -10,7 +10,7 @@ resource "null_resource" "catalystdashboard_release" {
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deploy-catalystdashboard.sh ${self.triggers.releases_namespace} ${var.cluster_type} dashboard ${var.cluster_ingress_hostname} ${var.image_tag} \"${jsonencode(var.tool_config_maps)}\""
+    command = "${path.module}/scripts/deploy-dashboard.sh ${self.triggers.releases_namespace} ${var.cluster_type} dashboard ${var.cluster_ingress_hostname} ${var.image_tag}"
 
     environment = {
       KUBECONFIG  = self.triggers.kubeconfig_iks
@@ -21,7 +21,7 @@ resource "null_resource" "catalystdashboard_release" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "${path.module}/scripts/destroy-catalystdashboard.sh ${self.triggers.releases_namespace}"
+    command = "${path.module}/scripts/destroy-dashboard.sh ${self.triggers.releases_namespace}"
 
     environment = {
       KUBECONFIG = self.triggers.kubeconfig_iks
