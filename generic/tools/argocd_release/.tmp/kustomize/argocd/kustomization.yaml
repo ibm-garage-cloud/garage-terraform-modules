@@ -1,0 +1,8 @@
+commonLabels:
+ app: "argocd"
+resources:
+ - base.yaml
+ - solsa/solsa-cm.yaml
+patchesStrategicMerge:
+ - solsa/argocd-reposerver.yaml
+ - solsa/argocd-cm.yaml
