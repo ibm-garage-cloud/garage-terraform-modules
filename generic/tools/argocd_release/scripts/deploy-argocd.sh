@@ -33,17 +33,9 @@ ARGOCD_BASE_KUSTOMIZE="${ARGOCD_KUSTOMIZE}/base.yaml"
 ARGOCD_SOLSACM_KUSTOMIZE="${ARGOCD_KUSTOMIZE}/solsa/solsa-cm.yaml"
 
 ARGOCD_YAML="${TMP_DIR}/argocd.yaml"
+SECRET_OUTPUT_YAML="${TMP_DIR}/argocd-secret.yaml"
 
-HELM_REPO="https://ibm-garage-cloud.github.io/argo-helm/"
-
-echo "*** Fetching the helm chart from ${HELM_REPO}"
-mkdir -p ${CHART_DIR}
-helm init --client-only
-helm fetch --repo ${HELM_REPO} \
-    --untar \
-    --untardir ${CHART_DIR} \
-    --version ${VERSION} \
-    ${CHART_NAME}
+HELM_REPO="https://argoproj.github.io/argo-helm/"
 
 echo "*** Setting up kustomize directory"
 mkdir -p "${KUSTOMIZE_DIR}"
@@ -60,15 +52,17 @@ if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
   fi
 fi
 
+helm3 repo add argo ${HELM_REPO}
+
 echo "*** Generating kube yaml from helm template into ${ARGOCD_BASE_KUSTOMIZE}"
-helm template "${ARGOCD_CHART}" \
+helm3 template argocd "argo/${CHART_NAME}" \
+    --version "${VERSION}" \
     --namespace "${NAMESPACE}" \
-    --name "argocd" \
     --set "${HELM_VALUES}" > ${ARGOCD_BASE_KUSTOMIZE}
 
 echo "*** Generating solsa-cm yaml from helm template into ${ARGOCD_SOLSACM_KUSTOMIZE}"
-helm template ${SOLSACM_CHART} \
-    --namespace ${NAMESPACE} \
+helm3 template solsacm "${SOLSACM_CHART}" \
+    --namespace "${NAMESPACE}" \
     --set ingress.subdomain="${INGRESS_SUBDOMAIN}" \
     --set ingress.tlssecret="${TLS_SECRET_NAME}" > ${ARGOCD_SOLSACM_KUSTOMIZE}
 
@@ -82,8 +76,8 @@ kubectl apply -n "${NAMESPACE}" -f "${ARGOCD_YAML}"
 if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
   sleep 5
 
-  oc project ${NAMESPACE}
-  oc create route edge argocd --service=argocd-server --port=https --insecure-policy=Redirect
+  oc project "${NAMESPACE}"
+  oc create route passthrough argocd --service=argocd-server --port=https --insecure-policy=Redirect
 
   HOST=$(oc get route argocd -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
 
@@ -93,8 +87,12 @@ fi
 sleep 5
 PASSWORD=$(kubectl get pods -n tools -l app.kubernetes.io/name=argocd-server -o jsonpath='{.items[0].metadata.name}')
 
+helm3 repo add toolkit-charts https://ibm-garage-cloud.github.io/toolkit-charts/
+helm3 template argocd-config toolkit-charts/tool-config \
+  --namespace "${NAMESPACE}" \
+  --set name=argocd \
+  --set username=admin \
+  --set password="${PASSWORD}" \
+  --set url="${URL}" > "${SECRET_OUTPUT_YAML}"
 
-if [[ ! $(command -v igc) ]]; then
-  npm i -g @ibmgaragecloud/cloud-native-toolkit-cli
-fi
-igc tool-config --name argocd --url "${URL}" --username admin --password "${PASSWORD}"
+kubectl apply -n "${NAMESPACE}" -f "${SECRET_OUTPUT_YAML}"
