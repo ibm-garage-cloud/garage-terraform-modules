@@ -17,12 +17,6 @@ variable "cluster_type" {
   description = "The cluster type (openshift or kubernetes)"
 }
 
-variable "tool_config_maps" {
-  type = "list"
-  description = "The list of config maps containing connectivity information for tools"
-  default = []
-}
-
 variable "tls_secret_name" {
   description = "The name of the secret containing the tls certificate values"
   default     = ""
