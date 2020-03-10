@@ -81,6 +81,30 @@ if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] |
   HOST=$(oc get route argocd -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
 
   URL="https://${HOST}"
+
+  DEX_TOKEN=$(oc serviceaccounts get-token argocd-dex-server)
+  OAUTH_URL="https://${HOST}/api/dex/callback"
+  SERVER_URL=$(oc whoami --show-server)
+
+  oc patch serviceaccount argocd-dex-server -n "${NAMESPACE}" --type='json' -p="[{\"op\": \"add\", \"path\": \"/metadata/annotations/serviceaccounts.openshift.io~1oauth-redirecturi.argocd\", \"value\":\"${OAUTH_URL\"}]"
+
+  cat > "${MODULE_DIR}/argocd-patch.yaml" << EOL
+data:
+  url: ${URL}
+  dex.config: |
+    connectors:
+    - type: openshift
+      id: openshift
+      name: OpenShift
+      config:
+        issuer: ${SERVER_URL}
+        clientID: system:serviceaccount:${NAMESPACE}:argocd-dex-server
+        clientSecret: ${DEV_TOKEN}
+        redirectURI: ${OAUTH_URL}
+        insecureCA: true
+EOL
+
+  kubectl patch configmap argocd-cm --type merge --patch "$(cat ${MODULE_DIR}/argocd-patch.yaml)"
 fi
 
 sleep 5
