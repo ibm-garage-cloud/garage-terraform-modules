@@ -44,11 +44,11 @@ cp -R "${KUSTOMIZE_TEMPLATE}" "${KUSTOMIZE_DIR}"
 HELM_VALUES="redis.enabled=${ENABLE_ARGO_CACHE}"
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
   HELM_VALUES="${HELM_VALUES},server.ingress.enabled=true,server.ingress.hosts.0=${INGRESS_HOST}"
-  URL="http://${INGRESS_HOST}"
+  URL="http://${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
 
   if [[ -n "${TLS_SECRET_NAME}" ]]; then
-    HELM_VALUES="${HELM_VALUES},server.ingress.tls.0.secretName=${TLS_SECRET_NAME},server.ingress.tls.0.hosts.0=${INGRESS_HOST}"
-    URL="https://${INGRESS_HOST}"
+    HELM_VALUES="${HELM_VALUES},server.ingress.tls.0.secretName=${TLS_SECRET_NAME},server.ingress.tls.0.hosts.0=${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
+    URL="https://${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
   fi
 fi
 
@@ -76,8 +76,7 @@ kubectl apply -n "${NAMESPACE}" -f "${ARGOCD_YAML}"
 if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
   sleep 5
 
-  oc project "${NAMESPACE}"
-  oc create route reencrypt argocd --service=argocd-server --port=https --insecure-policy=Redirect
+  oc create route reencrypt argocd --service=argocd-server --port=https --insecure-policy=Redirect -n "${NAMESPACE}"
 
   HOST=$(oc get route argocd -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
 
