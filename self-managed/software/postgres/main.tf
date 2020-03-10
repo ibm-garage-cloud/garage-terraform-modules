@@ -1,13 +1,13 @@
 locals {
   tmp_dir          = "${path.cwd}/.tmp"
-  volume_capacity       = "5Gi"
 }
 
 resource "null_resource" "postgresql_release" {
-  count = var.cluster_type != "kubernetes" ? 1 : 0
+  count = var.cluster_type != "kubernetes" || var.server_exists != "true" ? 1 : 0
 
   triggers = {
     tools_namespace = var.namespaces[0]
+    app_name = var.postgresql_database
   }
   
   provisioner "local-exec" {
@@ -24,6 +24,6 @@ resource "null_resource" "postgresql_release" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "${path.module}/scripts/destroy-postgres.sh ${self.triggers.tools_namespace}"
+    command = "${path.module}/scripts/destroy-postgres.sh ${self.triggers.tools_namespace} ${self.triggers.app_name}"
   }
 }
