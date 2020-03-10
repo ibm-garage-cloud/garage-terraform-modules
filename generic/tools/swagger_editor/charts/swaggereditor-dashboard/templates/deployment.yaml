@@ -30,7 +30,7 @@ spec:
       serviceAccountName: {{ include "catalyst-dashboard.name" . }}
       volumes:
         - name: cache
-          empty-dir: {}
+          emptyDir: {}
       {{- if eq .Values.clusterType "openshift-fix" }}
         - name: proxy-tls
           secret:
