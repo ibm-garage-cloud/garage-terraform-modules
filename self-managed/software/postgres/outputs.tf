@@ -10,13 +10,15 @@ output "postgresql_service_account_password" {
 }
 
 output "postgresql_hostname" {
-    value     = "postgresql"
+  value     = "postgresql"
   description = "Hostname for the Databases for PostgreSQL instance."
+  depends_on  = [null_resource.postgresql_release]
 }
 
 output "postgresql_port" {
   value       = "5432"
   description = "Port for the Databases for PostgreSQL instance."
+  depends_on  = [null_resource.postgresql_release]
 }
 
 output "postgresql_database_name" {
