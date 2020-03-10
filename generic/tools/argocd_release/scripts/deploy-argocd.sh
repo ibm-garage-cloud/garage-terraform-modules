@@ -76,7 +76,7 @@ kubectl apply -n "${NAMESPACE}" -f "${ARGOCD_YAML}"
 if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
   sleep 5
 
-  oc create route reencrypt argocd --service=argocd-server --port=https --insecure-policy=Redirect -n "${NAMESPACE}"
+  oc create route passthrough argocd --service=argocd-server --port=https --insecure-policy=Redirect -n "${NAMESPACE}"
 
   HOST=$(oc get route argocd -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
 
