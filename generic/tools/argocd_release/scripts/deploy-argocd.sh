@@ -58,6 +58,7 @@ echo "*** Generating kube yaml from helm template into ${ARGOCD_BASE_KUSTOMIZE}"
 helm3 template argocd "argo/${CHART_NAME}" \
     --version "${VERSION}" \
     --namespace "${NAMESPACE}" \
+    --set installCRDs=true \
     --set "${HELM_VALUES}" > ${ARGOCD_BASE_KUSTOMIZE}
 
 echo "*** Generating solsa-cm yaml from helm template into ${ARGOCD_SOLSACM_KUSTOMIZE}"
