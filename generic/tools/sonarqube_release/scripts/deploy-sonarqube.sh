@@ -118,6 +118,6 @@ igc tool-config --name sonarqube --url "${SONARQUBE_URL}" --username admin --pas
 echo "*** Waiting for Sonarqube"
 until ${SCRIPT_DIR}/checkPodRunning.sh sonarqube-sonarqube; do
     echo '>>> waiting for Sonarqube'
-    sleep 300
+    sleep 120
 done
 echo '>>> Sonarqube has started'
