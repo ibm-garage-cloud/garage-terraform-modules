@@ -6,13 +6,27 @@ locals {
 }
 
 resource "null_resource" "tekton_resources" {
+
+  triggers = {
+    kubeconfig         = var.cluster_config_file_path
+    tools_namespace    = var.tools_namespace
+  }
+
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deploy-tekton-resources.sh ${var.resource_namespace} ${var.pre_tekton}"
+    command = "${path.module}/scripts/deploy-tekton-resources.sh ${self.triggers.tools_namespace} ${var.pre_tekton}"
 
     environment = {
-      KUBECONFIG   = "${var.cluster_config_file_path}"
+      KUBECONFIG       = self.triggers.kubeconfig
       TMP_DIR          = "${local.tmp_dir}"
-      TEKTON_NAMESPACE = "${var.tekton_namespace}"
+    }
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "${path.module}/scripts/destroy-tekton-resources.sh ${self.triggers.tools_namespace}"
+
+    environment = {
+      KUBECONFIG = self.triggers.kubeconfig
     }
   }
 }
