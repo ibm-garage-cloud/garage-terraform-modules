@@ -2,7 +2,7 @@
 
 print_usage() {
     echo "Missing required arguments"
-    echo "Usage: $0 {CONFIGMAP_NAME} {TO_NAMESPACE} [{FROM_NAMESPACE}]"
+    echo "Usage: $0 {CONFIGMAP_NAME} {TO_NAMESPACE}"
 }
 
 if [[ -z "$1" ]]; then
