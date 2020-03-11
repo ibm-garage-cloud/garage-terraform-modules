@@ -56,9 +56,10 @@ helm3 repo add argo ${HELM_REPO}
 
 echo "*** Generating kube yaml from helm template into ${ARGOCD_BASE_KUSTOMIZE}"
 helm3 template argocd "argo/${CHART_NAME}" \
+    --include-crds \
     --version "${VERSION}" \
     --namespace "${NAMESPACE}" \
-    --set installCRDs=true \
+    --set installCRDs=false \
     --set "${HELM_VALUES}" > ${ARGOCD_BASE_KUSTOMIZE}
 
 echo "*** Generating solsa-cm yaml from helm template into ${ARGOCD_SOLSACM_KUSTOMIZE}"
