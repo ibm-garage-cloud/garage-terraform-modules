@@ -13,7 +13,7 @@ resource "null_resource" "delete_namespace" {
   count  = var.create_namespace ? 1 : 0
 
   provisioner "local-exec" {
-    command = "kubectl delete namespace ${var.namespace} --wait 1> /dev/null 2> /dev/null || exit 0"
+    command = "kubectl delete namespace ${var.namespace} --wait=true 1> /dev/null 2> /dev/null || exit 0"
 
     environment={
       KUBECONFIG = var.cluster_config_file_path
@@ -34,7 +34,7 @@ resource "null_resource" "delete_serviceaccount" {
   depends_on = [kubernetes_namespace.create]
 
   provisioner "local-exec" {
-    command = "kubectl delete serviceaccount -n ${var.namespace} ${var.service_account_name} 1> /dev/null 2> /dev/null || exit 0"
+    command = "kubectl delete serviceaccount -n ${var.namespace} ${var.service_account_name} --wait=true 1> /dev/null 2> /dev/null || exit 0"
 
     environment={
       KUBECONFIG = var.cluster_config_file_path
