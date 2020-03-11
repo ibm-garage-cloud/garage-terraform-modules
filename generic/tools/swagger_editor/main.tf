@@ -4,7 +4,7 @@ locals {
 }
 
 resource "null_resource" "swaggereditor_release" {
-  triggers {
+  triggers = {
     namespace = var.releases_namespace
   }
 
