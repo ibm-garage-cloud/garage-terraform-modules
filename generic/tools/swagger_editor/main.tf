@@ -4,8 +4,12 @@ locals {
 }
 
 resource "null_resource" "swaggereditor_release" {
+  triggers {
+    namespace = var.releases_namespace
+  }
+
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deploy-swaggereditor.sh ${var.releases_namespace} ${var.cluster_type} apieditor ${var.cluster_ingress_hostname} ${var.image_tag}"
+    command = "${path.module}/scripts/deploy-swaggereditor.sh ${self.triggers.namespace} ${var.cluster_type} apieditor ${var.cluster_ingress_hostname} ${var.image_tag}"
 
     environment = {
       KUBECONFIG_IKS  = var.cluster_config_file
@@ -16,9 +20,10 @@ resource "null_resource" "swaggereditor_release" {
 
   provisioner "local-exec" {
     when    = "destroy"
-    command = "${path.module}/scripts/destroy-swaggereditor.sh ${var.releases_namespace}"
+    command = "${path.module}/scripts/destroy-swaggereditor.sh ${self.triggers.namespace}"
 
     environment = {
+      KUBECONFIG_IKS = var.cluster_config_file
       KUBECONFIG_IKS = var.cluster_config_file
     }
   }
