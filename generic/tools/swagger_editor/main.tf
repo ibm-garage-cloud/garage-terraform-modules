@@ -20,7 +20,7 @@ resource "null_resource" "swaggereditor_release" {
   }
 
   provisioner "local-exec" {
-    when    = "destroy"
+    when    = destroy
     command = "${path.module}/scripts/destroy-swaggereditor.sh ${self.triggers.namespace}"
 
     environment = {
