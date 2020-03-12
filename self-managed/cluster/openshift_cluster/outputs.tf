@@ -21,13 +21,13 @@ output "region" {
 output "ingress_hostname" {
   value       = var.ingress_subdomain
   description = "Ingress hostname of the cluster."
-  depends_on = ["null_resource.oc_login"]
+  depends_on = [null_resource.oc_login]
 }
 
 output "server_url" {
   value       = var.server_url
   description = "The url of the control server."
-  depends_on = ["null_resource.oc_login"]
+  depends_on = [null_resource.oc_login]
 }
 
 output "config_file_path" {

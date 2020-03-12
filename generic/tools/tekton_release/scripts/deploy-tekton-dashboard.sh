@@ -5,6 +5,7 @@ CHART_DIR=$(cd "${SCRIPT_DIR}/../charts"; pwd -P)
 
 INGRESS_HOST="$1"
 NAMESPACE="$2"
+DASHBOARD_VERSION="$3"
 
 URL="http://${INGRESS_HOST}"
 
@@ -17,8 +18,8 @@ YAML_OUTPUT=${TMP_DIR}/tekton-config.yaml
 
 # installs the tekton dashboard
 # note: The namespace is hardcoded in the dashboard-latest-release file
-kubectl create namespace "${NAMESPACE}" 1> /dev/null 2> /dev/null
-kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.2.1/dashboard-latest-release.yaml
+kubectl create namespace "${NAMESPACE}" 1> /dev/null 2> /dev/null || true
+kubectl apply -n "${NAMESPACE}" --filename https://github.com/tektoncd/dashboard/releases/download/${DASHBOARD_VERSION}/dashboard-latest-release.yaml
 
 # installs the ingress, secret, and configmap
 helm template "${CHART_DIR}/tekton-config" \
