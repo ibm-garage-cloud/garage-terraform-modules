@@ -19,3 +19,15 @@ variable "tools_namespace" {
   type        = string
   description = "The namespace where tools are installed"
 }
+
+variable "tekton_dashboard_version" {
+  type        = string
+  description = "The tekton dashboard version to install"
+  default     = "v0.2.1"
+}
+
+variable "tekton_dashboard_namespace" {
+  type        = string
+  description = "The tekton dashboard version to install"
+  default     = "tekton-pipelines"
+}

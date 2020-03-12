@@ -3,7 +3,6 @@ provider "null" {
 
 locals {
   ingress_host = "tekton.${var.cluster_ingress_hostname}"
-  namespace    = "tekton-pipelines"
 }
 
 resource "null_resource" "tekton" {
@@ -20,14 +19,6 @@ resource "null_resource" "tekton" {
     }
   }
 
-  provisioner "local-exec" {
-    when    = destroy
-    command = "${path.module}/scripts/destroy-tekton.sh"
-
-    environment = {
-      KUBECONFIG = self.triggers.kubeconfig
-    }
-  }
 }
 
 resource "null_resource" "tekton_dashboard" {
@@ -35,11 +26,12 @@ resource "null_resource" "tekton_dashboard" {
 
   triggers = {
     kubeconfig = var.cluster_config_file_path
-    tekton_namespace = local.namespace
+    dashboard_namespace = var.tekton_dashboard_namespace
+    dashboard_version = var.tekton_dashboard_version
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deploy-tekton-dashboard.sh ${local.ingress_host} ${self.triggers.tekton_namespace}"
+    command = "${path.module}/scripts/deploy-tekton-dashboard.sh ${local.ingress_host} ${self.triggers.dashboard_namespace} ${self.triggers.dashboard_version}"
 
     environment = {
       KUBECONFIG = self.triggers.kubeconfig
@@ -48,7 +40,7 @@ resource "null_resource" "tekton_dashboard" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "${path.module}/scripts/destroy-tekton-dashboard.sh ${self.triggers.tekton_namespace}"
+    command = "${path.module}/scripts/destroy-tekton-dashboard.sh ${self.triggers.dashboard_namespace} ${self.triggers.dashboard_version}"
 
     environment = {
       KUBECONFIG = self.triggers.kubeconfig
@@ -62,10 +54,11 @@ resource "null_resource" "copy_cloud_configmap" {
   triggers = {
     kubeconfig         = var.cluster_config_file_path
     tools_namespace    = var.tools_namespace
+    dashboard_namespace = var.tekton_dashboard_namespace
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/copy-configmap-to-namespace.sh tekton-config ${self.triggers.tools_namespace} ${local.namespace}"
+    command = "${path.module}/scripts/copy-configmap-to-namespace.sh tekton-config ${self.triggers.tools_namespace}  ${self.triggers.dashboard_namespace}"
 
     environment = {
       KUBECONFIG = self.triggers.kubeconfig
@@ -74,7 +67,7 @@ resource "null_resource" "copy_cloud_configmap" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "${path.module}/scripts/destroy-configmap.sh tekton-config ${self.triggers.tools_namespace}"
+    command = "${path.module}/scripts/destroy-tekton-configmap-tools.sh tekton-config ${self.triggers.tools_namespace}"
 
     environment = {
       KUBECONFIG = self.triggers.kubeconfig

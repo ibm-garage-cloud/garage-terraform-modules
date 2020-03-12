@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
 
-NAMESPACE="$1"
+SCRIPT_DIR=$(cd $(dirname $0); pwd -P)
+CHART_DIR=$(cd "${SCRIPT_DIR}/../charts"; pwd -P)
 
-# installs the tekton dashboard
-# note: The namespace is hardcoded in the dashboard-latest-release file
-kubectl delete namespace "${NAMESPACE}"  1> /dev/null 2> /dev/null || true
+NAMESPACE="$1"
+DASHBOARD_VERSION="$2"
+
+if [[ -z "${TMP_DIR}" ]]; then
+  TMP_DIR=./tmp
+fi
+
+mkdir -p ${TMP_DIR}
+YAML_OUTPUT=${TMP_DIR}/tekton-config.yaml
+
+# uninstall the tekton dashboard
+kubectl delete -n "${NAMESPACE}" --filename https://github.com/tektoncd/dashboard/releases/download/${DASHBOARD_VERSION}/dashboard-latest-release.yaml || true
+
+# installs the ingress, secret, and configmap
+helm template "${CHART_DIR}/tekton-config" \
+    --name "tekton" \
+    --namespace "${NAMESPACE}" \
+    --set name="tekton" > ${YAML_OUTPUT}
+kubectl delete --namespace "${NAMESPACE}" -f ${YAML_OUTPUT} || true
