@@ -52,7 +52,7 @@ resource "null_resource" "create_sysdig_agent" {
     command = "${path.module}/scripts/bind-sysdig.sh ${local.access_key} ${local.endpoint} ${var.namespace}"
 
     environment = {
-      KUBECONFIG = self.triggers.kubeconfig_iks
+      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
     }
   }
 
@@ -61,7 +61,7 @@ resource "null_resource" "create_sysdig_agent" {
     command = "${path.module}/scripts/unbind-sysdig.sh"
 
     environment = {
-      KUBECONFIG = self.triggers.kubeconfig_iks
+      KUBECONFIG_IKS = self.triggers.kubeconfig_iks
     }
   }
 }
