@@ -9,7 +9,7 @@ resource "null_resource" "tekton_resources" {
 
   triggers = {
     kubeconfig         = var.cluster_config_file_path
-    tools_namespace    = var.tools_namespace
+    tools_namespace    = var.resource_namespace
   }
 
   provisioner "local-exec" {
