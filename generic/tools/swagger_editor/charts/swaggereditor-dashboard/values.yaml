@@ -7,7 +7,7 @@ clusterType: "kubernetes"
 host: "apieditor"
 ingressSubdomain: ""
 
-oauth-enabled: false
+oauthEnabled: false
 
 image:
   repository: docker.io/swaggerapi/swagger-editor

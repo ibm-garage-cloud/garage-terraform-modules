@@ -8,7 +8,7 @@ spec:
     kind: Service
     name: {{ include "catalyst-dashboard.fullname" . }}
     weight: 100
-  {{- if and .Values.oauth-enabled (eq .Values.clusterType "openshift") }}
+  {{- if and .Values.oauthEnabled (eq .Values.clusterType "openshift") }}
   port:
     targetPort: proxy
   tls:
