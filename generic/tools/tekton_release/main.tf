@@ -11,7 +11,7 @@ resource "null_resource" "tekton" {
   triggers = {
     kubeconfig = var.cluster_config_file_path
   }
-  
+
   provisioner "local-exec" {
     command = "${path.module}/scripts/deploy-tekton.sh"
 
@@ -35,10 +35,11 @@ resource "null_resource" "tekton_dashboard" {
 
   triggers = {
     kubeconfig = var.cluster_config_file_path
+    tekton_namespace = local.namespace
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deploy-tekton-dashboard.sh ${local.ingress_host} ${local.namespace}"
+    command = "${path.module}/scripts/deploy-tekton-dashboard.sh ${local.ingress_host} ${self.triggers.tekton_namespace}"
 
     environment = {
       KUBECONFIG = self.triggers.kubeconfig
@@ -47,7 +48,7 @@ resource "null_resource" "tekton_dashboard" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "${path.module}/scripts/destroy-tekton-dashboard.sh ${local.namespace}"
+    command = "${path.module}/scripts/destroy-tekton-dashboard.sh ${self.triggers.tekton_namespace}"
 
     environment = {
       KUBECONFIG = self.triggers.kubeconfig
