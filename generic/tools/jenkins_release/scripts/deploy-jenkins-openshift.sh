@@ -36,8 +36,4 @@ helm template "${CHART_DIR}/pipeline-config" \
 kubectl apply --namespace "${TOOLS_NAMESPACE}" -f ${YAML_OUTPUT}
 
 echo "*** Waiting for Jenkins on ${JENKINS_URL}"
-until curl --insecure -Isf "${JENKINS_URL}/login"; do
-    echo '>>> waiting for Jenkins'
-    sleep 300
-done
-echo '>>> Jenkins has started'
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${JENKINS_URL}/login" 300 6

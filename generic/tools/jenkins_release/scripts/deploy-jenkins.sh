@@ -97,8 +97,4 @@ echo "*** Applying Jenkins yaml to kube"
 kubectl apply -n "${NAMESPACE}" -f "${JENKINS_YAML}"
 
 echo "*** Waiting for Jenkins"
-until curl -Isf --insecure "${JENKINS_URL}/login"; do
-    echo '>>> waiting for Jenkins'
-    sleep 300
-done
-echo '>>> Jenkins has started'
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${JENKINS_URL}/login" 300 6
