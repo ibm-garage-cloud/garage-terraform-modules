@@ -69,4 +69,4 @@ helm3 template "${NAME}" "${CONFIG_CHART}" \
     --set url="${DASHBOARD_URL}" > ${CONFIG_OUTPUT_YAML}
 kubectl apply -n "${NAMESPACE}" -f ${CONFIG_OUTPUT_YAML}
 
-"${SCRIPT_DIR}/waitForEndpoint.sh" "${DASHBOARD_URL}" 300 6
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${DASHBOARD_URL}" 150 12
