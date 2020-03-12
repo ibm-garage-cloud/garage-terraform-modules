@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 NAMESPACE="$1"
+LABEL="$2"
 
 if [[ -n "${KUBECONFIG_IKS}" ]]; then
     export KUBECONFIG="${KUBECONFIG_IKS}"
 fi
 
-kubectl delete all -n "${NAMESPACE}" -l app=swaggereditor
+kubectl delete deployment,ingress,role,rolebinding,route,service,serviceaccount -n "${NAMESPACE}" -l app="${LABEL}"

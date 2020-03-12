@@ -26,3 +26,8 @@ variable "image_tag" {
   description = "The image version tag to use"
   default     = "v3.8.0"
 }
+
+variable "enable_oauth" {
+  description = "Flag indicating if oauth should be applied (only available for OpenShift)"
+  default     = "true"
+}

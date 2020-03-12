@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 
+set -e
+set -x
+
 SCRIPT_DIR=$(cd $(dirname $0); pwd -P)
 MODULE_DIR=$(cd ${SCRIPT_DIR}/..; pwd -P)
 
 NAMESPACE="$1"
-CLUSTER_TYPE="$2"
-INGRESS_HOST="$3"
-INGRESS_SUBDOMAIN="$4"
-IMAGE_TAG="$5"
-CONFIG_MAPS="$6"
+NAME="$2"
+CLUSTER_TYPE="$3"
+INGRESS_HOST="$4"
+INGRESS_SUBDOMAIN="$5"
+IMAGE_TAG="$6"
+ENABLE_OAUTH="$7"
 
 if [[ -n "${KUBECONFIG_IKS}" ]]; then
     export KUBECONFIG="${KUBECONFIG_IKS}"
@@ -22,10 +26,13 @@ if [[ -z "${IMAGE_TAG}" ]]; then
     IMAGE_TAG="latest"
 fi
 
+if [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
+  CLUSTER_TYPE="openshift"
+fi
+
 CHART="${MODULE_DIR}/charts/swaggereditor-dashboard"
 CONFIG_CHART="${MODULE_DIR}/charts/swaggereditor-config"
 
-NAME="swaggereditor"
 OUTPUT_YAML="${TMP_DIR}/swaggereditor.yaml"
 CONFIG_OUTPUT_YAML="${TMP_DIR}/swaggereditor-config.yaml"
 
@@ -49,6 +56,7 @@ helm3 template "${NAME}" "${CHART}" \
     --set "host=${INGRESS_HOST}" \
     --set "ingressSubdomain=${INGRESS_SUBDOMAIN}" \
     --set "image.tag=${IMAGE_TAG}" \
+    --set "oauthEnabled=${ENABLE_OAUTH}" \
     --set "${VALUES}"  > ${OUTPUT_YAML}
 
 SERVICE_ACCOUNT_NAME="swaggereditor-dashboard"
@@ -69,3 +77,6 @@ helm3 template ${NAME} "${CONFIG_CHART}" \
     --namespace "${NAMESPACE}" \
     --set url="${DASHBOARD_URL}" > ${CONFIG_OUTPUT_YAML}
 kubectl apply -n "${NAMESPACE}" -f ${CONFIG_OUTPUT_YAML}
+
+echo "*** Waiting for Swagger"
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${DASHBOARD_URL}" 150 12
