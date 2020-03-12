@@ -101,3 +101,5 @@ helm3 template artifactory-config toolkit-charts/tool-config \
   --values "${CONFIG_VALUES_FILE}" > "${SECRET_OUTPUT_YAML}"
 
 kubectl apply -n "${NAMESPACE}" -f "${SECRET_OUTPUT_YAML}"
+
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${URL}" 150 12
