@@ -19,7 +19,7 @@ git clone https://github.com/ibm-garage-cloud/ibm-garage-tekton-tasks.git "${TAS
 echo "*** Waiting for Tekton API group to be available"
 until oc get tasks
 do
-    echo '>>> waiting for tekton CRD availability'
+    echo '>>> waiting for Tekton APIs availability'
     sleep 60
 done
 echo '>>> Tekton APIs are available'
