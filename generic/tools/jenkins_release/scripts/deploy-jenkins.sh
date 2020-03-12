@@ -97,4 +97,4 @@ echo "*** Applying Jenkins yaml to kube"
 kubectl apply -n "${NAMESPACE}" -f "${JENKINS_YAML}"
 
 echo "*** Waiting for Jenkins"
-"${SCRIPT_DIR}/waitForEndpoint.sh" "${JENKINS_URL}/login" 300 6
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${JENKINS_URL}/login" 150 12

@@ -36,4 +36,4 @@ helm template "${CHART_DIR}/pipeline-config" \
 kubectl apply --namespace "${TOOLS_NAMESPACE}" -f ${YAML_OUTPUT}
 
 echo "*** Waiting for Jenkins on ${JENKINS_URL}"
-"${SCRIPT_DIR}/waitForEndpoint.sh" "${JENKINS_URL}/login" 300 6
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${JENKINS_URL}/login" 150 12
