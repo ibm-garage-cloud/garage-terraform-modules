@@ -19,4 +19,4 @@ else
    TO_NAMESPACE="$2"
 fi
 
-kubectl delete configmap ${CONFIGMAP_NAME} --namespace=${TO_NAMESPACE}
+kubectl delete configmap ${CONFIGMAP_NAME} --namespace=${TO_NAMESPACE} || true
