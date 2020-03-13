@@ -5,7 +5,7 @@ WAIT_COUNT=$3
 count=0
 
 until [[ $(curl -Isf --insecure "${URL}") ]] || \
-  [[ $(curl -Iq "${URL}" | grep "403 Forbidden") ]] || \
+  [[ $(curl -Iq --insecure "${URL}" | grep "403 Forbidden") ]] || \
   [[ $count -eq ${WAIT_COUNT} ]]
 do
     echo ">>> waiting for ${URL} to be available"
