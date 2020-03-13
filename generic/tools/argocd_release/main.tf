@@ -2,7 +2,7 @@ locals {
   tmp_dir      = "${path.cwd}/.tmp"
   chart_name   = "argo-cd"
   enable_cache = var.enable_cache
-  ingress_host = "argocd.${var.cluster_ingress_hostname}"
+  ingress_host = "argocd"
   ingress_subdomain = var.cluster_ingress_hostname
   ingress_url  = "http://${local.ingress_host}"
   config_name  = "argocd-config"

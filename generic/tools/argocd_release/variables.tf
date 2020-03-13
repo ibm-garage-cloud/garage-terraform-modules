@@ -27,7 +27,7 @@ variable "tls_secret_name" {
 variable "helm_version" {
   type        = string
   description = "The version of helm chart that should be deployed"
-  default     = "1.0.0"
+  default     = "1.8.7"
 }
 
 # If enable_cache is not set to true, then Argo will not be able to synchronize
