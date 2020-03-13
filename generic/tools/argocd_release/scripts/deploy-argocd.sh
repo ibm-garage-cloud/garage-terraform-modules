@@ -9,6 +9,7 @@ VERSION="$3"
 INGRESS_HOST="$4"
 INGRESS_SUBDOMAIN="$5"
 ENABLE_ARGO_CACHE="$6"
+ROUTE_TYPE="$7"
 
 if [[ -n "${KUBECONFIG_IKS}" ]]; then
     export KUBECONFIG="${KUBECONFIG_IKS}"
@@ -16,6 +17,10 @@ fi
 
 if [[ -z "${TMP_DIR}" ]]; then
     TMP_DIR=".tmp"
+fi
+
+if [[ -z "${ROUTE_TYPE}" ]]; then
+  ROUTE_TYPE="passthrough"
 fi
 
 KUSTOMIZE_TEMPLATE="${MODULE_DIR}/kustomize/argocd"
@@ -78,7 +83,7 @@ kubectl apply -n "${NAMESPACE}" -f "${ARGOCD_YAML}"
 if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
   sleep 5
 
-  oc create route passthrough argocd --service=argocd-server --port=https --insecure-policy=Redirect -n "${NAMESPACE}"
+  oc create route "${ROUTE_TYPE}" argocd --service=argocd-server --port=https --insecure-policy=Redirect -n "${NAMESPACE}"
 
   HOST=$(oc get route argocd -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
 
@@ -128,3 +133,6 @@ helm3 template argocd-config toolkit-charts/tool-config \
   --set url="${URL}" > "${SECRET_OUTPUT_YAML}"
 
 kubectl apply -n "${NAMESPACE}" -f "${SECRET_OUTPUT_YAML}"
+
+echo "*** Waiting for ArgoCD"
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${URL}" 150 12

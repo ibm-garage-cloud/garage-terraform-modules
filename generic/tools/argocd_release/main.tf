@@ -16,7 +16,7 @@ resource "null_resource" "argocd_release" {
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/deploy-argocd.sh ${local.chart_name} ${self.triggers.releases_namespace} ${var.helm_version} ${local.ingress_host} ${local.ingress_subdomain} ${local.enable_cache}"
+    command = "${path.module}/scripts/deploy-argocd.sh ${local.chart_name} ${self.triggers.releases_namespace} ${var.helm_version} ${local.ingress_host} ${local.ingress_subdomain} ${local.enable_cache} ${var.route_type}"
 
     environment = {
       KUBECONFIG  = self.triggers.kubeconfig_iks

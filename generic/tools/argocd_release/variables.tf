@@ -38,3 +38,9 @@ variable "enable_cache" {
   description = "Enable redis caching layer in Argo CD deployment"
   default     = "true"
 }
+
+variable "route_type" {
+  type        = string
+  description = "The type of route that should be created for OpenShift (passthrough or reencrypt)"
+  default     = "passthrough"
+}
