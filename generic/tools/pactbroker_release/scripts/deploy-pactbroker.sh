@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+set -e
+
+SCRIPT_DIR=$(cd $(dirname $0); pwd -P)
+MODULE_DIR=$(cd ${SCRIPT_DIR}/..; pwd -P)
+
 CHART="$1"
 NAMESPACE="$2"
 INGRESS_HOST="$3"
@@ -17,6 +22,7 @@ fi
 
 NAME="pact-broker"
 OUTPUT_YAML="${TMP_DIR}/pactbroker.yaml"
+SECRET_OUTPUT_YAML="${TMP_DIR}/pactbroker-secret.yaml"
 
 mkdir -p ${TMP_DIR}
 
@@ -32,23 +38,38 @@ else
 fi
 
 echo "*** Generating kube yaml from helm template into ${OUTPUT_YAML}"
-helm init --client-only
-helm template ${CHART} \
-    --namespace ${NAMESPACE} \
-    --name ${NAME} \
+helm3 template ${NAME} "${CHART}" \
+    --namespace "${NAMESPACE}" \
     --set "${VALUES}" \
-    --set database.type=${DATABASE_TYPE} \
-    --set database.name=${DATABASE_NAME} > ${OUTPUT_YAML}
+    --set database.type="${DATABASE_TYPE}" \
+    --set database.name="${DATABASE_NAME}" > ${OUTPUT_YAML}
 
 echo "*** Applying kube yaml ${OUTPUT_YAML}"
 kubectl apply -n ${NAMESPACE} -f ${OUTPUT_YAML} --validate=false
 
 if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
   sleep 5
-  PACTBROKER_HOST=$(oc get route pactbroker -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
+  PACTBROKER_HOST=$(oc get route pact-broker -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
 
-  if [[ ! $(command -v igc) ]]; then
-    npm i -g @ibmgaragecloud/cloud-native-toolkit-cli
+  URL="https://${PACTBROKER_HOST}"
+else
+  PACTBROKER_HOST=$(kubectl get ingress/pact-broker -n "${NAMESPACE}" -o jsonpath='{ .spec.rules[0].host }')
+
+  if [[ -n "${TLS_SECRET_NAME}" ]]; then
+    URL="https://${PACTBROKER_HOST}"
+  else
+    URL="http://${PACTBROKER_HOST}"
   fi
-  igc tools-config --name pactbroker --url "https://${PACTBROKER_HOST}"
 fi
+
+
+helm3 repo add toolkit-charts https://ibm-garage-cloud.github.io/toolkit-charts/
+helm3 template pactbroker-config toolkit-charts/tool-config \
+  --namespace "${NAMESPACE}" \
+  --set name=pactbroker \
+  --set url="${URL}" > "${SECRET_OUTPUT_YAML}"
+
+kubectl apply -n "${NAMESPACE}" -f "${SECRET_OUTPUT_YAML}"
+
+echo "*** Waiting for Pact Broker"
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${URL}" 150 12
