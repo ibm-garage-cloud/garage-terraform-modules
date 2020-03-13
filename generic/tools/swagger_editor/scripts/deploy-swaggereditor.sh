@@ -73,10 +73,13 @@ else
   kubectl apply -n "${NAMESPACE}" -f ${OUTPUT_YAML}
 fi
 
-helm3 template ${NAME} "${CONFIG_CHART}" \
-    --namespace "${NAMESPACE}" \
-    --set url="${DASHBOARD_URL}" > ${CONFIG_OUTPUT_YAML}
-kubectl apply -n "${NAMESPACE}" -f ${CONFIG_OUTPUT_YAML}
+
+helm3 repo add toolkit-charts https://ibm-garage-cloud.github.io/toolkit-charts/
+helm3 template apieditor toolkit-charts/tool-config \
+  --namespace "${NAMESPACE}" \
+  --set app="${NAME}" \
+  --set url="${DASHBOARD_URL}" > "${CONFIG_OUTPUT_YAML}"
+kubectl apply -n "${NAMESPACE}" -f "${CONFIG_OUTPUT_YAML}"
 
 echo "*** Waiting for Swagger"
 "${SCRIPT_DIR}/waitForEndpoint.sh" "${DASHBOARD_URL}" 150 12

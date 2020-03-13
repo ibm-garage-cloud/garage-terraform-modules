@@ -29,5 +29,5 @@ variable "image_tag" {
 
 variable "enable_oauth" {
   description = "Flag indicating if oauth should be applied (only available for OpenShift)"
-  default     = "true"
+  default     = "falae"
 }
