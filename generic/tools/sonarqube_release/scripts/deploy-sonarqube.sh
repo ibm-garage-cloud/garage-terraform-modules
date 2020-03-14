@@ -79,11 +79,11 @@ helm3 template "${NAME}" oteemocharts/sonarqube \
     --namespace "${NAMESPACE}" \
     --set ${VALUES} \
     --set persistence.size="${VOLUME_CAPACITY}" \
-    --set postgresql.postgresServer="${DATABASE_HOST}" \
+    --set postgresql.postgresqlServer="${DATABASE_HOST}" \
+    --set postgresql.postgresqlDatabase="${DATABASE_NAME}" \
+    --set postgresql.postgresqlUsername="${DATABASE_USERNAME}" \
+    --set postgresql.postgresqlPassword="${DATABASE_PASSWORD}" \
     --set postgresql.service.port="${DATABASE_PORT}" \
-    --set postgresql.postgresDatabase="${DATABASE_NAME}" \
-    --set postgresql.postgresUser="${DATABASE_USERNAME}" \
-    --set postgresql.postgresPassword="${DATABASE_PASSWORD}" \
     --set plugins.install=${PLUGIN_YAML} \
     --values "${VALUES_FILE}" > "${SONARQUBE_BASE_KUSTOMIZE}"
 
