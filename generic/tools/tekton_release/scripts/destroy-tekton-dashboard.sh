@@ -12,8 +12,10 @@ DASHBOARD_YAML_FILE_OCP="$5"
 
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
   DASHBOARD_YAML_FILE="${DASHBOARD_YAML_FILE_K8S}"
+  CHART_NAME="tekton-config"
 elif
   DASHBOARD_YAML_FILE="${DASHBOARD_YAML_FILE_OCP}"
+  CHART_NAME="tekton-config-ocp"
 fi
 
 if [[ -z "${TMP_DIR}" ]]; then
@@ -27,7 +29,7 @@ YAML_OUTPUT=${TMP_DIR}/tekton-config.yaml
 kubectl delete -n "${NAMESPACE}" --filename https://github.com/tektoncd/dashboard/releases/download/${DASHBOARD_VERSION}/${DASHBOARD_YAML_FILE} || true
 
 # installs the ingress, secret, and configmap
-helm template "${CHART_DIR}/tekton-config" \
+helm template "${CHART_DIR}/${CHART_NAME}" \
     --name "tekton" \
     --namespace "${NAMESPACE}" \
     --set name="tekton" > ${YAML_OUTPUT}
