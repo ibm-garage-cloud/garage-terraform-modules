@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+set -x
+
 SCRIPT_DIR=$(cd $(dirname $0); pwd -P);
 ROOT_DIR=$(cd "${SCRIPT_DIR}/.."; pwd - P)
 
@@ -18,15 +21,13 @@ if [[ -z "${TMP_DIR}" ]]; then
     TMP_DIR=".tmp"
 fi
 if [[ -z "${CHART_REPO}" ]]; then
-    CHART_REPO="https://kubernetes-charts.storage.googleapis.com/"
+    CHART_REPO="https://oteemo.github.io/charts"
 fi
 
 NAME="sonarqube"
 
 CHART_DIR="${TMP_DIR}/charts"
 KUSTOMIZE_DIR="${TMP_DIR}/kustomize"
-
-SONARQUBE_CHART="${CHART_DIR}/sonarqube"
 
 KUSTOMIZE_TEMPLATE="${ROOT_DIR}/kustomize/sonarqube"
 
@@ -39,10 +40,11 @@ PATCH_DEPLOYMENT_KUSTOMIZE="${SONARQUBE_KUSTOMIZE}/patch-deployment.yaml"
 PATCH_DEPLOYMENT_TEMPLATE="${KUSTOMIZE_TEMPLATE}/patch-deployment.yaml"
 
 SONARQUBE_YAML="${TMP_DIR}/sonarqube.yaml"
+SECRET_OUTPUT_YAML="${TMP_DIR}/sonarqube-secret.yaml"
 
 echo "*** Fetching Sonarqube helm chart from ${CHART_REPO} into ${CHART_DIR}"
 mkdir -p "${CHART_DIR}"
-helm fetch --repo "${CHART_REPO}" --untar --untardir "${CHART_DIR}" --version "${VERSION}" sonarqube
+helm3 repo add oteemocharts ${CHART_REPO}
 
 echo "*** Setting up kustomize directory"
 mkdir -p "${KUSTOMIZE_DIR}"
@@ -52,8 +54,8 @@ echo "*** Updating patch-deployment.yaml with service account"
 cat "${PATCH_DEPLOYMENT_TEMPLATE}" | sed "s/%SERVICE_ACCOUNT_NAME%/${SERVICE_ACCOUNT}/g" > ${PATCH_DEPLOYMENT_KUSTOMIZE}
 
 echo "*** Cleaning up helm chart tests"
-rm "${SONARQUBE_CHART}/templates/sonarqube-test.yaml"
-rm "${SONARQUBE_CHART}/templates/test-config.yaml"
+#rm "${SONARQUBE_CHART}/templates/sonarqube-test.yaml"
+#rm "${SONARQUBE_CHART}/templates/test-config.yaml"
 
 PLUGIN_YAML=$(echo $PLUGINS | sed -E "s/[[](.*)[]]/{\1}/g")
 
@@ -73,10 +75,8 @@ if [[ -n "${STORAGE_CLASS}" ]]; then
 fi
 
 echo "*** Generating sonarqube yaml from helm template with plugins ${PLUGIN_YAML}"
-helm init --client-only
-helm template "${SONARQUBE_CHART}" \
+helm3 template "${NAME}" oteemocharts/sonarqube \
     --namespace "${NAMESPACE}" \
-    --name "${NAME}" \
     --set ${VALUES} \
     --set persistence.size="${VOLUME_CAPACITY}" \
     --set postgresql.postgresServer="${DATABASE_HOST}" \
@@ -115,9 +115,14 @@ if [[ ! $(command -v igc) ]]; then
 fi
 igc tool-config --name sonarqube --url "${SONARQUBE_URL}" --username admin --password admin
 
+helm3 repo add toolkit-charts https://ibm-garage-cloud.github.io/toolkit-charts/
+helm3 template sonarqube toolkit-charts/tool-config \
+  --namespace "${NAMESPACE}" \
+  --set url="${SONARQUBE_URL}" \
+  --set username=admin \
+  --set password=admin > "${SECRET_OUTPUT_YAML}"
+
+kubectl apply -n "${NAMESPACE}" -f "${SECRET_OUTPUT_YAML}"
+
 echo "*** Waiting for Sonarqube"
-until ${SCRIPT_DIR}/checkPodRunning.sh sonarqube-sonarqube; do
-    echo '>>> waiting for Sonarqube'
-    sleep 120
-done
-echo '>>> Sonarqube has started'
+${SCRIPT_DIR}/waitForEndpoint.sh "${SONARQUBE_URL}/about" 120 10

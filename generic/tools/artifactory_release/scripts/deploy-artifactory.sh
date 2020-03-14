@@ -95,7 +95,7 @@ if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] |
 fi
 
 helm3 repo add toolkit-charts https://ibm-garage-cloud.github.io/toolkit-charts/
-helm3 template artifactory-config toolkit-charts/tool-config \
+helm3 template artifactory toolkit-charts/tool-config \
   --namespace "${NAMESPACE}" \
   --set url="${URL}" \
   --values "${CONFIG_VALUES_FILE}" > "${SECRET_OUTPUT_YAML}"
