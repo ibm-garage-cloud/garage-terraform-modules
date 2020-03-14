@@ -27,7 +27,7 @@ variable "revision" {
   default     = "master"
 }
 
-variable "git_slug" {
+variable "git_url" {
   type        = string
   description = "The git url Cloud Native Toolkit Tekton tasks and pipelines"
   default     = "https://github.com/ibm/ibm-garage-tekton-tasks.git"
