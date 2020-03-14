@@ -23,7 +23,7 @@ variable "tools_namespace" {
 variable "tekton_dashboard_version" {
   type        = string
   description = "The tekton dashboard version to install"
-  default     = "v0.2.1"
+  default     = "v0.5.2"
 }
 
 variable "tekton_dashboard_namespace" {
@@ -31,3 +31,16 @@ variable "tekton_dashboard_namespace" {
   description = "The tekton dashboard version to install"
   default     = "tekton-pipelines"
 }
+
+variable "tekton_dashboard_yaml_file_ocp" {
+  type        = string
+  description = "The tekton dashboard yaml file for the release for openshift"
+  default     = "openshift-tekton-dashboard-release.yaml"
+}
+
+variable "tekton_dashboard_yaml_file_k8s" {
+  type        = string
+  description = "The tekton dashboard yaml file for the release for kubernetes"
+  default     = "tekton-dashboard-release.yaml"
+}
+

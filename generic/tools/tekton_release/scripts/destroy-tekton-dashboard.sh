@@ -5,6 +5,16 @@ CHART_DIR=$(cd "${SCRIPT_DIR}/../charts"; pwd -P)
 
 NAMESPACE="$1"
 DASHBOARD_VERSION="$2"
+CLUSTER_TYPE="$3"
+DASHBOARD_YAML_FILE_K8S="$4"
+DASHBOARD_YAML_FILE_OCP="$5"
+
+
+if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
+  DASHBOARD_YAML_FILE="${DASHBOARD_YAML_FILE_K8S}"
+elif
+  DASHBOARD_YAML_FILE="${DASHBOARD_YAML_FILE_OCP}"
+fi
 
 if [[ -z "${TMP_DIR}" ]]; then
   TMP_DIR=./tmp
@@ -14,7 +24,7 @@ mkdir -p ${TMP_DIR}
 YAML_OUTPUT=${TMP_DIR}/tekton-config.yaml
 
 # uninstall the tekton dashboard
-kubectl delete -n "${NAMESPACE}" --filename https://github.com/tektoncd/dashboard/releases/download/${DASHBOARD_VERSION}/dashboard-latest-release.yaml || true
+kubectl delete -n "${NAMESPACE}" --filename https://github.com/tektoncd/dashboard/releases/download/${DASHBOARD_VERSION}/${DASHBOARD_YAML_FILE} || true
 
 # installs the ingress, secret, and configmap
 helm template "${CHART_DIR}/tekton-config" \
