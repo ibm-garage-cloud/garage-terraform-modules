@@ -13,7 +13,7 @@ DASHBOARD_HOST="$6"
 
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
   DASHBOARD_YAML_FILE="${DASHBOARD_YAML_FILE_K8S}"
-elif
+else
   DASHBOARD_YAML_FILE="${DASHBOARD_YAML_FILE_OCP}"
 fi
 
@@ -32,9 +32,11 @@ kubectl apply -n "${NAMESPACE}" --filename https://github.com/tektoncd/dashboard
 
 
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
+
   URL="http://${DASHBOARD_HOST}"
   CHART_NAME="tekton-config"
-elif
+
+else
 
   until [[ $(kubectl get route tekton-dashboard -n ${NAMESPACE} -o jsonpath='{.spec.host}') ]]
   do
@@ -44,6 +46,7 @@ elif
   DASHBOARD_HOST=$(kubectl get route tekton-dashboard -n ${NAMESPACE} -o jsonpath='{.spec.host}')
   URL="https://${DASHBOARD_HOST}"
   CHART_NAME="tekton-config-ocp"
+  
 fi
 # installs the ingress, secret, and configmap
 helm template "${CHART_DIR}/${CHART_NAME}" \
