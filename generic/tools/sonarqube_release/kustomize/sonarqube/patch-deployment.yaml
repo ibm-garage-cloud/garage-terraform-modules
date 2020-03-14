@@ -28,9 +28,3 @@
       - mountPath: /mount/logs
         name: sonarqube
         subPath: logs
-- op: replace
-  path: /spec/template/spec/containers/0/livenessProbe/initialDelaySeconds
-  value: 300
-- op: replace
-  path: /spec/template/spec/containers/0/readinessProbe/initialDelaySeconds
-  value: 300
