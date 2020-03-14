@@ -12,9 +12,9 @@ do
 done
 
 if [[ $count -eq ${WAIT_COUNT} ]]; then
-  echo ">>> Retry count exceeded. ${URL} not avilable"
+  echo ">>> Retry count exceeded. ${URL} not available"
   exit 1
 else
-  echo ">>> ${URL} is avilable"
+  echo ">>> ${URL} is available"
 fi
 
