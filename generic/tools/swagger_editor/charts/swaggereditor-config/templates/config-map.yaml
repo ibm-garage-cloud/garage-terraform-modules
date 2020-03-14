@@ -7,4 +7,4 @@ metadata:
     "app.kubernetes.io/instance": "swaggereditor"
     group: {{ .Values.group }}
 data:
-  DASHBOARD_URL: {{ .Values.url | quote }}
+  APIEDITOR_URL: {{ .Values.url | quote }}
