@@ -44,3 +44,9 @@ variable "tekton_dashboard_yaml_file_k8s" {
   default     = "tekton-dashboard-release.yaml"
 }
 
+variable "tekton_tools_resources_revision" {
+  type        = string
+  description = "The revision Cloud Native Toolkit Tekton tasks and pipelines"
+  default     = "master"
+}
+

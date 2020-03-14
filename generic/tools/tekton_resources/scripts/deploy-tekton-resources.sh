@@ -2,6 +2,7 @@
 
 NAMESPACE="$1"
 PRE_TEKTON="$2"
+REVISION="$3"
 
 if [[ -n "${KUBECONFIG_IKS}" ]]; then
     export KUBECONFIG="${KUBECONFIG_IKS}"
@@ -14,7 +15,7 @@ mkdir -p "${TMP_DIR}"
 
 TASK_DIR="${TMP_DIR}/ibm-garage-tekton-tasks"
 
-git clone https://github.com/ibm-garage-cloud/ibm-garage-tekton-tasks.git "${TASK_DIR}"
+git clone --branch ${REVISION} https://github.com/ibm/ibm-garage-tekton-tasks.git "${TASK_DIR}"
 
 echo "*** Waiting for Tekton API group to be available"
 until oc get tasks
