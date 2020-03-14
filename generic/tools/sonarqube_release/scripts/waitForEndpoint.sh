@@ -4,9 +4,10 @@ WAIT_COUNT=$3
 
 count=0
 
-sleep 20
+sleep 30
 
-until [[ $(curl -X GET -Iq --insecure "${URL}" | grep -E "403 Forbidden|200 OK") ]] || \
+until [[ $(curl -Isf --insecure "${URL}") ]] || \
+  [[ $(curl -Iq --insecure "${URL}" | grep "403 Forbidden") ]] || \
   [[ $count -eq ${WAIT_COUNT} ]]
 do
     echo ">>> waiting for ${URL} to be available"
@@ -15,9 +16,9 @@ do
 done
 
 if [[ $count -eq ${WAIT_COUNT} ]]; then
-  echo ">>> Retry count exceeded. ${URL} not avilable"
+  echo ">>> Retry count exceeded. ${URL} not available"
   exit 1
 else
-  echo ">>> ${URL} is avilable"
+  echo ">>> ${URL} is available"
 fi
 
