@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+set -x
+
 SCRIPT_DIR=$(cd $(dirname $0); pwd -P)
 MODULE_DIR=$(cd ${SCRIPT_DIR}/..; pwd -P)
 
@@ -25,8 +28,6 @@ KUSTOMIZE_TEMPLATE="${MODULE_DIR}/kustomize/jenkins"
 CHART_DIR="${TMP_DIR}/charts"
 KUSTOMIZE_DIR="${TMP_DIR}/kustomize"
 
-JENKINS_CHART="${CHART_DIR}/jenkins"
-
 JENKINS_KUSTOMIZE="${KUSTOMIZE_DIR}/jenkins"
 JENKINS_BASE_KUSTOMIZE="${JENKINS_KUSTOMIZE}/base.yaml"
 JENKINS_CONFIG_KUSTOMIZE="${JENKINS_KUSTOMIZE}/jenkins-config.yaml"
@@ -34,9 +35,10 @@ CLUSTER_ROLE_KUSTOMIZE="${JENKINS_KUSTOMIZE}/cluster-role.yaml"
 
 JENKINS_YAML="${TMP_DIR}/jenkins.yaml"
 
-echo "*** Fetching Jenkins helm chart from ${CHART_REPO} into ${CHART_DIR}"
+echo "*** Fetching Jenkins helm chart from ${CHART_REPO}"
 mkdir -p "${CHART_DIR}"
-helm fetch --repo "${CHART_REPO}" --untar --untardir "${CHART_DIR}" --version ${HELM_VERSION} jenkins
+helm3 add repo base ${CHART_REPO}
+#helm fetch --repo "${CHART_REPO}" --untar --untardir "${CHART_DIR}" --version ${HELM_VERSION} jenkins
 
 echo "*** Setting up kustomize directory"
 mkdir -p "${KUSTOMIZE_DIR}"
@@ -45,12 +47,9 @@ cp -R "${KUSTOMIZE_TEMPLATE}" "${KUSTOMIZE_DIR}"
 echo "*** Updating namespace in kustomization.yaml"
 sed -i -e "s/tools/${NAMESPACE}/g"  ${KUSTOMIZE_DIR}/jenkins/kustomization.yaml
 
-echo "*** Cleaning up helm chart tests"
-rm -rf "${JENKINS_CHART}/templates/tests"
-
 JENKINS_TLS="false"
 JENKINS_URL="http://${JENKINS_HOST}"
-HELM_VALUES="master.ingress.hostName=${JENKINS_HOST}"
+HELM_VALUES="master.ingress.hostName=${JENKINS_HOST},master.testEnabled=false"
 
 if [[ -n "${TLS_SECRET_NAME}" ]]; then
     JENKINS_TLS="true"
@@ -65,33 +64,25 @@ if [[ -n "${STORAGE_CLASS}" ]]; then
 fi
 
 echo "*** Generating jenkins yaml from helm template"
-helm init --client-only
-helm template "${JENKINS_CHART}" \
+helm3 template "${NAME}" jenkins \
+    --repo https://kubernetes-charts.storage.googleapis.com/ \
+    --version "${HELM_VERSION}" \
     --namespace "${NAMESPACE}" \
-    --name "${NAME}" \
     --set ${HELM_VALUES} \
     --values "${VALUES_FILE}" > "${JENKINS_BASE_KUSTOMIZE}"
-if [[ $? -ne - ]]; then
-  exit 1
-fi
 
 echo "*** Generating jenkins-config yaml from helm template"
-helm template "${JENKINS_CONFIG_CHART}" \
-    --name jenkins-config \
+helm3 template jenkins-config "${JENKINS_CONFIG_CHART}" \
     --namespace "${NAMESPACE}" \
     --set jenkins.tls="${JENKINS_TLS}" \
     --set jenkins.host="${JENKINS_HOST}" > "${JENKINS_CONFIG_KUSTOMIZE}"
 
 echo "*** Generating jenkins-config yaml from helm template"
-helm template "${CLUSTER_ROLE_CHART}" \
-    --name jenkins-cluster-role \
+helm3 template jenkins-cluster-role "${CLUSTER_ROLE_CHART}" \
     --namespace "${NAMESPACE}" > "${CLUSTER_ROLE_KUSTOMIZE}"
 
 echo "*** Building final kube yaml from kustomize into ${JENKINS_YAML}"
 kustomize build "${JENKINS_KUSTOMIZE}" > "${JENKINS_YAML}"
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
 
 echo "*** Applying Jenkins yaml to kube"
 kubectl apply -n "${NAMESPACE}" -f "${JENKINS_YAML}"

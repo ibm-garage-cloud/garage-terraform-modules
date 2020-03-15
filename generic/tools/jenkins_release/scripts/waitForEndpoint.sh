@@ -4,6 +4,8 @@ WAIT_COUNT=$3
 
 count=0
 
+sleep 20
+
 until [[ $(curl -Isf --insecure "${URL}") ]] || [[ $count -eq ${WAIT_COUNT} ]]
 do
     echo ">>> waiting for ${URL} to be available"
