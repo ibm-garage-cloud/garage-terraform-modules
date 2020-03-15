@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+set -x
+
 SCRIPT_DIR=$(cd $(dirname $0); pwd -P)
 MODULE_DIR=$(cd "${SCRIPT_DIR}/.."; pwd -P)
 
@@ -22,6 +25,12 @@ fi
 if [[ -z "${ROUTE_TYPE}" ]]; then
   ROUTE_TYPE="passthrough"
 fi
+
+if [[ -z "${TLS_SECRET_NAME}" ]]; then
+  TLS_SECRET_NAME="argocd-secret"
+fi
+
+NAME="argocd"
 
 KUSTOMIZE_TEMPLATE="${MODULE_DIR}/kustomize/argocd"
 KUSTOMIZE_PATCH_TEMPLATE="${KUSTOMIZE_TEMPLATE}/patch-ingress.yaml"
@@ -48,19 +57,18 @@ cp -R "${KUSTOMIZE_TEMPLATE}" "${KUSTOMIZE_DIR}"
 
 HELM_VALUES="redis.enabled=${ENABLE_ARGO_CACHE}"
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
-  HELM_VALUES="${HELM_VALUES},server.ingress.enabled=true,server.ingress.hosts.0=${INGRESS_HOST}"
-  URL="http://${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
+  HELM_VALUES="${HELM_VALUES},server.ingress.enabled=false,server.ingress.hosts.0=${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
 
   if [[ -n "${TLS_SECRET_NAME}" ]]; then
-    HELM_VALUES="${HELM_VALUES},server.ingress.tls.0.secretName=${TLS_SECRET_NAME},server.ingress.tls.0.hosts.0=${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
-    URL="https://${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
+    HELM_VALUES="${HELM_VALUES},server.ingress.tls[0].secretName=${TLS_SECRET_NAME},server.ingress.tls[0].hosts[0]=${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
   fi
+
+  URL="https://${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
 fi
 
-helm3 repo add argo ${HELM_REPO}
-
 echo "*** Generating kube yaml from helm template into ${ARGOCD_BASE_KUSTOMIZE}"
-helm3 template argocd "argo/${CHART_NAME}" \
+helm3 template "${NAME}" "${CHART_NAME}" \
+    --repo "${HELM_REPO}" \
     --include-crds \
     --version "${VERSION}" \
     --namespace "${NAMESPACE}" \
@@ -102,7 +110,7 @@ EOL
 
   kubectl patch configmap argocd-cm --type merge --patch "$(cat ${MODULE_DIR}/argocd-url-patch.yaml)"
 
-  cat > "${MODULE_DIR}/argocd-dex-patch.yaml" << EOL
+  cat > "${TMP_DIR}/argocd-dex-patch.yaml" << EOL
 data:
   dex.config: |
     connectors:
@@ -118,11 +126,64 @@ data:
 EOL
 
   # don't apply this patch right now
-  #kubectl patch configmap argocd-cm --type merge --patch "$(cat ${MODULE_DIR}/argocd-dex-patch.yaml)"
+  #kubectl patch configmap argocd-cm --type merge --patch "$(cat ${TMP_DIR}/argocd-dex-patch.yaml)"
+else
+  # create ingress
+  echo "creating ingress for IKS"
+    cat > "${TMP_DIR}/argocd-ingress.yaml" << EOL
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: argocd-server-http-ingress
+  labels:
+    app: ${NAME}
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: argocd-server
+          servicePort: http
+        path: "/"
+    host: "${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
+  tls:
+  - hosts:
+    - "${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
+    secretName: ${TLS_SECRET_NAME}
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: argocd-server-grpc-ingress
+  labels:
+    app: ${NAME}
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: argocd-server
+          servicePort: https
+        path: "/"
+    host: "grpc.${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
+  tls:
+  - hosts:
+    - "grpc.${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
+    secretName: ${TLS_SECRET_NAME}
+EOL
+
+  kubectl apply -n "${NAMESPACE}" -f "${TMP_DIR}/argocd-ingress.yaml"
 fi
 
 sleep 5
-PASSWORD=$(kubectl get pods -n tools -l app.kubernetes.io/name=argocd-server -o jsonpath='{.items[0].metadata.name}')
+PASSWORD=$(kubectl get pods -n "${NAMESPACE}" -l app.kubernetes.io/name=argocd-server -o jsonpath='{.items[0].metadata.name}')
 
 helm3 repo add toolkit-charts https://ibm-garage-cloud.github.io/toolkit-charts/
 helm3 template argocd-config toolkit-charts/tool-config \
