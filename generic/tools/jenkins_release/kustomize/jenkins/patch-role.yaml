@@ -1,6 +1,18 @@
 - op: add
-  path: /rules/0/resources/0
-  value: secrets
+  path: /rules/-
+  value:
+    apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - "*"
 - op: add
-  path: /rules/0/resources/0
-  value: ingress
+  path: /rules/-
+  value:
+    apiGroups:
+      - "networking.k8s.io"
+    resources:
+      - ingress
+    verbs:
+      - "*"

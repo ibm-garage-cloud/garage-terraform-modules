@@ -9,16 +9,16 @@ spec:
             serviceAccountName: jenkins
             initContainers:
               - name: wait-for-jenkins
-                image: garagecatalyst/ibm-garage-cli-tools:latest
-                imagePullPolicy: Always
-                command: ["sh", "-c", "until curl -Isf ${JENKINS_URL}; do echo '>>> waiting for Jenkins'; sleep 300; done; echo '>>> Jenkins has started'"]
+                image: docker.io/alpine:latest
+                imagePullPolicy: IfNotPresent
+                command: ["sh", "-c", "apk add curl; until curl -Isf ${JENKINS_URL}; do echo '>>> waiting for Jenkins'; sleep 90; done; echo '>>> Jenkins has started'"]
                 env:
                 - name: JENKINS_URL
                   value: {{ printf "%s/login" (include "jenkins-config.url" .) }}
             containers:
                 - name: jenkins-config
                   image: garagecatalyst/node11:latest
-                  imagePullPolicy: Always
+                  imagePullPolicy: IfNotPresent
                   command: ["bash", "-c", "npm i -g @garage-catalyst/ibm-garage-cloud-cli@0.2.14 && ~/.npm-packages/bin/igc jenkins-auth --inCluster"]
                   env:
                       - name: JENKINS_HOST

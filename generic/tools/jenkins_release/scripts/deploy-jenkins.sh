@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -e
-set -x
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd -P)
 MODULE_DIR=$(cd ${SCRIPT_DIR}/..; pwd -P)
@@ -71,6 +70,14 @@ helm3 template "${NAME}" jenkins \
     --set ${HELM_VALUES} \
     --values "${VALUES_FILE}" > "${JENKINS_BASE_KUSTOMIZE}"
 
+#kubectl delete role access-secrets --namespace="${NAMESPACE}" 1> /dev/null 2> /dev/null || exit 0
+#kubectl delete rolebinding jenkins-to-secrets --namespace="${NAMESPACE}" 1> /dev/null 2> /dev/null || exit 0
+
+#kubectl create role access-secrets --verb=get,list,watch,update,create --resource=secrets --namespace="${NAMESPACE}"
+#kubectl create rolebinding --role=access-secrets jenkins-to-secrets --serviceaccount="${NAMESPACE}:jenkins" --namespace="${NAMESPACE}"
+#kubectl create clusterrole cluster-access-secrets --verb=get,list,watch,update,create --resource=secrets
+#kubectl create clusterrolebinding --clusterrole=cluster-access-secrets jenkins-to-secrets-cluster -z jenkins
+
 echo "*** Generating jenkins-config yaml from helm template"
 helm3 template jenkins-config "${JENKINS_CONFIG_CHART}" \
     --namespace "${NAMESPACE}" \
@@ -88,4 +95,8 @@ echo "*** Applying Jenkins yaml to kube"
 kubectl apply -n "${NAMESPACE}" -f "${JENKINS_YAML}"
 
 echo "*** Waiting for Jenkins"
-"${SCRIPT_DIR}/waitForEndpoint.sh" "${JENKINS_URL}/login" 150 12
+"${SCRIPT_DIR}/waitForEndpoint.sh" "${JENKINS_URL}/login" 90 15
+
+echo "*** Waiting for jenkins-config job to complete"
+kubectl -n "${NAMESPACE}" wait --for=condition=complete --timeout=10m "job/jenkins-config"
+kubectl -n "${NAMESPACE}" wait --for=condition=complete --timeout=0 "job/jenkins-config"
