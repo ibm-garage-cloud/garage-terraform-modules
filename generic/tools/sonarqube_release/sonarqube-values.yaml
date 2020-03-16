@@ -17,10 +17,12 @@ persistence:
 
 postgresql:
   # Enable to deploy the PostgreSQL chart
-  enabled: false
+  enabled: true
 #  postgresUser: "sonarUser"
 #  postgresPassword: "sonarPass"
 #  postgresDatabase: "sonarDB"
 #  postgresServer: ""
 #  service:
 #    port: 5432
+
+enableTests: false

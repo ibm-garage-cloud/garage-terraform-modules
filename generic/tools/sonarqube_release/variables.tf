@@ -17,26 +17,31 @@ variable "cluster_ingress_hostname" {
 variable "postgresql_username" {
   type        = string
   description = "Username for the Databases for PostgreSQL service account to use for SonarQube."
+  default     = ""
 }
 
 variable "postgresql_password" {
   type        = string
   description = "Password for the Databases for PostgreSQL Sservice account to use for SonarQube."
+  default     = ""
 }
 
 variable "postgresql_hostname" {
   type        = string
   description = "Hostname for the Databases for PostgreSQL instance to use for SonarQube."
+  default     = ""
 }
 
 variable "postgresql_port" {
   type        = string
   description = "Port for the Databases for PostgreSQL instance to use for SonarQube."
+  default     = ""
 }
 
 variable "postgresql_database_name" {
   type        = string
   description = "Database name for the Databases for PostgreSQL instance to use for SonarQube."
+  default     = ""
 }
 
 variable "cluster_type" {
@@ -46,7 +51,7 @@ variable "cluster_type" {
 variable "helm_version" {
   description = "The version of the helm chart that should be used"
   type        = string
-  default     = "2.1.1"
+  default     = "4.4.0"
 }
 
 variable "service_account_name" {

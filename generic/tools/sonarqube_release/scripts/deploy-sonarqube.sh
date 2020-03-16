@@ -41,10 +41,6 @@ PATCH_DEPLOYMENT_TEMPLATE="${KUSTOMIZE_TEMPLATE}/patch-deployment.yaml"
 SONARQUBE_YAML="${TMP_DIR}/sonarqube.yaml"
 SECRET_OUTPUT_YAML="${TMP_DIR}/sonarqube-secret.yaml"
 
-echo "*** Fetching Sonarqube helm chart from ${CHART_REPO} into ${CHART_DIR}"
-mkdir -p "${CHART_DIR}"
-helm3 repo add oteemocharts ${CHART_REPO}
-
 echo "*** Setting up kustomize directory"
 mkdir -p "${KUSTOMIZE_DIR}"
 cp -R "${KUSTOMIZE_TEMPLATE}" "${KUSTOMIZE_DIR}"
@@ -59,11 +55,11 @@ echo "*** Cleaning up helm chart tests"
 PLUGIN_YAML=$(echo $PLUGINS | sed -E "s/[[](.*)[]]/{\1}/g")
 
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
-  VALUES=ingress.hosts.0.name="${SONARQUBE_HOST}"
+  VALUES=ingress.hosts[0].name="${SONARQUBE_HOST}"
   if [[ -n "${TLS_SECRET_NAME}" ]]; then
       VALUES="${VALUES},ingress.tls[0].secretName=${TLS_SECRET_NAME}"
       VALUES="${VALUES},ingress.tls[0].hosts[0]=${SONARQUBE_HOST}"
-      VALUES="${VALUES},ingress.annotations.ingress\.bluemix\.net/redirect-to-https='True'"
+#      VALUES="${VALUES},ingress.annotations.ingress\.bluemix\.net/redirect-to-https='True'"
   fi
 else
   VALUES="ingress.enabled=false"
@@ -73,18 +69,22 @@ if [[ -n "${STORAGE_CLASS}" ]]; then
   VALUES="${VALUES},persistence.storageClass=${STORAGE_CLASS}"
 fi
 
+if [[ -n "${DATABASE_HOST}" ]] && [[ -n "${DATABASE_PORT}" ]] && [[ -n "${DATABASE_NAME}" ]] && [[ -n "${DATABASE_USERNAME}" ]] && [[ -n "${DATABASE_PASSWORD}" ]]; then
+  echo "*** Database information provided for ${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
+  VALUES="${VALUES},postgresql.enabled=false,postgresql.postgresqlServer=${DATABASE_HOST},postgresql.postgresqlDatabase=${DATABASE_NAME},postgresql.postgresqlUsername=${DATABASE_USERNAME},postgresql.postgresqlPassword=${DATABASE_PASSWORD},postgresql.service.port=${DATABASE_PORT}"
+fi
+
 echo "*** Generating sonarqube yaml from helm template with plugins ${PLUGIN_YAML}"
-helm3 template "${NAME}" oteemocharts/sonarqube \
+helm3 template "${NAME}" sonarqube \
     --namespace "${NAMESPACE}" \
+    --repo "${CHART_REPO}" \
+    --version "${VERSION}" \
     --set ${VALUES} \
-    --set persistence.size="${VOLUME_CAPACITY}" \
-    --set postgresql.postgresqlServer="${DATABASE_HOST}" \
-    --set postgresql.postgresqlDatabase="${DATABASE_NAME}" \
-    --set postgresql.postgresqlUsername="${DATABASE_USERNAME}" \
-    --set postgresql.postgresqlPassword="${DATABASE_PASSWORD}" \
-    --set postgresql.service.port="${DATABASE_PORT}" \
+    --set postgresql.persistence.enabled=false \
+    --set postgresql.volumePermissions.enabled=false \
+    --set postgresql.persistence.storageClass="${STORAGE_CLASS}" \
     --set plugins.install=${PLUGIN_YAML} \
-    --values "${VALUES_FILE}" > "${SONARQUBE_BASE_KUSTOMIZE}"
+    --values "${VALUES_FILE}" > "${SONARQUBE_YAML}"
 
 if [[ -n "${TLS_SECRET_NAME}" ]]; then
     SONARQUBE_URL="https://${SONARQUBE_HOST}"
@@ -92,8 +92,8 @@ else
     SONARQUBE_URL="http://${SONARQUBE_HOST}"
 fi
 
-echo "*** Building final kube yaml from kustomize into ${SONARQUBE_YAML}"
-kustomize build "${SONARQUBE_KUSTOMIZE}" > "${SONARQUBE_YAML}"
+#echo "*** Building final kube yaml from kustomize into ${SONARQUBE_YAML}"
+#kustomize build "${SONARQUBE_KUSTOMIZE}" > "${SONARQUBE_YAML}"
 
 echo "*** Applying Sonarqube yaml to kube"
 kubectl apply -n "${NAMESPACE}" -f "${SONARQUBE_YAML}"
