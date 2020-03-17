@@ -21,7 +21,7 @@ mkdir -p ${TMP_DIR}
 YAML_FILE=${TMP_DIR}/logdna-agent-key.yaml
 
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
-    LOGDNA_AGENT_DS_YAML="https://assets.us-south.logging.cloud.ibm.com/clients/logdna-agent-ds.yaml"
+    LOGDNA_AGENT_DS_YAML="https://assets.${REGION}.logging.cloud.ibm.com/clients/logdna-agent-ds.yaml"
 else
     KUSTOMIZE_TEMPLATE="${MODULE_DIR}/kustomize"
     LOGDNA_PATCH_TEMPLATE="${KUSTOMIZE_TEMPLATE}/logdna-os/patch-daemonset.yaml"
