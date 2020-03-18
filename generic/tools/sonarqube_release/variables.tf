@@ -14,34 +14,10 @@ variable "cluster_ingress_hostname" {
   description = "Ingress hostname of the IKS cluster."
 }
 
-variable "postgresql_username" {
+variable "hostname" {
   type        = string
-  description = "Username for the Databases for PostgreSQL service account to use for SonarQube."
-  default     = ""
-}
-
-variable "postgresql_password" {
-  type        = string
-  description = "Password for the Databases for PostgreSQL Sservice account to use for SonarQube."
-  default     = ""
-}
-
-variable "postgresql_hostname" {
-  type        = string
-  description = "Hostname for the Databases for PostgreSQL instance to use for SonarQube."
-  default     = ""
-}
-
-variable "postgresql_port" {
-  type        = string
-  description = "Port for the Databases for PostgreSQL instance to use for SonarQube."
-  default     = ""
-}
-
-variable "postgresql_database_name" {
-  type        = string
-  description = "Database name for the Databases for PostgreSQL instance to use for SonarQube."
-  default     = ""
+  description = "The hostname that will be used for the ingress/route"
+  default     = "sonarqube"
 }
 
 variable "cluster_type" {
@@ -89,4 +65,22 @@ variable "storage_class" {
   type        = string
   description = "The storage class of the persistence volume claim"
   default     = "ibmc-file-gold"
+}
+
+variable "postgresql" {
+  type = object({
+    username      = string
+    password      = string
+    hostname      = string
+    port          = string
+    database_name = string
+  })
+  description = "Properties for an existing postgresql database"
+  default     = {
+    username      = ""
+    password      = ""
+    hostname      = ""
+    port          = ""
+    database_name = ""
+  }
 }

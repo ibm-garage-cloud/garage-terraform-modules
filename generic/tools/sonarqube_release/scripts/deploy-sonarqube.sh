@@ -48,10 +48,6 @@ cp -R "${KUSTOMIZE_TEMPLATE}" "${KUSTOMIZE_DIR}"
 echo "*** Updating patch-deployment.yaml with service account"
 cat "${PATCH_DEPLOYMENT_TEMPLATE}" | sed "s/%SERVICE_ACCOUNT_NAME%/${SERVICE_ACCOUNT}/g" > ${PATCH_DEPLOYMENT_KUSTOMIZE}
 
-echo "*** Cleaning up helm chart tests"
-#rm "${SONARQUBE_CHART}/templates/sonarqube-test.yaml"
-#rm "${SONARQUBE_CHART}/templates/test-config.yaml"
-
 PLUGIN_YAML=$(echo $PLUGINS | sed -E "s/[[](.*)[]]/{\1}/g")
 
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
@@ -59,7 +55,6 @@ if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
   if [[ -n "${TLS_SECRET_NAME}" ]]; then
       VALUES="${VALUES},ingress.tls[0].secretName=${TLS_SECRET_NAME}"
       VALUES="${VALUES},ingress.tls[0].hosts[0]=${SONARQUBE_HOST}"
-#      VALUES="${VALUES},ingress.annotations.ingress\.bluemix\.net/redirect-to-https='True'"
   fi
 else
   VALUES="ingress.enabled=false"
@@ -69,7 +64,28 @@ if [[ -n "${STORAGE_CLASS}" ]]; then
   VALUES="${VALUES},persistence.storageClass=${STORAGE_CLASS}"
 fi
 
-if [[ -n "${DATABASE_HOST}" ]] && [[ -n "${DATABASE_PORT}" ]] && [[ -n "${DATABASE_NAME}" ]] && [[ -n "${DATABASE_USERNAME}" ]] && [[ -n "${DATABASE_PASSWORD}" ]]; then
+if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] || [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
+  DATABASE_HOST="postgresql"
+  DATABASE_PORT="5432"
+  DATABASE_USERNAME="sonarUser"
+  DATABASE_PASSWORD="sonarPass"
+  DATABASE_NAME="sonarqube"
+
+  echo "*** Deplopying postgresql-persistent deployment config"
+  oc new-app postgresql-persistent -n "${NAMESPACE}" \
+    --name="${DATABASE_NAME}" \
+    -p POSTGRESQL_USER="${DATABASE_USERNAME}" \
+    -p POSTGRESQL_PASSWORD="${DATABASE_PASSWORD}" \
+    -p POSTGRESQL_DATABASE="${DATABASE_NAME}" \
+    -p VOLUME_CAPACITY="${VOLUME_CAPACITY}"
+fi
+
+if [[ -n "${DATABASE_HOST}" ]] && \
+ [[ -n "${DATABASE_PORT}" ]] && \
+ [[ -n "${DATABASE_NAME}" ]] && \
+ [[ -n "${DATABASE_USERNAME}" ]] && \
+ [[ -n "${DATABASE_PASSWORD}" ]]; then
+
   echo "*** Database information provided for ${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
   VALUES="${VALUES},postgresql.enabled=false,postgresql.postgresqlServer=${DATABASE_HOST},postgresql.postgresqlDatabase=${DATABASE_NAME},postgresql.postgresqlUsername=${DATABASE_USERNAME},postgresql.postgresqlPassword=${DATABASE_PASSWORD},postgresql.service.port=${DATABASE_PORT}"
 fi
@@ -84,7 +100,7 @@ helm3 template "${NAME}" sonarqube \
     --set postgresql.volumePermissions.enabled=false \
     --set postgresql.persistence.storageClass="${STORAGE_CLASS}" \
     --set plugins.install=${PLUGIN_YAML} \
-    --values "${VALUES_FILE}" > "${SONARQUBE_YAML}"
+    --values "${VALUES_FILE}" > "${SONARQUBE_BASE_KUSTOMIZE}"
 
 if [[ -n "${TLS_SECRET_NAME}" ]]; then
     SONARQUBE_URL="https://${SONARQUBE_HOST}"
@@ -92,8 +108,8 @@ else
     SONARQUBE_URL="http://${SONARQUBE_HOST}"
 fi
 
-#echo "*** Building final kube yaml from kustomize into ${SONARQUBE_YAML}"
-#kustomize build "${SONARQUBE_KUSTOMIZE}" > "${SONARQUBE_YAML}"
+echo "*** Building final kube yaml from kustomize into ${SONARQUBE_YAML}"
+kustomize build "${SONARQUBE_KUSTOMIZE}" > "${SONARQUBE_YAML}"
 
 echo "*** Applying Sonarqube yaml to kube"
 kubectl apply -n "${NAMESPACE}" -f "${SONARQUBE_YAML}"
@@ -108,11 +124,6 @@ if [[ "${CLUSTER_TYPE}" == "openshift" ]] || [[ "${CLUSTER_TYPE}" == "ocp3" ]] |
 
   SONARQUBE_URL="https://${HOST}"
 fi
-
-if [[ ! $(command -v igc) ]]; then
-  npm i -g @ibmgaragecloud/cloud-native-toolkit-cli
-fi
-igc tool-config --name sonarqube --url "${SONARQUBE_URL}" --username admin --password admin
 
 helm3 repo add toolkit-charts https://ibm-garage-cloud.github.io/toolkit-charts/
 helm3 template sonarqube toolkit-charts/tool-config \

@@ -3,7 +3,7 @@ provider "null" {
 
 locals {
   tmp_dir         = "${path.cwd}/.tmp"
-  ingress_host    = "sonarqube.${var.cluster_ingress_hostname}"
+  ingress_host    = "${var.hostname}.${var.cluster_ingress_hostname}"
   ingress_url     = "http://${local.ingress_host}"
   secret_name     = "sonarqube-access"
   config_name     = "sonarqube-config"
@@ -24,11 +24,11 @@ resource "null_resource" "sonarqube_release" {
       CLUSTER_TYPE      = var.cluster_type
       TLS_SECRET_NAME   = var.tls_secret_name
       STORAGE_CLASS     = var.storage_class
-      DATABASE_HOST     = var.postgresql_hostname
-      DATABASE_PORT     = var.postgresql_port
-      DATABASE_NAME     = var.postgresql_database_name
-      DATABASE_USERNAME = var.postgresql_username
-      DATABASE_PASSWORD = var.postgresql_password
+      DATABASE_HOST     = var.postgresql.hostname
+      DATABASE_PORT     = var.postgresql.port
+      DATABASE_NAME     = var.postgresql.database_name
+      DATABASE_USERNAME = var.postgresql.username
+      DATABASE_PASSWORD = var.postgresql.password
     }
   }
 
