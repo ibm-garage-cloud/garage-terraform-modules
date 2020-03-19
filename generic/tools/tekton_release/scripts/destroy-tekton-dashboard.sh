@@ -13,7 +13,7 @@ DASHBOARD_YAML_FILE_OCP="$5"
 if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
   DASHBOARD_YAML_FILE="${DASHBOARD_YAML_FILE_K8S}"
   CHART_NAME="tekton-config"
-elif
+else
   DASHBOARD_YAML_FILE="${DASHBOARD_YAML_FILE_OCP}"
   CHART_NAME="tekton-config-ocp"
 fi
