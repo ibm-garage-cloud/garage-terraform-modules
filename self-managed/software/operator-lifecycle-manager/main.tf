@@ -4,7 +4,7 @@ locals {
 }
 
 resource "null_resource" "deploy_operator_lifecycle_manager" {
-  triggers {
+  triggers = {
     KUBECONFIG      = var.cluster_config_file
     CLUSTER_TYPE    = var.cluster_type
     CLUSTER_VERSION = var.cluster_version
