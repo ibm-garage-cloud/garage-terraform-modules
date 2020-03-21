@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+SCRIPT_DIR=$(cd $(dirname $0); pwd -P)
+
 if [[ -n "${KUBECONFIG_IKS}" ]]; then
   export KUBECONFIG="${KUBECONFIG_IKS}"
 fi
@@ -11,4 +13,6 @@ if [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
 fi
 
 kubectl delete deployment -n olm --all
+"${SCRIPT_DIR}/kill-kube-ns"
 kubectl delete namespace olm
+exit 0
