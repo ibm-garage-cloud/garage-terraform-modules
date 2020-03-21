@@ -13,6 +13,6 @@ if [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
 fi
 
 kubectl delete deployment -n olm --all
-"${SCRIPT_DIR}/kill-kube-ns"
+"${SCRIPT_DIR}/kill-kube-ns" olm
 kubectl delete namespace olm
 exit 0
