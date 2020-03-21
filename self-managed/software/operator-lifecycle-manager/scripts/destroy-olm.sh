@@ -10,4 +10,5 @@ if [[ "${CLUSTER_TYPE}" == "ocp4" ]]; then
   exit 0
 fi
 
+kubectl delete deployment -n olm
 kubectl delete namespace olm
