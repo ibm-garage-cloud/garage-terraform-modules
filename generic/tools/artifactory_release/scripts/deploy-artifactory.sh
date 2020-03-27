@@ -62,8 +62,6 @@ else
   VALUES="ingress.enabled=false"
 fi
 
-helm3 repo add artifactory-repo ${CHART_REPO}
-
 echo "*** Generating kube yaml from helm template into ${ARTIFACTORY_OUTPUT_YAML}"
 helm3 template artifactory artifactory-repo/artifactory \
     --version "${CHART_VERSION}" \
