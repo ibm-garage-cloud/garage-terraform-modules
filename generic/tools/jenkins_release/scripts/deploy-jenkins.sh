@@ -34,11 +34,6 @@ CLUSTER_ROLE_KUSTOMIZE="${JENKINS_KUSTOMIZE}/cluster-role.yaml"
 
 JENKINS_YAML="${TMP_DIR}/jenkins.yaml"
 
-echo "*** Fetching Jenkins helm chart from ${CHART_REPO}"
-mkdir -p "${CHART_DIR}"
-helm3 add repo base ${CHART_REPO}
-#helm fetch --repo "${CHART_REPO}" --untar --untardir "${CHART_DIR}" --version ${HELM_VERSION} jenkins
-
 echo "*** Setting up kustomize directory"
 mkdir -p "${KUSTOMIZE_DIR}"
 cp -R "${KUSTOMIZE_TEMPLATE}" "${KUSTOMIZE_DIR}"
@@ -69,14 +64,6 @@ helm3 template "${NAME}" jenkins \
     --namespace "${NAMESPACE}" \
     --set ${HELM_VALUES} \
     --values "${VALUES_FILE}" > "${JENKINS_BASE_KUSTOMIZE}"
-
-#kubectl delete role access-secrets --namespace="${NAMESPACE}" 1> /dev/null 2> /dev/null || exit 0
-#kubectl delete rolebinding jenkins-to-secrets --namespace="${NAMESPACE}" 1> /dev/null 2> /dev/null || exit 0
-
-#kubectl create role access-secrets --verb=get,list,watch,update,create --resource=secrets --namespace="${NAMESPACE}"
-#kubectl create rolebinding --role=access-secrets jenkins-to-secrets --serviceaccount="${NAMESPACE}:jenkins" --namespace="${NAMESPACE}"
-#kubectl create clusterrole cluster-access-secrets --verb=get,list,watch,update,create --resource=secrets
-#kubectl create clusterrolebinding --clusterrole=cluster-access-secrets jenkins-to-secrets-cluster -z jenkins
 
 echo "*** Generating jenkins-config yaml from helm template"
 helm3 template jenkins-config "${JENKINS_CONFIG_CHART}" \
