@@ -65,9 +65,8 @@ fi
 helm3 repo add artifactory-repo ${CHART_REPO}
 
 echo "*** Generating kube yaml from helm template into ${ARTIFACTORY_OUTPUT_YAML}"
-helm3 template artifactory artifactory \
+helm3 template artifactory artifactory-repo/artifactory \
     --version "${CHART_VERSION}"
-    --repo "${CHART_REPO}"
     --namespace "${NAMESPACE}" \
     --set "${VALUES}" \
     --set artifactory.persistence.storageClass="${STORAGE_CLASS}" \
