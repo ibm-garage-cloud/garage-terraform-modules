@@ -63,7 +63,7 @@ else
 fi
 
 echo "*** Generating kube yaml from helm template into ${ARTIFACTORY_OUTPUT_YAML}"
-helm3 template artifactory artifactory-repo/artifactory \
+helm3 template artifactory artifactory \
     --version "${CHART_VERSION}" \
     --repo "${CHART_REPO}" \
     --namespace "${NAMESPACE}" \
