@@ -14,4 +14,4 @@ fi
 kubectl delete all,deployment,statefulset,secret,configmap,service,ingress,pvc -n "${NAMESPACE}" -l "app=${APP_NAME}"
 
 echo "Destroying postgres db"
-kubectl delete all,deploymentconfig,service,secret,pvc -l "app=${APP_NAME}" -n "${NAMESPACE}"
+kubectl delete all,deploymentconfig,service,secret,pvc -l "tools=${APP_NAME}" -n "${NAMESPACE}"
