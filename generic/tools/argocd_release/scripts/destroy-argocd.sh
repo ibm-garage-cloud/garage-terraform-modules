@@ -11,4 +11,8 @@ if [[ -n "${KUBECONFIG_IKS}" ]]; then
     export KUBECONFIG="${KUBECONFIG_IKS}"
 fi
 
-kubectl delete deployment,service,configmap,secret,ingress,route -n "${NAMESPACE}" -l app="${NAME}"
+kubectl delete deployment,service,configmap,secret,ingress -n "${NAMESPACE}" -l app="${NAME}"
+
+if kubectl get route -n "${NAMESPACE}" -l app="${LABEL}"; then
+  kubectl delete route -n "${NAMESPACE}" -l app="${LABEL}"
+fi
