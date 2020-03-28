@@ -47,19 +47,6 @@ resource "kubernetes_namespace" "releases" {
   }
 }
 
-resource "null_resource" "copy_tls_secrets" {
-  depends_on = [kubernetes_namespace.tools, kubernetes_namespace.releases]
-  count      = length(local.namespaces)
-
-  provisioner "local-exec" {
-    command = "${path.module}/scripts/copy-secret-to-namespace.sh \"${var.tls_secret_name}\" ${local.namespaces[count.index]}"
-
-    environment = {
-      KUBECONFIG = var.cluster_config_file_path
-    }
-  }
-}
-
 resource "null_resource" "copy_apikey_secret" {
   depends_on = [kubernetes_namespace.tools, kubernetes_namespace.releases]
   count      = length(local.namespaces)
