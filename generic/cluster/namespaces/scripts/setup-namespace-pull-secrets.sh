@@ -14,8 +14,7 @@ if [[ $(kubectl get secrets -n "${CLUSTER_NAMESPACE}" -o jsonpath='{ range .item
     echo "*** Copying pull secrets from default namespace to ${CLUSTER_NAMESPACE} namespace"
 
     kubectl get secrets -n default | grep icr | sed "s/\([A-Za-z-]*\) *.*/\1/g" | while read default_secret; do
-        kubectl get secret ${default_secret} -n default -o yaml | sed "s/namespace: default/namespace: ${CLUSTER_NAMESPACE}/g" | sed "s/name: default/name: ${CLUSTER_NAMESPACE}/g" | kubectl -n ${CLUSTER_NAMESPACE} create -f -
-        kubectl get secret ${default_secret} -n default -o yaml | sed "s/namespace: default/namespace: ${CLUSTER_NAMESPACE}/g" | sed "s/name: default-/name: /g" | kubectl -n ${CLUSTER_NAMESPACE} create -f -
+        kubectl get secret ${default_secret} -n default -o yaml --export | sed "s/name: default-/name: /g" | kubectl -n ${CLUSTER_NAMESPACE} create -f -
     done
 else
     echo "*** Pull secrets already exist on ${CLUSTER_NAMESPACE} namespace"

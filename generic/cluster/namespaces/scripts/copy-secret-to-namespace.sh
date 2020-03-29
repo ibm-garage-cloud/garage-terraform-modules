@@ -38,7 +38,7 @@ fi
 if [[ $(kubectl get secrets -n "${TO_NAMESPACE}" -o jsonpath='{ range .items[*] }{ .metadata.name }{ "\n" }{ end }' | grep -E "^${SECRET_NAME}$" | wc -l | xargs) -eq 0 ]]; then
     echo "*** Copying ${SECRET_NAME} from ${FROM_NAMESPACE} namespace to ${TO_NAMESPACE} namespace"
 
-    kubectl get secret ${SECRET_NAME} --namespace=${FROM_NAMESPACE} -oyaml | sed "s/namespace: ${FROM_NAMESPACE}/namespace: ${TO_NAMESPACE}/g" | kubectl apply --namespace=${TO_NAMESPACE} -f -
+    kubectl get secret ${SECRET_NAME} --namespace=${FROM_NAMESPACE} -o yaml --export | kubectl apply --namespace=${TO_NAMESPACE} -f -
 else
     echo "*** ${SECRET_NAME} already exists in ${TO_NAMESPACE} namespace"
 fi
