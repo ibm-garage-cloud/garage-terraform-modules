@@ -83,3 +83,9 @@ variable "name_prefix" {
   description = "The prefix name for the service. If not provided it will default to the resource group name"
   default     = ""
 }
+
+variable "is_vpc" {
+  type        = bool
+  description = "Flag indicating that the cluster uses vpc infrastructure"
+  default     = false
+}

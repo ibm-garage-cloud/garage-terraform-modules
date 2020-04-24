@@ -40,9 +40,9 @@ locals {
   config_namespace      = "default"
   config_file_path      = var.cluster_type == "kubernetes" ? data.ibm_container_cluster_config.cluster.config_file_path : ""
   cluster_type_tag      = var.cluster_type == "kubernetes" ? "iks" : "ocp"
-  server_url            = data.ibm_container_cluster.config.public_service_endpoint_url
-  ingress_hostname      = data.ibm_container_cluster.config.ingress_hostname
-  tls_secret            = data.ibm_container_cluster.config.ingress_secret
+  server_url            = var.is_vpc ? data.ibm_container_vpc_cluster.config[0].public_service_endpoint_url : data.ibm_container_cluster.config[0].public_service_endpoint_url
+  ingress_hostname      = var.is_vpc ? data.ibm_container_vpc_cluster.config[0].ingress_hostname : data.ibm_container_cluster.config[0].ingress_hostname
+  tls_secret            = var.is_vpc ? data.ibm_container_vpc_cluster.config[0].ingress_secret : data.ibm_container_cluster.config[0].ingress_secret
   openshift_versions    = {
   for version in data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions:
   substr(version, 0, 1) => "${version}_openshift"
@@ -75,6 +75,16 @@ resource "ibm_container_cluster" "create_cluster" {
 }
 
 data "ibm_container_cluster" "config" {
+  count      = var.is_vpc ? 0 : 1
+  depends_on = [ibm_container_cluster.create_cluster]
+
+  cluster_name_id   = local.cluster_name
+  alb_type          = "public"
+  resource_group_id = data.ibm_resource_group.resource_group.id
+}
+
+data "ibm_container_vpc_cluster" "config" {
+  count      = var.is_vpc ? 1 : 0
   depends_on = [ibm_container_cluster.create_cluster]
 
   cluster_name_id   = local.cluster_name
