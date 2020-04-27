@@ -9,22 +9,12 @@ NAMESPACE="$1"
 CLUSTER_TYPE="$2"
 INGRESS_HOST="$3"
 INGRESS_SUBDOMAIN="$4"
-IMAGE_TAG="$5"
-
-if [[ -n "${KUBECONFIG_IKS}" ]]; then
-    export KUBECONFIG="${KUBECONFIG_IKS}"
-fi
+CHART_VERSION="$5"
+ENABLE_SSO="$6"
 
 if [[ -z "${TMP_DIR}" ]]; then
     TMP_DIR=".tmp"
 fi
-
-if [[ -z "${IMAGE_TAG}" ]]; then
-    IMAGE_TAG="latest"
-fi
-
-CHART="${MODULE_DIR}/charts/developer-dashboard"
-CONFIG_CHART="${MODULE_DIR}/charts/dashboard-config"
 
 NAME="developer-dashboard"
 OUTPUT_YAML="${TMP_DIR}/developerdashboard.yaml"
@@ -45,13 +35,14 @@ if [[ -n "${TLS_SECRET_NAME}" ]]; then
 fi
 
 echo "*** Generating kube yaml from helm template into ${OUTPUT_YAML}"
-#helm init --client-only
-helm3 template "${NAME}" "${CHART}" \
+helm3 template developer-dashboard developer-dashboard \
+    --repo https://ibm-garage-cloud.github.io/toolkit-charts/ \
+    --version "${CHART_VERSION}" \
     --namespace "${NAMESPACE}" \
     --set "clusterType=${CLUSTER_TYPE}" \
     --set "host=${INGRESS_HOST}" \
     --set "ingressSubdomain=${INGRESS_SUBDOMAIN}" \
-    --set "image.tag=${IMAGE_TAG}" \
+    --set "sso.enabled=${ENABLE_SSO}" \
     --set "${VALUES}" \
     --set configMaps="${CONFIG_MAP_YAML}" > ${OUTPUT_YAML}
 
@@ -64,9 +55,9 @@ else
   DASHBOARD_URL="https://${DASHBOARD_HOST}"
 fi
 
-helm3 template "${NAME}" "${CONFIG_CHART}" \
-    --namespace "${NAMESPACE}" \
-    --set url="${DASHBOARD_URL}" > ${CONFIG_OUTPUT_YAML}
+helm3 template dashboard tool-config \
+  --repo https://ibm-garage-cloud.github.io/toolkit-charts/ \
+  --set url="${DASHBOARD_URL}" > ${CONFIG_OUTPUT_YAML}
 kubectl apply -n "${NAMESPACE}" -f ${CONFIG_OUTPUT_YAML}
 
 "${SCRIPT_DIR}/waitForEndpoint.sh" "${DASHBOARD_URL}" 150 12

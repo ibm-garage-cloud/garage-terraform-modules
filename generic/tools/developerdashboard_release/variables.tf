@@ -35,3 +35,15 @@ variable "image_tag" {
   description = "The image version tag to use"
   default     = "1.0.31"
 }
+
+variable "chart_version" {
+  type        = string
+  description = "The helm chart version that should be installed from https://ibm-garage-cloud.github.io/toolkit-charts"
+  default     = "0.2.1"
+}
+
+variable "enable_sso" {
+  type        = bool
+  description = "Flag indicating that ssl should be enabled (OpenShift only)"
+  default     = true
+}
