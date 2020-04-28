@@ -24,14 +24,14 @@ CONFIG_MAP_YAML=$(echo "${CONFIG_MAPS}" | sed -E "s/[[](.+)[]]/{\1}/g" | sed "s/
 
 mkdir -p ${TMP_DIR}
 
-DASHBOARD_URL="http://${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
+DASHBOARD_URL="http://${INGRESS_HOST}-${NAMESPACE}.${INGRESS_SUBDOMAIN}"
 
 VALUES="ingress.hosts.0=${INGRESS_HOST}"
 if [[ -n "${TLS_SECRET_NAME}" ]]; then
     VALUES="${VALUES},ingress.tls[0].secretName=${TLS_SECRET_NAME}"
     VALUES="${VALUES},ingress.annotations.ingress\.bluemix\.net/redirect-to-https='True'"
 
-    DASHBOARD_URL="https://${INGRESS_HOST}.${INGRESS_SUBDOMAIN}"
+    DASHBOARD_URL="https://${INGRESS_HOST}-${NAMESPACE}.${INGRESS_SUBDOMAIN}"
 fi
 
 echo "*** Generating kube yaml from helm template into ${OUTPUT_YAML}"
@@ -41,19 +41,14 @@ helm3 template developer-dashboard developer-dashboard \
     --namespace "${NAMESPACE}" \
     --set "clusterType=${CLUSTER_TYPE}" \
     --set "host=${INGRESS_HOST}" \
+    --set "ingress.includeNamespace=true" \
     --set "ingressSubdomain=${INGRESS_SUBDOMAIN}" \
     --set "sso.enabled=${ENABLE_SSO}" \
     --set "${VALUES}" \
     --set configMaps="${CONFIG_MAP_YAML}" > ${OUTPUT_YAML}
 
 echo "*** Applying kube yaml ${OUTPUT_YAML}"
-if [[ "${CLUSTER_TYPE}" == "kubernetes" ]]; then
-  kubectl apply -n "${NAMESPACE}" -f ${OUTPUT_YAML}
-else
-  oc apply -n "${NAMESPACE}" -f ${OUTPUT_YAML}
-  DASHBOARD_HOST=$(oc get route "dashboard" -n "${NAMESPACE}" -o jsonpath='{ .spec.host }')
-  DASHBOARD_URL="https://${DASHBOARD_HOST}"
-fi
+kubectl apply -n "${NAMESPACE}" -f ${OUTPUT_YAML} --validate=false
 
 helm3 template dashboard tool-config \
   --repo https://ibm-garage-cloud.github.io/toolkit-charts/ \

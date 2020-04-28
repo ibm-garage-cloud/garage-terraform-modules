@@ -39,7 +39,7 @@ variable "image_tag" {
 variable "chart_version" {
   type        = string
   description = "The helm chart version that should be installed from https://ibm-garage-cloud.github.io/toolkit-charts"
-  default     = "0.2.1"
+  default     = "0.2.2"
 }
 
 variable "enable_sso" {

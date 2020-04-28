@@ -1,6 +1,5 @@
 locals {
   tmp_dir      = "${path.cwd}/.tmp"
-  ingress_host = "dashboard-${var.releases_namespace}.${var.cluster_ingress_hostname}"
 }
 
 resource "null_resource" "catalystdashboard_release" {
