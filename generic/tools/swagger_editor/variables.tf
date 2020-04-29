@@ -36,5 +36,5 @@ variable "enable_sso" {
 variable "chart_version" {
   type        = string
   description = "The version of the helm chart that will be installed"
-  default     = "1.2.2"
+  default     = "1.3.0"
 }
