@@ -41,7 +41,7 @@ output "config_file_path" {
 }
 
 output "type" {
-  value       = local.cluster_type
+  value       = local.cluster_type_code
   description = "The type of cluster (openshift or ocp4 or ocp3 or kubernetes)"
   depends_on  = [helm_release.ibmcloud-config]
 }
