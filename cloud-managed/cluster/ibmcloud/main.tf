@@ -2,6 +2,8 @@ provider "ibm" {
   version = ">= 1.2.1"
 }
 provider "helm" {
+  version = ">= 1.0.0"
+
   kubernetes {
     config_path = local.config_file_path
   }
