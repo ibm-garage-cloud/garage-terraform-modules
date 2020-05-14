@@ -55,6 +55,7 @@ variable "cluster_region" {
 variable "kubeconfig_download_dir" {
   type        = string
   description = "Directory where kubeconfig will be downloaded."
+  default     = ""
 }
 
 variable "cluster_type" {
