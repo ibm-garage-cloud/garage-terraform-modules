@@ -14,7 +14,7 @@ if [[ -n "${KUBECONFIG_IKS}" ]]; then
 fi
 
 if [[ -z "${TMP_DIR}" ]]; then
-   TMP_DIR="${MODULE_DIR}/.tmp"
+   TMP_DIR="./.tmp"
 fi
 
 mkdir -p ${TMP_DIR}

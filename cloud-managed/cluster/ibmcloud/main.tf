@@ -57,7 +57,15 @@ locals {
   ibmcloud_release_name = "ibmcloud-config"
 }
 
+resource "null_resource" "create_tmp" {
+  provisioner "local-exec" {
+    command = "mkdir -p ${local.tmp_dir}"
+  }
+}
+
 data "ibm_container_cluster_versions" "cluster_versions" {
+  depends_on = [null_resource.create_tmp]
+
   resource_group_id = data.ibm_resource_group.resource_group.id
 }
 
