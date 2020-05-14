@@ -57,14 +57,18 @@ locals {
   ibmcloud_release_name = "ibmcloud-config"
 }
 
-resource "null_resource" "create_tmp" {
+resource "null_resource" "create_dirs" {
   provisioner "local-exec" {
     command = "mkdir -p ${local.tmp_dir}"
+  }
+
+  provisioner "local-exec" {
+    command = "mkdir -p ${var.kubeconfig_download_dir}"
   }
 }
 
 data "ibm_container_cluster_versions" "cluster_versions" {
-  depends_on = [null_resource.create_tmp]
+  depends_on = [null_resource.create_dirs]
 
   resource_group_id = data.ibm_resource_group.resource_group.id
 }
