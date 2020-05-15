@@ -63,7 +63,7 @@ resource "null_resource" "create_dirs" {
   }
 
   provisioner "local-exec" {
-    command = "mkdir -p ${var.kubeconfig_download_dir}"
+    command = "mkdir -p ${local.cluster_config_dir}"
   }
 }
 
