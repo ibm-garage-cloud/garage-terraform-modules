@@ -4,11 +4,50 @@ This repository contains a collection of terraform modules that
 can be used to provision an environment in an IBM Cloud or OpenShift
 environment.
 
-
 The modules have been organized into three major categories:
 - **cloud_managed** - modules to provision and manage resources in the IBM Cloud environment (clusters, services, etc)
 - **generic** - modules that are not specific to any one environment, typically working with kubernetes resources
 - **self_managed** - modules that provision/work with self_managed environments (CRC, other non-IBM Cloud managed clusters, in-cluster software, etc)
+
+## Module catalog
+
+### IBM provider
+
+- *IBM Cloud Cluster* - https://github.com/ibm-garage-cloud/terraform-ibm-container-platform.git
+- *AppId* - cloud-managed/services/appid
+- *Cloud Object Storage* - cloud-managed/services/cloud_object_storage
+- *Cloudant* - cloud-managed/services/cloudant
+- *LogDNA* - cloud-managed/services/logdna
+- *PostGreSQL* - cloud-managed/services/postgres
+- *SysDig* - cloud-managed/services/sysdig
+- *Watson Assistant* - https://github.com/ibm-garage-cloud/terraform-ibm-watson-assistant.git
+- *Watson Studio* - https://github.com/ibm-garage-cloud/terraform-ibm-watson-studio.git
+- *AppId operator* - cloud-managed/operator-services/appid
+- *Cloud Object Storage operator* - cloud-managed/operator-services/cloud_object_storage
+- *Cloudant operator* - cloud-managed/operator-services/cloudant
+- *LogDNA operator* - cloud-managed/operator-services/logdna
+- *PostGreSQL operator* - cloud-managed/operator-services/postgres
+- *SysDig operator* - cloud-managed/operator-services/sysdig
+
+### K8s provider
+
+- *Namespace* - generic/cluster/namespace
+- *Service Account* - generic/cluster/serviceaccount
+- *Operator Lifecycle Manager* - self-managed/software/operator-lifecycle-manager
+- *Cloud Operator* - self-managed/software/cloud_operator
+- *ArgoCD* - generic/tools/argocd_release
+- *Artifactory* - generic/tools/artifactory_release
+- *Developer Dashboard* - generic/tools/developerdashboard_release
+- *Jaeger* - https://github.com/ibm-garage-cloud/terraform-tools-jaeger.git
+- *Jenkins* - generic/tools/jenkins_release
+- *Kafka* - https://github.com/ibm-garage-cloud/terraform-software-kafka.git
+- *Nexus* - https://github.com/ibm-garage-cloud/terraform-tools-nexus.git
+- *Pact Broker* - generic/tools/pactbroker_release
+- *Prometheus Grafana* - generic/tools/prometheusgrafana_release
+- *SonarQube* - generic/tools/sonarqube_release
+- *Swagger Editor* - generic/tools/swagger_editor
+- *Tekton* - generic/tools/tekton_release
+- *Tekton Resources* - generic/tools/tekton_resources
 
 ## How to apply a module
 
