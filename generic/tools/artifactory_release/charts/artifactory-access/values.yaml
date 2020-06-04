@@ -1,9 +1,0 @@
-
-group: catalyst-tools
-
-username: admin
-password: password
-encryptPassword: ""
-adminAccessUser: admin-access
-adminAccessPassword: admin
-url: url

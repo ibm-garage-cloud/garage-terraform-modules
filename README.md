@@ -17,9 +17,9 @@ The modules have been organized into three major categories:
 - *AppId* - cloud-managed/services/appid
 - *Cloud Object Storage* - cloud-managed/services/cloud_object_storage
 - *Cloudant* - cloud-managed/services/cloudant
-- *LogDNA* - cloud-managed/services/logdna
+- *LogDNA* - https://github.com/ibm-garage-cloud/terraform-ibm-logdna.git
 - *PostGreSQL* - cloud-managed/services/postgres
-- *SysDig* - cloud-managed/services/sysdig
+- *SysDig* - https://github.com/ibm-garage-cloud/terraform-ibm-sysdig.git
 - *Watson Assistant* - https://github.com/ibm-garage-cloud/terraform-ibm-watson-assistant.git
 - *Watson Studio* - https://github.com/ibm-garage-cloud/terraform-ibm-watson-studio.git
 - *AppId operator* - cloud-managed/operator-services/appid
@@ -31,23 +31,23 @@ The modules have been organized into three major categories:
 
 ### K8s provider
 
-- *Namespace* - generic/cluster/namespace
-- *Service Account* - generic/cluster/serviceaccount
-- *Operator Lifecycle Manager* - self-managed/software/operator-lifecycle-manager
+- *Namespace* - https://github.com/ibm-garage-cloud/terraform-cluster-namespace.git
+- *Service Account* - https://github.com/ibm-garage-cloud/terraform-cluster-serviceaccount.git
+- *Operator Lifecycle Manager* - https://github.com/ibm-garage-cloud/terraform-software-olm.git
 - *Cloud Operator* - self-managed/software/cloud_operator
-- *ArgoCD* - generic/tools/argocd_release
-- *Artifactory* - generic/tools/artifactory_release
-- *Developer Dashboard* - generic/tools/developerdashboard_release
+- *ArgoCD* - https://github.com/ibm-garage-cloud/terraform-tools-argocd.git
+- *Artifactory* - https://github.com/ibm-garage-cloud/terraform-tools-artifactory.git
+- *Developer Dashboard* - https://github.com/ibm-garage-cloud/terraform-tools-dashboard.git
 - *Jaeger* - https://github.com/ibm-garage-cloud/terraform-tools-jaeger.git
-- *Jenkins* - generic/tools/jenkins_release
+- *Jenkins* - https://github.com/ibm-garage-cloud/terraform-tools-jenkins.git
 - *Kafka* - https://github.com/ibm-garage-cloud/terraform-software-kafka.git
 - *Nexus* - https://github.com/ibm-garage-cloud/terraform-tools-nexus.git
-- *Pact Broker* - generic/tools/pactbroker_release
+- *Pact Broker* - https://github.com/ibm-garage-cloud/terraform-tools-pactbroker.git
 - *Prometheus Grafana* - generic/tools/prometheusgrafana_release
-- *SonarQube* - generic/tools/sonarqube_release
-- *Swagger Editor* - generic/tools/swagger_editor
-- *Tekton* - generic/tools/tekton_release
-- *Tekton Resources* - generic/tools/tekton_resources
+- *SonarQube* - https://github.com/ibm-garage-cloud/terraform-tools-sonarqube.git
+- *Swagger Editor* - https://github.com/ibm-garage-cloud/terraform-tools-swaggereditor.git
+- *Tekton* - https://github.com/ibm-garage-cloud/terraform-tools-tekton.git
+- *Tekton Resources* - https://github.com/ibm-garage-cloud/terraform-tools-tekton-resources.git
 
 ## How to apply a module
 
