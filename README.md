@@ -31,6 +31,7 @@ The modules have been organized into three major categories:
 
 ### K8s provider
 
+- *OpenShift cluster* - self-managed/cluster/openshift_cluster
 - *Namespace* - https://github.com/ibm-garage-cloud/terraform-cluster-namespace.git
 - *Service Account* - https://github.com/ibm-garage-cloud/terraform-cluster-serviceaccount.git
 - *Operator Lifecycle Manager* - https://github.com/ibm-garage-cloud/terraform-software-olm.git
