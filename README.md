@@ -13,42 +13,46 @@ The modules have been organized into three major categories:
 
 ### IBM provider
 
-- *IBM Cloud Cluster* - https://github.com/ibm-garage-cloud/terraform-ibm-container-platform.git
-- *Cloud Operator* - self-managed/software/cloud_operator
-- *AppId* - cloud-managed/services/appid
-- *Cloud Object Storage* - cloud-managed/services/cloud_object_storage
-- *Cloudant* - cloud-managed/services/cloudant
-- *LogDNA* - https://github.com/ibm-garage-cloud/terraform-ibm-logdna.git
-- *PostGreSQL* - cloud-managed/services/postgres
-- *SysDig* - https://github.com/ibm-garage-cloud/terraform-ibm-sysdig.git
-- *Watson Assistant* - https://github.com/ibm-garage-cloud/terraform-ibm-watson-assistant.git
-- *Watson Studio* - https://github.com/ibm-garage-cloud/terraform-ibm-watson-studio.git
-- *AppId operator* - cloud-managed/operator-services/appid
-- *Cloud Object Storage operator* - cloud-managed/operator-services/cloud_object_storage
-- *Cloudant operator* - cloud-managed/operator-services/cloudant
-- *LogDNA operator* - cloud-managed/operator-services/logdna
-- *PostGreSQL operator* - cloud-managed/operator-services/postgres
-- *SysDig operator* - cloud-managed/operator-services/sysdig
+| **Module name**                 | **Module location** |
+|---------------------------------|---------------------|
+| *IBM Cloud Cluster*             | https://github.com/ibm-garage-cloud/terraform-ibm-container-platform.git|
+| *Cloud Operator*                | self-managed/software/cloud_operator |
+| *AppId*                         | cloud-managed/services/appid |
+| *Cloud Object Storage*          | cloud-managed/services/cloud_object_storage |
+| *Cloudant*                      | cloud-managed/services/cloudant |
+| *LogDNA*                        | https://github.com/ibm-garage-cloud/terraform-ibm-logdna.git |
+| *PostGreSQL*                    | cloud-managed/services/postgres |
+| *SysDig*                        | https://github.com/ibm-garage-cloud/terraform-ibm-sysdig.git |
+| *Watson Assistant*              | https://github.com/ibm-garage-cloud/terraform-ibm-watson-assistant.git |
+| *Watson Studio*                 | https://github.com/ibm-garage-cloud/terraform-ibm-watson-studio.git |
+| *AppId operator*                | cloud-managed/operator-services/appid |
+| *Cloud Object Storage operator* | cloud-managed/operator-services/cloud_object_storage |
+| *Cloudant operator*             | cloud-managed/operator-services/cloudant |
+| *LogDNA operator*               | cloud-managed/operator-services/logdna |
+| *PostGreSQL operator*           | cloud-managed/operator-services/postgres |
+| *SysDig operator*               | cloud-managed/operator-services/sysdig |
 
 ### K8s provider
 
-- *OpenShift cluster* - self-managed/cluster/openshift_cluster
-- *Namespace* - https://github.com/ibm-garage-cloud/terraform-cluster-namespace.git
-- *Service Account* - https://github.com/ibm-garage-cloud/terraform-cluster-serviceaccount.git
-- *Operator Lifecycle Manager* - https://github.com/ibm-garage-cloud/terraform-software-olm.git
-- *ArgoCD* - https://github.com/ibm-garage-cloud/terraform-tools-argocd.git
-- *Artifactory* - https://github.com/ibm-garage-cloud/terraform-tools-artifactory.git
-- *Developer Dashboard* - https://github.com/ibm-garage-cloud/terraform-tools-dashboard.git
-- *Jaeger* - https://github.com/ibm-garage-cloud/terraform-tools-jaeger.git
-- *Jenkins* - https://github.com/ibm-garage-cloud/terraform-tools-jenkins.git
-- *Kafka* - https://github.com/ibm-garage-cloud/terraform-software-kafka.git
-- *Nexus* - https://github.com/ibm-garage-cloud/terraform-tools-nexus.git
-- *Pact Broker* - https://github.com/ibm-garage-cloud/terraform-tools-pactbroker.git
-- *Prometheus Grafana* - generic/tools/prometheusgrafana_release
-- *SonarQube* - https://github.com/ibm-garage-cloud/terraform-tools-sonarqube.git
-- *Swagger Editor* - https://github.com/ibm-garage-cloud/terraform-tools-swaggereditor.git
-- *Tekton* - https://github.com/ibm-garage-cloud/terraform-tools-tekton.git
-- *Tekton Resources* - https://github.com/ibm-garage-cloud/terraform-tools-tekton-resources.git
+| **Module name**                 | **Module location** |
+|---------------------------------|---------------------|
+| *OpenShift cluster* | self-managed/cluster/openshift_cluster |
+| *Namespace* | https://github.com/ibm-garage-cloud/terraform-cluster-namespace.git |
+| *Service Account* | https://github.com/ibm-garage-cloud/terraform-cluster-serviceaccount.git |
+| *Operator Lifecycle Manager* | https://github.com/ibm-garage-cloud/terraform-software-olm.git |
+| *ArgoCD* | https://github.com/ibm-garage-cloud/terraform-tools-argocd.git |
+| *Artifactory* | https://github.com/ibm-garage-cloud/terraform-tools-artifactory.git |
+| *Developer Dashboard* | https://github.com/ibm-garage-cloud/terraform-tools-dashboard.git |
+| *Jaeger* | https://github.com/ibm-garage-cloud/terraform-tools-jaeger.git |
+| *Jenkins* | https://github.com/ibm-garage-cloud/terraform-tools-jenkins.git |
+| *Kafka* | https://github.com/ibm-garage-cloud/terraform-software-kafka.git |
+| *Nexus* | https://github.com/ibm-garage-cloud/terraform-tools-nexus.git |
+| *Pact Broker* | https://github.com/ibm-garage-cloud/terraform-tools-pactbroker.git |
+| *Prometheus Grafana* | generic/tools/prometheusgrafana_release |
+| *SonarQube* | https://github.com/ibm-garage-cloud/terraform-tools-sonarqube.git |
+| *Swagger Editor* | https://github.com/ibm-garage-cloud/terraform-tools-swaggereditor.git |
+| *Tekton* | https://github.com/ibm-garage-cloud/terraform-tools-tekton.git |
+| *Tekton Resources* | https://github.com/ibm-garage-cloud/terraform-tools-tekton-resources.git |
 
 ## How to apply a module
 
