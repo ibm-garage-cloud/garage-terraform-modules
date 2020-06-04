@@ -14,6 +14,7 @@ The modules have been organized into three major categories:
 ### IBM provider
 
 - *IBM Cloud Cluster* - https://github.com/ibm-garage-cloud/terraform-ibm-container-platform.git
+- *Cloud Operator* - self-managed/software/cloud_operator
 - *AppId* - cloud-managed/services/appid
 - *Cloud Object Storage* - cloud-managed/services/cloud_object_storage
 - *Cloudant* - cloud-managed/services/cloudant
@@ -35,7 +36,6 @@ The modules have been organized into three major categories:
 - *Namespace* - https://github.com/ibm-garage-cloud/terraform-cluster-namespace.git
 - *Service Account* - https://github.com/ibm-garage-cloud/terraform-cluster-serviceaccount.git
 - *Operator Lifecycle Manager* - https://github.com/ibm-garage-cloud/terraform-software-olm.git
-- *Cloud Operator* - self-managed/software/cloud_operator
 - *ArgoCD* - https://github.com/ibm-garage-cloud/terraform-tools-argocd.git
 - *Artifactory* - https://github.com/ibm-garage-cloud/terraform-tools-artifactory.git
 - *Developer Dashboard* - https://github.com/ibm-garage-cloud/terraform-tools-dashboard.git
