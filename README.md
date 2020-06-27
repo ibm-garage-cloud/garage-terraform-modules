@@ -13,24 +13,24 @@ The modules have been organized into three major categories:
 
 ### IBM provider
 
-| **Module name**                 | **Module location** | **G** | **Latest release** | **Last build status** |
-|---------------------------------|---------------------|--|--|--|
-| *IBM Cloud Cluster*             | https://github.com/ibm-garage-cloud/terraform-ibm-container-platform.git | | ![Latest release](https://img.shields.io/github/v/release/ibm-garage-cloud/terraform-ibm-container-platform?sort=semver) | ![Verify and release module](https://github.com/ibm-garage-cloud/terraform-ibm-container-platform/workflows/Verify%20and%20release%20module/badge.svg) |
-| *Cloud Operator*                | self-managed/software/cloud_operator | | | |
-| *AppId*                         | cloud-managed/services/appid | | | |
-| *Cloud Object Storage*          | cloud-managed/services/cloud_object_storage | | | |
-| *Cloudant*                      | cloud-managed/services/cloudant | | | |
-| *LogDNA*                        | https://github.com/ibm-garage-cloud/terraform-ibm-logdna.git | | | |
-| *PostGreSQL*                    | cloud-managed/services/postgres | | | |
-| *SysDig*                        | https://github.com/ibm-garage-cloud/terraform-ibm-sysdig.git | | | |
-| *Watson Assistant*              | https://github.com/ibm-garage-cloud/terraform-ibm-watson-assistant.git | | | |
-| *Watson Studio*                 | https://github.com/ibm-garage-cloud/terraform-ibm-watson-studio.git | | | |
-| *AppId operator*                | cloud-managed/operator-services/appid | | | |
-| *Cloud Object Storage operator* | cloud-managed/operator-services/cloud_object_storage | | | |
-| *Cloudant operator*             | cloud-managed/operator-services/cloudant | | | |
-| *LogDNA operator*               | cloud-managed/operator-services/logdna | | | |
-| *PostGreSQL operator*           | cloud-managed/operator-services/postgres | | | |
-| *SysDig operator*               | cloud-managed/operator-services/sysdig | | | |
+| **Module name**                 | **Module location**                                                      | **G** | **Latest release** | **Last build status** |
+|---------------------------------|--------------------------------------------------------------------------|-------|--------------------|-----------------------|
+| *IBM Cloud Cluster*             | https://github.com/ibm-garage-cloud/terraform-ibm-container-platform.git |       | ![Latest release](https://img.shields.io/github/v/release/ibm-garage-cloud/terraform-ibm-container-platform?sort=semver) | ![Verify and release module](https://github.com/ibm-garage-cloud/terraform-ibm-container-platform/workflows/Verify%20and%20release%20module/badge.svg) |
+| *Cloud Operator*                | self-managed/software/cloud_operator                                     |       | | |
+| *AppId*                         | cloud-managed/services/appid                                             |       | | |
+| *Cloud Object Storage*          | cloud-managed/services/cloud_object_storage                              |       | | |
+| *Cloudant*                      | cloud-managed/services/cloudant                                          |       | | |
+| *LogDNA*                        | https://github.com/ibm-garage-cloud/terraform-ibm-logdna.git             |       | | |
+| *PostGreSQL*                    | cloud-managed/services/postgres                                          |       | | |
+| *SysDig*                        | https://github.com/ibm-garage-cloud/terraform-ibm-sysdig.git             |       | | |
+| *Watson Assistant*              | https://github.com/ibm-garage-cloud/terraform-ibm-watson-assistant.git   |       | | |
+| *Watson Studio*                 | https://github.com/ibm-garage-cloud/terraform-ibm-watson-studio.git      |       | | |
+| *AppId operator*                | cloud-managed/operator-services/appid                                    |       | | |
+| *Cloud Object Storage operator* | cloud-managed/operator-services/cloud_object_storage                     |       | | |
+| *Cloudant operator*             | cloud-managed/operator-services/cloudant                                 |       | | |
+| *LogDNA operator*               | cloud-managed/operator-services/logdna                                   |       | | |
+| *PostGreSQL operator*           | cloud-managed/operator-services/postgres                                 |       | | |
+| *SysDig operator*               | cloud-managed/operator-services/sysdig                                   |       | | |
 
 ### K8s provider
 
