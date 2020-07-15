@@ -23,7 +23,7 @@ jobs:
 
       - name: Build index.yaml
         run: |
-          ./scripts/build-catalog.sh ${{ env.DIST_DIR }}
+          ./.github/scripts/build-catalog.sh ${{ env.DIST_DIR }}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
