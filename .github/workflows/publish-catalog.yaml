@@ -1,0 +1,33 @@
+name: Publish catalog
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  publish:
+    #    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+
+    env:
+      DIST_DIR: ./dist
+      PUBLISH_BRANCH: gh-pages
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build index.yaml
+        run: |
+          ./scripts/build-catalog.sh ${{ env.DIST_DIR }}
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ env.DIST_DIR }}
+          publish_branch: ${{ env.PUBLISH_BRANCH }}

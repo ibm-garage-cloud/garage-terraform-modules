@@ -1,0 +1,8 @@
+cluster:
+- https://ibm-garage-cloud.github.io/terraform-ibm-container-platform/index.yaml
+- https://ibm-garage-cloud.github.io/terraform-k8s-ocp-cluster/index.yaml
+infrastructure:
+- https://ibm-garage-cloud.github.io/terraform-k8s-namespace/index.yaml
+- https://ibm-garage-cloud.github.io/terraform-k8s-olm/index.yaml
+tool:
+- https://ibm-garage-cloud.github.io/terraform-tools-artifactory/index.yaml
