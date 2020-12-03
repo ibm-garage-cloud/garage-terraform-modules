@@ -28,6 +28,12 @@ jobs:
           sudo apt update
           sudo apt install yq -y
 
+      - name: Install jq
+        run: |
+          curl -Lo jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+          chmod +x jq
+          sudo mv jq /usr/local/bin
+
       - name: Build index.yaml
         run: |
           ./.github/scripts/build-catalog.sh ${{ env.DIST_DIR }}
