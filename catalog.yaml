@@ -1,6 +1,6 @@
 categories:
   - category: cluster
-    selection: single
+    selection: required
     modules:
       - https://ibm-garage-cloud.github.io/terraform-ibm-container-platform/index.yaml
       - https://ibm-garage-cloud.github.io/terraform-k8s-ocp-cluster/index.yaml
