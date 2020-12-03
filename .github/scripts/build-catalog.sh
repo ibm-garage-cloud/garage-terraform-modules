@@ -20,7 +20,7 @@ yq r -j "${BASE_DIR}/catalog.yaml" | jq -r '.categories | .[] | .category' | whi
     yq r --prettyPrint - > "${DEST_DIR}/${category}.yaml"
 
   yq r -j "${BASE_DIR}/catalog.yaml" | \
-    jq -r '.categories | .[] | select(.category == "cluster") | .modules | .[]' | \
+    jq -r --arg CATEGORY "${category}" '.categories | .[] | select(.category == $CATEGORY) | .modules | .[]' | \
     while read module_url; do
 
     echo "module_url: ${module_url}"
