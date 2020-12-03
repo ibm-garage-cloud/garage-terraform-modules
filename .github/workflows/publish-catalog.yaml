@@ -21,6 +21,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Install yq
+        run: |
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CC86BB64
+          sudo add-apt-repository ppa:rmescandon/yq
+          sudo apt update
+          sudo apt install yq -y
+
       - name: Build index.yaml
         run: |
           ./.github/scripts/build-catalog.sh ${{ env.DIST_DIR }}
