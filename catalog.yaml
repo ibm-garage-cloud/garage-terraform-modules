@@ -26,12 +26,12 @@ categories:
       - https://ibm-garage-cloud.github.io/terraform-ibm-activity-tracker/index.yaml
       - https://ibm-garage-cloud.github.io/terraform-ibm-appid/index.yaml
       - https://ibm-garage-cloud.github.io/terraform-ibm-cloud-operator/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-logdna/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-sysdig/index.yaml
       - https://ibm-garage-cloud.github.io/terraform-ibm-key-protect/index.yaml
+      - https://ibm-garage-cloud.github.io/terraform-ibm-logdna/index.yaml
       - https://ibm-garage-cloud.github.io/terraform-ibm-mongodb/index.yaml
       - https://ibm-garage-cloud.github.io/terraform-ibm-object-storage/index.yaml
       - https://ibm-garage-cloud.github.io/terraform-ibm-redis/index.yaml
+      - https://ibm-garage-cloud.github.io/terraform-ibm-sysdig/index.yaml
       - https://ibm-garage-cloud.github.io/terraform-ibm-watson-assistant/index.yaml
       - https://ibm-garage-cloud.github.io/terraform-ibm-watson-studio/index.yaml
   - category: tool
