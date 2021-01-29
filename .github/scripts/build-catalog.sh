@@ -24,8 +24,13 @@ yq r -j "${BASE_DIR}/catalog.yaml" | jq -r '.categories | .[] | .category' | whi
     while read module_url; do
 
     echo "module_url: ${module_url}"
-    curl -sL "${module_url}" | \
-      yq p - "[+]" | yq p - "modules" | yq m -i -a "${DEST_DIR}/${category}.yaml" -
+    http_status=$(curl -sLI "${module_url}" | grep -E "^HTTP/2" | sed "s~HTTP/2 ~~g")
+    if [[ "${http_status}" =~ "200" ]]; then
+      curl -sL "${module_url}" | \
+        yq p - "[+]" | yq p - "modules" | yq m -i -a "${DEST_DIR}/${category}.yaml" -
+    else
+      echo "  ** Unable to access module url: ${module_url} - ${http_status}"
+    fi
   done
 done
 

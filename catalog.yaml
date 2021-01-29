@@ -19,7 +19,7 @@ categories:
     modules:
       - https://ibm-garage-cloud.github.io/terraform-k8s-namespace/index.yaml
       - https://ibm-garage-cloud.github.io/terraform-k8s-olm/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-cp4i/index.yaml
+      - https://ibm-garage-cloud.github.io/terraform-ibm-cp-catalog/index.yaml
   - category: ibm
     selection: multiple
     modules:
