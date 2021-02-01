@@ -2,51 +2,91 @@ categories:
   - category: cluster
     selection: required
     modules:
-      - https://ibm-garage-cloud.github.io/terraform-ibm-container-platform/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-k8s-ocp-cluster/index.yaml
+      - name: IBM Container Platform
+        id: github.com/ibm-garage-cloud/terraform-ibm-container-platform
+        metadataUrl: https://ibm-garage-cloud.github.io/terraform-ibm-container-platform/index.yaml
+      - name: OpenShift Cluster
+        id: github.com/ibm-garage-cloud/terraform-k8s-ocp-cluster
+        aliases:
+          - github.com/ibm-garage-cloud/terraform-ocp-cluster
+        metadataUrl: https://ibm-garage-cloud.github.io/terraform-k8s-ocp-cluster/index.yaml
   - category: image-registry
     selection: single
     modules:
-      - https://ibm-garage-cloud.github.io/terraform-ibm-image-registry/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ocp-image-registry/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-k8s-image-registry/index.yaml
+      - name: IBM Container Registry
+        id: github.com/ibm-garage-cloud/terraform-ibm-image-registry
+      - name: OpenShift Container Registry
+        id: github.com/ibm-garage-cloud/terraform-ocp-image-registry
+      - name: External Container Registry
+        id: github.com/ibm-garage-cloud/terraform-k8s-image-registry
   - category: source-control
     selection: single
     modules:
-      - https://ibm-garage-cloud.github.io/terraform-k8s-source-control/index.yaml
+      - name: Source Control
+        id: github.com/ibm-garage-cloud/terraform-k8s-source-control
   - category: infrastructure
     selection: indirect
     modules:
-      - https://ibm-garage-cloud.github.io/terraform-k8s-namespace/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-k8s-olm/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-cp-catalog/index.yaml
-  - category: ibm
+      - name: Namespace
+        id: ibm-garage-cloud.github.io/terraform-k8s-namespace/index.yaml
+      - name: Operator Lifecycle Manager
+        id: github.com/ibm-garage-cloud/terraform-k8s-olm
+      - name: Cloud Pak Catalog
+        id: github.com/ibm-garage-cloud/terraform-ibm-cp-catalog
+      - name: IBM Cloud Operator
+        id: github.com/ibm-garage-cloud/terraform-ibm-cloud-operator
+  - category: sre
     selection: multiple
     modules:
-      - https://ibm-garage-cloud.github.io/terraform-ibm-activity-tracker/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-appid/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-cloud-operator/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-key-protect/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-logdna/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-mongodb/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-object-storage/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-redis/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-sysdig/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-watson-assistant/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-ibm-watson-studio/index.yaml
-  - category: tool
+      - name: IBM Activity Tracker
+        id: github.com/ibm-garage-cloud/terraform-ibm-activity-tracker
+      - name: IBM LogDNA
+        id: github.com/ibm-garage-cloud/terraform-ibm-logdna
+      - name: IBM Sysdig
+        id: github.com/ibm-garage-cloud/terraform-ibm-sysdig
+  - category: middleware
     selection: multiple
     modules:
-      - https://ibm-garage-cloud.github.io/terraform-tools-argocd/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-tools-artifactory/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-tools-dashboard/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-tools-jenkins/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-tools-pactbroker/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-tools-sonarqube/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-tools-swaggereditor/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-tools-tekton/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-tools-tekton-resources/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-tools-nexus/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-tools-jaeger/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-k8s-kafka/index.yaml
-      - https://ibm-garage-cloud.github.io/terraform-k8s-service-mesh/index.yaml
+      - name: IBM AppId
+        id: github.com/ibm-garage-cloud/terraform-ibm-appid
+      - name: Jaeger
+        id: github.com/ibm-garage-cloud/terraform-tools-jaeger
+      - name: Kafka
+        id: github.com/ibm-garage-cloud/terraform-k8s-kafka
+      - name: IBM Key Protect
+        id: github.com/ibm-garage-cloud/terraform-ibm-key-protect
+      - name: IBM MongoDB
+        id: github.com/ibm-garage-cloud/terraform-ibm-mongodb
+      - name: IBM Object Storage
+        id: github.com/ibm-garage-cloud/terraform-ibm-object-storage
+      - name: IBM Redist
+        id: github.com/ibm-garage-cloud/terraform-ibm-redis
+      - name: Service Mesh
+        id: github.com/ibm-garage-cloud/terraform-k8s-service-mesh
+      - name: IBM Watson Assistant
+        id: github.com/ibm-garage-cloud/terraform-ibm-watson-assistant
+      - name: IBM Watson Studio
+        id: github.com/ibm-garage-cloud/terraform-ibm-watson-studio
+  - category: dev-tool
+    selection: multiple
+    modules:
+      - name: ArgoCD
+        id: github.com/ibm-garage-cloud/terraform-tools-argocd
+      - name: Artifactory
+        id: github.com/ibm-garage-cloud/terraform-tools-artifactory
+      - name: Developer Dashboard
+        id: github.com/ibm-garage-cloud/terraform-tools-dashboard
+      - name: Jenkins
+        id: github.com/ibm-garage-cloud.github.io/terraform-tools-jenkins
+      - name: Nexus
+        id: github.com/ibm-garage-cloud/terraform-tools-nexus
+      - name: Pact Broker
+        id: github.com/ibm-garage-cloud/terraform-tools-pactbroker
+      - name: SonarQube
+        id: github.com/ibm-garage-cloud/terraform-tools-sonarqube
+      - name: Swagger Editor
+        id: github.com/ibm-garage-cloud/terraform-tools-swaggereditor
+      - name: Tekton
+        id: github.com/ibm-garage-cloud/terraform-tools-tekton
+      - name: Tekton Resources
+        id: github.com/ibm-garage-cloud/terraform-tools-tekton-resources
