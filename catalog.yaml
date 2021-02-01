@@ -1,5 +1,6 @@
 categories:
   - category: cluster
+    categoryName: Cluster
     selection: required
     modules:
       - name: IBM Container Platform
@@ -11,6 +12,7 @@ categories:
           - github.com/ibm-garage-cloud/terraform-ocp-cluster
         metadataUrl: https://ibm-garage-cloud.github.io/terraform-k8s-ocp-cluster/index.yaml
   - category: image-registry
+    categoryName: Image Registry
     selection: single
     modules:
       - name: IBM Container Registry
@@ -20,15 +22,17 @@ categories:
       - name: External Container Registry
         id: github.com/ibm-garage-cloud/terraform-k8s-image-registry
   - category: source-control
+    categoryName: Source Control
     selection: single
     modules:
       - name: Source Control
         id: github.com/ibm-garage-cloud/terraform-k8s-source-control
   - category: infrastructure
+    categoryName: Infrastructure
     selection: indirect
     modules:
       - name: Namespace
-        id: ibm-garage-cloud.github.io/terraform-k8s-namespace/index.yaml
+        id: github.com/ibm-garage-cloud/terraform-k8s-namespace
       - name: Operator Lifecycle Manager
         id: github.com/ibm-garage-cloud/terraform-k8s-olm
       - name: Cloud Pak Catalog
@@ -36,6 +40,7 @@ categories:
       - name: IBM Cloud Operator
         id: github.com/ibm-garage-cloud/terraform-ibm-cloud-operator
   - category: sre
+    categoryName: SRE tools
     selection: multiple
     modules:
       - name: IBM Activity Tracker
@@ -45,6 +50,7 @@ categories:
       - name: IBM Sysdig
         id: github.com/ibm-garage-cloud/terraform-ibm-sysdig
   - category: middleware
+    categoryName: Middleware
     selection: multiple
     modules:
       - name: IBM AppId
@@ -68,6 +74,7 @@ categories:
       - name: IBM Watson Studio
         id: github.com/ibm-garage-cloud/terraform-ibm-watson-studio
   - category: dev-tool
+    categoryName: Dev Tools
     selection: multiple
     modules:
       - name: ArgoCD
@@ -77,7 +84,7 @@ categories:
       - name: Developer Dashboard
         id: github.com/ibm-garage-cloud/terraform-tools-dashboard
       - name: Jenkins
-        id: github.com/ibm-garage-cloud.github.io/terraform-tools-jenkins
+        id: github.com/ibm-garage-cloud/terraform-tools-jenkins
       - name: Nexus
         id: github.com/ibm-garage-cloud/terraform-tools-nexus
       - name: Pact Broker

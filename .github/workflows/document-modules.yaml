@@ -1,0 +1,47 @@
+name: Publish catalog
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  push:
+    branches: [ main ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  document:
+    #    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+
+    env:
+      DIST_DIR: ./dist
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install yq
+        run: |
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CC86BB64
+          sudo add-apt-repository ppa:rmescandon/yq
+          sudo apt update
+          sudo apt install yq -y
+
+      - name: Install jq
+        run: |
+          curl -Lo jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+          chmod +x jq
+          sudo mv jq /usr/local/bin
+
+      - name: Build module markdown
+        run: |
+          ./.github/scripts/build-module-list.sh ${{ env.DIST_DIR }}
+          cp ${{ env.DIST_DIR }}/*.md ./
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: Cloud-Native Toolkit
+          author_email: cloud-native-toolkit@ibm.com
+          message: 'Updates module catalog documentation'
+          add: '*.md'
