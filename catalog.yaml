@@ -11,6 +11,18 @@ categories:
         aliases:
           - github.com/ibm-garage-cloud/terraform-ocp-cluster
         metadataUrl: https://ibm-garage-cloud.github.io/terraform-k8s-ocp-cluster/index.yaml
+  - category: iam
+    categoryName: IAM
+    selection: multiple
+    modules:
+      - name: IBM Resource Group
+        id: github.com/ibm-garage-cloud/terraform-ibm-resource-group
+      - name: IBM Access Group
+        id: github.com/ibm-garage-cloud/terraform-ibm-access-group
+      - name: IBM Account Users
+        id: github.com/ibm-garage-cloud/terraform-ibm-account-users
+      - name: IBM Add Users to Access Group
+        id: github.com/ibm-garage-cloud/terraform-ibm-add-access-group-users
   - category: image-registry
     categoryName: Image Registry
     selection: single
