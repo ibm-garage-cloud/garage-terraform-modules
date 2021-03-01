@@ -31,8 +31,8 @@ yq r -j "${BASE_DIR}/catalog.yaml" | jq -r '.categories | .[] | .category' | whi
 
   echo "### ${category_name}" >> "${OUTPUT}"
   echo "" >> "${OUTPUT}"
-  echo "| **Module name** | **Module location** | **Latest release** | **Last build status** |" >> "${OUTPUT}"
-  echo "|-----------------|---------------------|--------------------|-----------------------|" >> "${OUTPUT}"
+  echo "| **Module name** | **Module id** | **Module location** | **Latest release** | **Last build status** |" >> "${OUTPUT}"
+  echo "|-----------------|---------------|---------------------|--------------------|-----------------------|" >> "${OUTPUT}"
 
   yq r -j "${BASE_DIR}/catalog.yaml" | \
     jq -c --arg CATEGORY "${category}" '.categories | .[] | select(.category == $CATEGORY) | .modules | .[]' | \
@@ -41,12 +41,22 @@ yq r -j "${BASE_DIR}/catalog.yaml" | jq -r '.categories | .[] | .category' | whi
     module_name=$(echo "${module}" | jq -r '.name')
     module_id=$(echo "${module}" | jq -r '.id')
     module_slug=$(echo "${module_id}" | sed -E "s~[^/]+/(.+)~\1~g")
+    module_url=$(echo "${module}" | jq -r '.metadataUrl // empty')
+    if [[ -z "${module_url}" ]]; then
+      module_url=$(echo "${module_id}" | sed -E "s~(.+).com+/([^/]+)/(.*)~https://\2.\1.io/\3/index.yaml~g")
+    fi
 
     module_location="https://${module_id}"
     module_release="https://img.shields.io/github/v/release/${module_slug}?sort=semver"
     module_build="${module_location}/workflows/Verify%20and%20release%20module/badge.svg"
 
-    echo "| *${module_name}* | ${module_location} | ![Latest release](${module_release}) | ![Verify and release module](${module_build}) |" >> "${OUTPUT}"
+    id=""
+    http_status=$(curl -sLI "${module_url}" | grep -E "^HTTP/2" | sed "s~HTTP/2 ~~g")
+    if [[ "${http_status}" =~ "200" ]]; then
+      id=$(curl -sL "${module_url}" | yq r - 'name')
+    fi
+
+    echo "| *${module_name}* | ${id} | ${module_location} | ![Latest release](${module_release}) | ![Verify and release module](${module_build}) |" >> "${OUTPUT}"
   done
 
   echo "" >> "${OUTPUT}"
