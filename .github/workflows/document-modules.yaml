@@ -45,3 +45,4 @@ jobs:
           author_email: cloud-native-toolkit@ibm.com
           message: 'Updates module catalog documentation'
           add: '*.md'
+          pull_strategy: '--rebase'
