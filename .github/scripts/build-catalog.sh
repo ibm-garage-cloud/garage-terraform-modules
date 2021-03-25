@@ -48,6 +48,7 @@ yq r -j "${BASE_DIR}/catalog.yaml" | jq -r '.categories | .[] | .category' | whi
       fi
       echo "provider: ${provider}" > "${TMP_DIR}/defaults.yaml"
       curl -sL "${module_url}" | \
+        sed "s~github.com/ibm-garage-cloud~github.com/cloud-native-toolkit~g" |
         yq m -x - "${TMP_DIR}/overlay.yaml" | \
         yq m - "${TMP_DIR}/defaults.yaml" | \
         yq p - "[+]" | yq p - "modules" | yq m -i -a "${DEST_DIR}/${category}.yaml" -
