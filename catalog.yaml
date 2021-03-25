@@ -4,41 +4,41 @@ categories:
     selection: required
     modules:
       - name: IBM Container Platform
-        id: github.com/ibm-garage-cloud/terraform-ibm-container-platform
+        id: github.com/cloud-native-toolkit/terraform-ibm-container-platform
         metadataUrl: https://ibm-garage-cloud.github.io/terraform-ibm-container-platform/index.yaml
       - name: OpenShift Cluster
-        id: github.com/ibm-garage-cloud/terraform-k8s-ocp-cluster
+        id: github.com/cloud-native-toolkit/terraform-k8s-ocp-cluster
         aliases:
-          - github.com/ibm-garage-cloud/terraform-ocp-cluster
+          - github.com/cloud-native-toolkit/terraform-ocp-cluster
         metadataUrl: https://ibm-garage-cloud.github.io/terraform-k8s-ocp-cluster/index.yaml
   - category: iam
     categoryName: IAM
     selection: multiple
     modules:
       - name: IBM Resource Group
-        id: github.com/ibm-garage-cloud/terraform-ibm-resource-group
+        id: github.com/cloud-native-toolkit/terraform-ibm-resource-group
       - name: IBM Access Group
-        id: github.com/ibm-garage-cloud/terraform-ibm-access-group
+        id: github.com/cloud-native-toolkit/terraform-ibm-access-group
       - name: IBM Account Users
-        id: github.com/ibm-garage-cloud/terraform-ibm-account-users
+        id: github.com/cloud-native-toolkit/terraform-ibm-account-users
       - name: IBM Add Users to Access Group
-        id: github.com/ibm-garage-cloud/terraform-ibm-add-access-group-users
+        id: github.com/cloud-native-toolkit/terraform-ibm-add-access-group-users
   - category: image-registry
     categoryName: Image Registry
     selection: single
     modules:
       - name: IBM Container Registry
-        id: github.com/ibm-garage-cloud/terraform-ibm-image-registry
+        id: github.com/cloud-native-toolkit/terraform-ibm-image-registry
       - name: OpenShift Container Registry
-        id: github.com/ibm-garage-cloud/terraform-ocp-image-registry
+        id: github.com/cloud-native-toolkit/terraform-ocp-image-registry
       - name: External Container Registry
-        id: github.com/ibm-garage-cloud/terraform-k8s-image-registry
+        id: github.com/cloud-native-toolkit/terraform-k8s-image-registry
   - category: source-control
     categoryName: Source Control
     selection: single
     modules:
       - name: Source Control
-        id: github.com/ibm-garage-cloud/terraform-k8s-source-control
+        id: github.com/cloud-native-toolkit/terraform-k8s-source-control
   - category: network
     categoryName: Network
     selection: multiple
@@ -52,72 +52,72 @@ categories:
     selection: indirect
     modules:
       - name: Namespace
-        id: github.com/ibm-garage-cloud/terraform-k8s-namespace
+        id: github.com/cloud-native-toolkit/terraform-k8s-namespace
       - name: Operator Lifecycle Manager
-        id: github.com/ibm-garage-cloud/terraform-k8s-olm
+        id: github.com/cloud-native-toolkit/terraform-k8s-olm
       - name: Cloud Pak Catalog
-        id: github.com/ibm-garage-cloud/terraform-ibm-cp-catalog
+        id: github.com/cloud-native-toolkit/terraform-ibm-cp-catalog
       - name: Cloud Pak Platform Navigator
-        id: github.com/ibm-garage-cloud/terraform-ibm-cp-platform-navigator
+        id: github.com/cloud-native-toolkit/terraform-ibm-cp-platform-navigator
       - name: IBM Cloud Operator
-        id: github.com/ibm-garage-cloud/terraform-ibm-cloud-operator
+        id: github.com/cloud-native-toolkit/terraform-ibm-cloud-operator
   - category: sre
     categoryName: SRE tools
     selection: multiple
     modules:
       - name: IBM Activity Tracker
-        id: github.com/ibm-garage-cloud/terraform-ibm-activity-tracker
+        id: github.com/cloud-native-toolkit/terraform-ibm-activity-tracker
       - name: IBM LogDNA
-        id: github.com/ibm-garage-cloud/terraform-ibm-logdna
+        id: github.com/cloud-native-toolkit/terraform-ibm-logdna
       - name: IBM Sysdig
-        id: github.com/ibm-garage-cloud/terraform-ibm-sysdig
+        id: github.com/cloud-native-toolkit/terraform-ibm-sysdig
   - category: middleware
     categoryName: Middleware
     selection: multiple
     modules:
       - name: IBM AppId
-        id: github.com/ibm-garage-cloud/terraform-ibm-appid
+        id: github.com/cloud-native-toolkit/terraform-ibm-appid
       - name: Jaeger
-        id: github.com/ibm-garage-cloud/terraform-tools-jaeger
+        id: github.com/cloud-native-toolkit/terraform-tools-jaeger
       - name: Kafka
-        id: github.com/ibm-garage-cloud/terraform-k8s-kafka
+        id: github.com/cloud-native-toolkit/terraform-k8s-kafka
       - name: IBM Key Protect
-        id: github.com/ibm-garage-cloud/terraform-ibm-key-protect
+        id: github.com/cloud-native-toolkit/terraform-ibm-key-protect
       - name: IBM MongoDB
-        id: github.com/ibm-garage-cloud/terraform-ibm-mongodb
+        id: github.com/cloud-native-toolkit/terraform-ibm-mongodb
       - name: IBM Object Storage
-        id: github.com/ibm-garage-cloud/terraform-ibm-object-storage
+        id: github.com/cloud-native-toolkit/terraform-ibm-object-storage
       - name: IBM Redist
-        id: github.com/ibm-garage-cloud/terraform-ibm-redis
+        id: github.com/cloud-native-toolkit/terraform-ibm-redis
       - name: Service Mesh
-        id: github.com/ibm-garage-cloud/terraform-k8s-service-mesh
+        id: github.com/cloud-native-toolkit/terraform-k8s-service-mesh
       - name: IBM Watson Assistant
-        id: github.com/ibm-garage-cloud/terraform-ibm-watson-assistant
+        id: github.com/cloud-native-toolkit/terraform-ibm-watson-assistant
       - name: IBM Watson Studio
-        id: github.com/ibm-garage-cloud/terraform-ibm-watson-studio
+        id: github.com/cloud-native-toolkit/terraform-ibm-watson-studio
       - name: App Connect
-        id: github.com/ibm-garage-cloud/terraform-ibm-cp-app-connect
+        id: github.com/cloud-native-toolkit/terraform-ibm-cp-app-connect
   - category: dev-tool
     categoryName: Dev Tools
     selection: multiple
     modules:
       - name: ArgoCD
-        id: github.com/ibm-garage-cloud/terraform-tools-argocd
+        id: github.com/cloud-native-toolkit/terraform-tools-argocd
       - name: Artifactory
-        id: github.com/ibm-garage-cloud/terraform-tools-artifactory
+        id: github.com/cloud-native-toolkit/terraform-tools-artifactory
       - name: Developer Dashboard
-        id: github.com/ibm-garage-cloud/terraform-tools-dashboard
+        id: github.com/cloud-native-toolkit/terraform-tools-dashboard
       - name: Jenkins
-        id: github.com/ibm-garage-cloud/terraform-tools-jenkins
+        id: github.com/cloud-native-toolkit/terraform-tools-jenkins
       - name: Nexus
-        id: github.com/ibm-garage-cloud/terraform-tools-nexus
+        id: github.com/cloud-native-toolkit/terraform-tools-nexus
       - name: Pact Broker
-        id: github.com/ibm-garage-cloud/terraform-tools-pactbroker
+        id: github.com/cloud-native-toolkit/terraform-tools-pactbroker
       - name: SonarQube
-        id: github.com/ibm-garage-cloud/terraform-tools-sonarqube
+        id: github.com/cloud-native-toolkit/terraform-tools-sonarqube
       - name: Swagger Editor
-        id: github.com/ibm-garage-cloud/terraform-tools-swaggereditor
+        id: github.com/cloud-native-toolkit/terraform-tools-swaggereditor
       - name: Tekton
-        id: github.com/ibm-garage-cloud/terraform-tools-tekton
+        id: github.com/cloud-native-toolkit/terraform-tools-tekton
       - name: Tekton Resources
-        id: github.com/ibm-garage-cloud/terraform-tools-tekton-resources
+        id: github.com/cloud-native-toolkit/terraform-tools-tekton-resources
