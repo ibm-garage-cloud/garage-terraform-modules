@@ -5,12 +5,12 @@ categories:
     modules:
       - name: IBM Container Platform
         id: github.com/cloud-native-toolkit/terraform-ibm-container-platform
-        metadataUrl: https://ibm-garage-cloud.github.io/terraform-ibm-container-platform/index.yaml
+        metadataUrl: https://cloud-native-toolkit.github.io/terraform-ibm-container-platform/index.yaml
       - name: OpenShift Cluster
         id: github.com/cloud-native-toolkit/terraform-k8s-ocp-cluster
         aliases:
           - github.com/cloud-native-toolkit/terraform-ocp-cluster
-        metadataUrl: https://ibm-garage-cloud.github.io/terraform-k8s-ocp-cluster/index.yaml
+        metadataUrl: https://cloud-native-toolkit.github.io/terraform-k8s-ocp-cluster/index.yaml
   - category: iam
     categoryName: IAM
     selection: multiple
