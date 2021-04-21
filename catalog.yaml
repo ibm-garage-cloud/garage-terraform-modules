@@ -57,6 +57,8 @@ categories:
         id: github.com/cloud-native-toolkit/terraform-vsi-bastion
       - name: VPE Gateway
         id: github.com/cloud-native-toolkit/terraform-ibm-vpe-gateway
+      - name: Transit Gateway
+        id: github.com/cloud-native-toolkit/terraform-ibm-transit-gateway
   - category: infrastructure
     categoryName: Infrastructure
     selection: indirect
